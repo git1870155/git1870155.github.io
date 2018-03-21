@@ -5,19 +5,20 @@
   
 
   
-  <title>js | Jiwei`s blog website</title>
+  <title>浅拷贝与深拷贝 | Jiwei`s blog website</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="private blog">
-<meta property="og:type" content="website">
-<meta property="og:title" content="js">
-<meta property="og:url" content="http://zhangdijia.com/tags/index2.html">
+  <meta name="description" content="对象的赋值分为浅拷贝与深拷贝，区别在于浅拷贝为新对象与原来的指向同一个地址，如果新对象属性改变，原有对象也会跟着改变，深拷贝为整体复制一份对象，与地址无关">
+<meta name="keywords" content="php">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浅拷贝与深拷贝">
+<meta property="og:url" content="http://zhangdijia.com/2017/02/07/浅拷贝与深拷贝/index.html">
 <meta property="og:site_name" content="Jiwei`s blog website">
-<meta property="og:description" content="private blog">
+<meta property="og:description" content="对象的赋值分为浅拷贝与深拷贝，区别在于浅拷贝为新对象与原来的指向同一个地址，如果新对象属性改变，原有对象也会跟着改变，深拷贝为整体复制一份对象，与地址无关">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-03-17T02:35:28.993Z">
+<meta property="og:updated_time" content="2018-03-21T11:40:23.875Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="js">
-<meta name="twitter:description" content="private blog">
+<meta name="twitter:title" content="浅拷贝与深拷贝">
+<meta name="twitter:description" content="对象的赋值分为浅拷贝与深拷贝，区别在于浅拷贝为新对象与原来的指向同一个地址，如果新对象属性改变，原有对象也会跟着改变，深拷贝为整体复制一份对象，与地址无关">
   
     <link rel="alternate" href="/atom.xml" title="Jiwei`s blog website" type="application/atom+xml">
   
@@ -64,10 +65,10 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="page-" class="article article-type-page" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-浅拷贝与深拷贝" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/tags/index2.html" class="article-date">
-  <time datetime="2018-03-17T02:15:47.000Z" itemprop="datePublished">2018-03-17</time>
+    <a href="/2017/02/07/浅拷贝与深拷贝/" class="article-date">
+  <time datetime="2017-02-07T11:34:13.000Z" itemprop="datePublished">2017-02-07</time>
 </a>
     
   </div>
@@ -78,7 +79,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      js
+      浅拷贝与深拷贝
     </h1>
   
 
@@ -86,17 +87,42 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <p>对象的赋值分为浅拷贝与深拷贝，<br>区别在于浅拷贝为新对象与原来的指向同一个地址，如果新对象属性改变，原有对象也会跟着改变，<br>深拷贝为整体复制一份对象，与地址无关<a id="more"></a></p>
+<h2 id="浅拷贝"><a href="#浅拷贝" class="headerlink" title="浅拷贝"></a>浅拷贝</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</span><br><span class="line">	<span class="keyword">public</span> $age = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">public</span> $name = <span class="string">''</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> $obj = <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$a = <span class="keyword">new</span> A();</span><br><span class="line"></span><br><span class="line">$b = $a;</span><br><span class="line"></span><br><span class="line">$b-&gt;age = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">var_dump($a-&gt;age);<span class="keyword">exit</span>;</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<h2 id="深拷贝"><a href="#深拷贝" class="headerlink" title="深拷贝"></a>深拷贝</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</span><br><span class="line">	<span class="keyword">public</span> $age = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">public</span> $name = <span class="string">''</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> $obj = <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$a = <span class="keyword">new</span> A();</span><br><span class="line"></span><br><span class="line">$b = <span class="keyword">clone</span> $a;</span><br><span class="line"></span><br><span class="line">$b-&gt;age = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">var_dump($a-&gt;age);<span class="keyword">exit</span>;</span><br></pre></td></tr></table></figure>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://zhangdijia.com/tags/index2.html" data-id="cjf10g9hx0007dgr3w9n6im5v" class="article-share-link">Compartir</a>
+      <a data-url="http://zhangdijia.com/2017/02/07/浅拷贝与深拷贝/" data-id="cjf10g9ib000edgr3k3w4co4l" class="article-share-link">Compartir</a>
       
       
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/php/">php</a></li></ul>
+
     </footer>
   </div>
   
     
+<nav id="article-nav">
+  
+    <a href="/2017/02/18/百度面试题一百盏灯/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Nuevo</strong>
+      <div class="article-nav-title">
+        
+          百度面试题一百盏灯
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/02/07/static及延迟绑定/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Viejo</strong>
+      <div class="article-nav-title">static及延迟绑定</div>
+    </a>
+  
+</nav>
+
   
 </article>
 
