@@ -5,20 +5,20 @@
   
 
   
-  <title>浅拷贝与深拷贝 | Jiwei`s blog website</title>
+  <title>常用 | Jiwei`s blog website</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="对象的赋值分为浅拷贝与深拷贝，区别在于浅拷贝为新对象与原来的指向同一个地址，如果新对象属性改变，原有对象也会跟着改变，深拷贝为整体复制一份对象，与地址无关">
-<meta name="keywords" content="php">
+  <meta name="description" content="个人文档请输入密码.">
+<meta name="keywords" content="privately">
 <meta property="og:type" content="article">
-<meta property="og:title" content="浅拷贝与深拷贝">
-<meta property="og:url" content="jiweii.com/2017/02/07/浅拷贝与深拷贝/index.html">
+<meta property="og:title" content="常用">
+<meta property="og:url" content="jiweii.com/2018/10/20/常用/index.html">
 <meta property="og:site_name" content="Jiwei`s blog website">
-<meta property="og:description" content="对象的赋值分为浅拷贝与深拷贝，区别在于浅拷贝为新对象与原来的指向同一个地址，如果新对象属性改变，原有对象也会跟着改变，深拷贝为整体复制一份对象，与地址无关">
+<meta property="og:description" content="个人文档请输入密码.">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-04-16T02:19:02.560Z">
+<meta property="og:updated_time" content="2019-02-14T05:13:23.322Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="浅拷贝与深拷贝">
-<meta name="twitter:description" content="对象的赋值分为浅拷贝与深拷贝，区别在于浅拷贝为新对象与原来的指向同一个地址，如果新对象属性改变，原有对象也会跟着改变，深拷贝为整体复制一份对象，与地址无关">
+<meta name="twitter:title" content="常用">
+<meta name="twitter:description" content="个人文档请输入密码.">
   
     <link rel="alternate" href="/atom.xml" title="Jiwei`s blog website" type="application/atom+xml">
   
@@ -65,14 +65,14 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-浅拷贝与深拷贝" class="article article-type-post" itemscope="" itemprop="blogPost">
+        <section id="main"><article id="post-常用" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2017/02/07/浅拷贝与深拷贝/" class="article-date">
-  <time datetime="2017-02-07T11:34:13.000Z" itemprop="datePublished">2017-02-07</time>
+    <a href="/2018/10/20/常用/" class="article-date">
+  <time datetime="2018-10-20T02:32:39.000Z" itemprop="datePublished">2018-10-20</time>
 </a>
     
   <div class="article-category">
-    <a class="article-category-link" href="/categories/php/">php</a>
+    <a class="article-category-link" href="/categories/privately/">privately</a>
   </div>
 
   </div>
@@ -83,7 +83,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      浅拷贝与深拷贝
+      常用
     </h1>
   
 
@@ -91,18 +91,14 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>对象的赋值分为浅拷贝与深拷贝，<br>区别在于浅拷贝为新对象与原来的指向同一个地址，如果新对象属性改变，原有对象也会跟着改变，<br>深拷贝为整体复制一份对象，与地址无关<a id="more"></a></p>
-<h2 id="浅拷贝"><a href="#浅拷贝" class="headerlink" title="浅拷贝"></a>浅拷贝</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</span><br><span class="line">	<span class="keyword">public</span> $age = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">public</span> $name = <span class="string">''</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> $obj = <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$a = <span class="keyword">new</span> A();</span><br><span class="line"></span><br><span class="line">$b = $a;</span><br><span class="line"></span><br><span class="line">$b-&gt;age = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">var_dump($a-&gt;age);<span class="keyword">exit</span>;</span><br></pre></td></tr></table></figure>
-<p><br></p>
-<h2 id="深拷贝"><a href="#深拷贝" class="headerlink" title="深拷贝"></a>深拷贝</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</span><br><span class="line">	<span class="keyword">public</span> $age = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">public</span> $name = <span class="string">''</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> $obj = <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$a = <span class="keyword">new</span> A();</span><br><span class="line"></span><br><span class="line">$b = <span class="keyword">clone</span> $a;</span><br><span class="line"></span><br><span class="line">$b-&gt;age = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">var_dump($a-&gt;age);<span class="keyword">exit</span>;</span><br></pre></td></tr></table></figure>
-
+        <script src="/crypto-js.js"></script><script src="/mcommon.js"></script><h3 id="encrypt-message">个人文档请输入密码.</h3><link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css"> <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap-theme.min.css"> <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script> <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script> <div id="security"> <div> <div class="input-group"> <input type="text" class="form-control" aria-label="Enter the password." id="pass"> <div class="input-group-btn"> <button type="button" class="btn btn-default" onclick="decryptAES()">Decrypt</button> </div> </div> </div> </div> <div id="encrypt-blog" style="display:none"> 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 </div>
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2017/02/07/浅拷贝与深拷贝/" data-id="cjs40msax0014xkr3wc5fiesx" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2018/10/20/常用/" data-id="cjs41okxd001ixkr3e8fm0xgj" class="article-share-link">Share</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/php/">php</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/privately/">privately</a></li></ul>
 
     </footer>
   </div>
@@ -110,19 +106,19 @@
     
 <nav id="article-nav">
   
-    <a href="/2017/02/18/百度面试题一百盏灯/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2019/02/10/stdClass空对象的使用/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          百度面试题一百盏灯
+          2019年的第一个博客
         
       </div>
     </a>
   
   
-    <a href="/2017/02/07/static及延迟绑定/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2017/09/08/Yaf框架自动加载/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">static及延迟绑定</div>
+      <div class="article-nav-title">Yaf框架类的自动加载</div>
     </a>
   
 </nav>
