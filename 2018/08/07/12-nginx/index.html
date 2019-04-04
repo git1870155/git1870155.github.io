@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>(12)listen指令、处理HTTP请求头流程 | A type of habit</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="44 | Listen指令的用法">
+<meta name="keywords" content="nginx">
+<meta property="og:type" content="article">
+<meta property="og:title" content="(12)listen指令、处理HTTP请求头流程">
+<meta property="og:url" content="jiweii.com/2018/08/07/12-nginx/index.html">
+<meta property="og:site_name" content="A type of habit">
+<meta property="og:description" content="44 | Listen指令的用法">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/550939-07bcb924b3c8dcbc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/550939-210cd24339e63ae9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/550939-c605fa296985d44f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-04-04T08:30:55.681Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="(12)listen指令、处理HTTP请求头流程">
+<meta name="twitter:description" content="44 | Listen指令的用法">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/550939-07bcb924b3c8dcbc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+  
+    <link rel="alternate" href="/atom.xml" title="A type of habit" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/images/favicon.ico">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">A type of habit</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="jiweii.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-12-nginx" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/08/07/12-nginx/" class="article-date">
+  <time datetime="2018-08-07T08:24:25.000Z" itemprop="datePublished">2018-08-07</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/nginx/">nginx</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      (12)listen指令、处理HTTP请求头流程
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="44-Listen指令的用法"><a href="#44-Listen指令的用法" class="headerlink" title="44 | Listen指令的用法"></a>44 | Listen指令的用法</h1><a id="more"></a>
+<p>一个请求在进来之前，我们需要监听端口，以使得nginx跟客户端建立起一个TCP连接，建立端口的指令时listen，是放在server配置块下。通过监听的端口或者地址，可以决定有哪些匹配上TCP四元组的监听的地址的连接对应的server块它的相关指令取处理相应的请求。</p>
+<p>Listen指令</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-07bcb924b3c8dcbc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>listen 127.0.0.1 这样会默认使用80端口。</p>
+<p>listen :8000 跟listen <em>:8000 效果是一样的。什么情况下`</em>:8000`会不同呢？比如：对指定的地址给做一个全部匹配。</p>
+<p>listen localhost:8000 bind 这是在老的linux系统上对*8000做绑定。其他端口需要显示做绑定。最新的linux系统不会有这样的问题了。</p>
+<h1 id="45-处理HTTP请求头部的流程"><a href="#45-处理HTTP请求头部的流程" class="headerlink" title="45 | 处理HTTP请求头部的流程"></a>45 | 处理HTTP请求头部的流程</h1><h2 id="处理流程"><a href="#处理流程" class="headerlink" title="处理流程"></a>处理流程</h2><p>在http模块开始处理用户请求之前，首先需要nginx的框架先对nginx建立好连接，接收用户发来的http的line，比如：方法、url等。然后在接收到所有的header，根据header信息决定选用哪些配置块，才能决定让http配置块处理哪些请求。先看下nginx的框架是怎样建立连接以及接受http请求的。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-210cd24339e63ae9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>操作系统内核：三次握手建立连接。很多worker进程，每一个worker进程可能都监听了80跟443端口。操作系统根据它的负载均衡算法选中一个worker进程。</p>
+<p>事件模块：epoll_wait 方法 返回到刚建立好的句柄。发来的ack产生一个读事件，根据读事件找到了原理是监听的80或者443端口，然后调用accept方法，分配连接内存池（内存池分为连接内存池跟请求内存池）。connect_pool_size是连接内存池的分配大小。也就是nginx为这个连接分配了512字节的内存池。这个内存池如何使用呢？</p>
+<p>http模块：分配完内存建立好连接之后。所有的<code>http模块</code>开始从<code>事件模块</code>手中，接入请求的处理过程。http模块在启动时候就定义了一个回调方法ngx_http_init_connection。当accept一个新连接到时候这个方法就会被回调执行。新建立的读事件添加到epoll中（通过epoll_ctl函数），添加超时定时器，如果60秒中没有收到请求就超时了，也就是我们经常会看到的<code>client_header_timeout:60s</code>。</p>
+<p>上面三个流程走完，nginx的事件模块可能切到http模块处理了。</p>
+<p>当用户把一个get或post请求发来的时候，发来DATA，TCP层（操作系统内核层）回一个ACK。同时时间模块的epoll_wait又拿到这个请求了。这个请求的回调方法ngx_http_wait_request_handler（它是在上面ngx_init_connection那步设置的）。收到请求后把内核中的DATA读到用户的内核态中 。要读到内核态中要分配内存。这段内存要分配多大呢？从哪里分配的呢？是从连接内存池分配的，连接内存池初始分配了512字节，这个时候从内存中再分配1k（client_header_buffer_size），因为内存是可以扩展的。这个1k可以修改，也不是越大越好，因为只要用户有一个字节发来，nginxwoker进程也会分配1k。这么一看分配很大并不合适。但如果发来的url或者header非常大，超过了1k呢？接下来看看超过1k有什么变化。</p>
+<h2 id="接收请求HTTP模块"><a href="#接收请求HTTP模块" class="headerlink" title="接收请求HTTP模块"></a>接收请求HTTP模块</h2><p><img src="https://upload-images.jianshu.io/upload_images/550939-c605fa296985d44f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h3 id="接收URI"><a href="#接收URI" class="headerlink" title="接收URI"></a>接收URI</h3><p>分配完1k之后，我们收到了小于等于1k的请求内容。处理请求跟处理连接是不一样的。处理连接只要把它收到nginx内存中。但处理请求时，需要做大量的上下文分析，分析协议，分析每一个header。这个时候需要分配一个<code>请求内存池</code>。请求内存池默认分配4k（request_pool_size）。是connect_pool_size的8倍大小。为什么是8倍，因为请求的上下文涉及到业务。通常4k是一个比较合适的数值。如果分配的很小的话。需要请求内存池不断在的扩充。当分配内存的次数变多时，性能会下降。request_pool_size要不要改，要根据业务状况来。理解了后备这个内存池如何去用到就可以根据业务情况去决定是否修改它。</p>
+<p>分配完内存池之后。会用一个<code>状态机解析请求行</code>，也就是<code>\r\n</code>之前的，方法名、url、协议。解析过程中可能发现有些url特别大，已经超过了刚刚所分配的1k的内存。这个时候分配更大的内存，这个更大的内存就是用来解决有些url太长了。分配的大内存有多大呢？最大是<code>large_client_header_buffers</code>（也是一个经常遇到的一个配置）。<code>4 8k</code>是什么意思呢？不是一下子分配32k，而是先分配一个8k，然后把刚刚那1k的内容拷贝到8k，剩下的7k再去接收url，然后发现url是否解完了通过状态机做这样的部分。如果8k都没有接收完，再分配第二个8k（即分配到了16k，最多一共分配32k）。</p>
+<p>当完整的解析完请求行，然后就可以<code>标识URI</code>。什么是标识URI？后面会介绍nginx有很多变量，这些变量并不是真的复制一份，它只是有一个C指针指向接收到的解析行。所以nginx性能才能如此强大。</p>
+<h3 id="接收header"><a href="#接收header" class="headerlink" title="接收header"></a>接收header</h3><p>http请求的header可能非常长，它含有cookie、host等这些字段。<code>状态机解析header</code>。header很有可能超过1k，所以还是要分配大内存<code>large_client_header_buffers</code>。接收URI跟接收header的这两个大内存是共用的。如果接收URI用掉了2个8k，那么在接收header这里顶多在用掉2个8k，这个<code>4 8k</code>是针对所有的，所以叫做client_header。</p>
+<p>接受完完整的header，就开始<code>标识header</code>。标识header的过程中还会涉及到一些操作。比如：确定哪些server块开始处理这个请求。</p>
+<p>当收到host 这样一个header时候，当我收到全部的header以后，标识完header以后。就可以<code>移除超时定时器</code>了。所以，大家可以确定你需要什么时候修改这个60秒。也就是说我们收完header到底最长两次接收之间需要多大的时间。</p>
+<p>接下来开始核心的过程——<code>开始11个阶段的http请求处理</code>。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>以上的处理流程都是nginx框架完成的。nginx的http模块是多样化的。我们必须有一个流程按照一个主线串起来。方便我们理解与记忆。</p>
+<h2 id="留言问题"><a href="#留言问题" class="headerlink" title="留言问题"></a>留言问题</h2><p>1.请教一下课件中的接收URI的部分为什么会涉及到请求行呢？我理解URI仅仅是一个字符串而已，请求行处理是右边接收header的逻辑</p>
+<p> 作者回复<br>一个标准的HTTP请求是这样的：GET /uri HTTP/1.1\r\nHost: xxx\r\n，这里第一个\r\n就是请求行。</p>
+<p>2.视频中好像没有很具体的讲出连接内存池的作用，只是讲到从连接内存池中分配出了请求内存池，除此之外，还有其他的作用吗？</p>
+<p> 作者回复<br>所有与请求无关的内存都要在连接内存池里分配.例如第一次接收http请求行，此时既没有Host也没有URL，只能用连接内存池里分配默认1K的内存</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="jiweii.com/2018/08/07/12-nginx/" data-id="cju2dl5ai0001mcr3uptoje6g" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/08/07/4-nginx/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          (4)nginx模块
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/08/07/6-nginx/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">(6)nginx内存池</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/linux/">linux</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nginx/">nginx</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/">php</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/privately/">privately</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nginx/">nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php/">php</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/privately/">privately</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/nginx/" style="font-size: 20px;">nginx</a> <a href="/tags/php/" style="font-size: 16.67px;">php</a> <a href="/tags/privately/" style="font-size: 13.33px;">privately</a> <a href="/tags/数据库/" style="font-size: 13.33px;">数据库</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2019/04/04/常用书籍、资料、手册/">常用书籍、资料、手册</a>
+          </li>
+        
+          <li>
+            <a href="/2018/10/20/常用/">常用</a>
+          </li>
+        
+          <li>
+            <a href="/2018/08/07/公司php-fpm配置文件/">php-fpm配置文件</a>
+          </li>
+        
+          <li>
+            <a href="/2018/08/07/17-nginx/">(17)find_config阶段</a>
+          </li>
+        
+          <li>
+            <a href="/2018/08/07/18-nginx/">(18)preaccess阶段：连接限制limit_conn模块、请求限制limit_req模块</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 Jiwei<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>
