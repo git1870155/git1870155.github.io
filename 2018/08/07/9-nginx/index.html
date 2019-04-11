@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  <title>(9)nginx 哈希表、红黑树 | jiwei</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/css/app.css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+  
+</head>
+</html>
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/08/07/9-nginx/">(9)nginx 哈希表、红黑树</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">August 07 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <h1 id="39-哈希表的max-size与bucket-size如何配置"><a href="#39-哈希表的max-size与bucket-size如何配置" class="headerlink" title="39 | 哈希表的max_size与bucket_size如何配置"></a>39 | 哈希表的max_size与bucket_size如何配置</h1><a id="more"></a>
+<p>nginx的容器是很多nginx高级功能的实现基础。即使不需要编写第三方模块、查看nginx源代码。但变更nginx配置文件达到最大化的性能，也需要了解nginx的容器是怎样使用的。</p>
+<p>nginx 六个容器</p>
+<ul>
+<li>数组 （和平常理解的数组是不同的，是多块连续内存，其中每一块连续内存汇中可以存放许多元素）</li>
+<li>链表（ngx_list_t）</li>
+<li>队列（ngx_q_t，很多nginx数据结构中都有相应的这样的数据结构，这些结构体实现的功能是类似的，只是操作方法不同）</li>
+<li>哈希表</li>
+<li>红黑树</li>
+<li>基数树（自平衡排序二叉树的一种，只不过key只能是整型，所以像geo模块在使用基数树，其他使用基数树的场景不多）</li>
+</ul>
+<p>哈希表</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-da9022b00176870b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>nginx的哈希表跟我们正常见到的哈希表有所不同。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-3095c8111285b138.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>上图的结构跟普通的hash表相同。哪有哪些不同。nginx 哈希表应用场景不同。仅仅应用于静态不变的内容。这个hash表通常不会出现插入和删除。nginx刚启动的时候就能确定这个hash表中一共有多少个元素。使用hash表的这些模块通常会暴露出来一个叫max_size、bucket_size 给我们使用的时候。我们的max_size仅仅控制了最大的hash表bucket的个数而不是实际上bucket的个数。比如：max_size可能配置为100，但是实际上只有十个元素使用了哈希表。与实际上bucket_size不符。它的意义在于可以限制最大化的使用。因为消耗了内存。使用hash表的模块有怎样的特点呢？</p>
+<p>比如在stream/http的核心模块里，对所有的变量（variables）使用了hash表，因为变量在我们模块编译进去的时候就已经定义清楚了。还是有像map（stream/http）、反向代理（反向代理中，我们需要对很多header，在配置文件中定义好的header做hash提升性能，后面的referer也是一样的道理，访问复杂度O(1)）。</p>
+<p>哈希表中有一个bucket size ，在里面有一些默认值，这个默认值在nginx配置文档中说是cpu cache line 会对齐到这样一个值。有什么意义呢？影响了怎样配置bucket size。现在主流的cpu有L1、L2、L3缓存的，它在去主存的数据时，不是按照大家所想象的那样。按照所谓的64位，32位取。现在主流的cpu一次取主存去的字节数就是cpu cache line 。现在是64字节。</p>
+<p>哈希表为什么要向64字节对齐呢？这是因为，假设我们每个哈希表的bucket 是59字节，如果我们是紧密排在一起的，取第一个哈希表元素只需要访问一次，还多取了6个字节。但你去第二个元素的时候需要访问主存两次包括64字节中的最后6个字节，以及第二个单元的58个字节。为了避免这种取两次的问题。nginx在它的代码中自动的向上对齐了。所以在配置bucket_size 的时候需要注意两个问题。第一如果配置的bucket size 不是cpu cache line，而是配置了70字节，就会分配每个元素128字节。第二如果有可能的情况下，我们尽量不要超过64字节。以减少cpu访问每个hash表元素的次数。</p>
+<p>实际上还有很多第三方模块使用了hash表，使用hash表需要注意，它只为静态不变的内容服务。第二，hash表的bucket size 需要考虑cpu cache line的对齐问题。</p>
+<h2 id="课后问题"><a href="#课后问题" class="headerlink" title="课后问题"></a>课后问题</h2><ol>
+<li>两个问题</li>
+</ol>
+<ul>
+<li>1、这节课开头的hash表的图用的是书上7-10的图，图上写的是size个ngx_hash_elt_t结构体，我的理解是size个ngx_hash_elt_t结构体指针，然后每个指针指向ngx_hash_elt_t结构体数组，所以这幅图我有点困惑，还希望老师您解惑</li>
+<li>2、这节课最后举了个例子，说cacheline是64Byte，bucket size是59Byte，然后取第一个元素老师您讲的是多取了1个字节，这个地方不是多取了5个字节吗？为什么是1个字节，我有点不太理解</li>
+</ul>
+<p> 作者回复<br>*1、书中的图，是最终的存储结构，即，每个elt_t指针其实指向的是连续内存中的一个元素，所以，这里的buckets**不是语言上的指向，而是最终真实线性内存的指向。你可以再读读ngx_hash_init这个函数的实现。确实是比较难懂的。</p>
+<ul>
+<li>2、我的口误，呵呵，意思就是第1个比cacheline少的话，总有一个会占有2个cacheline。</li>
+</ul>
+<p>2.在ngx_hash_t中，buckets是一个二重指针，所以我感觉这个关于书上7-10的ngx_hash_t的基本散列表的结构示意图有点疑问，buckets这个为什么不是先指向一个ngx_hash_elt_t<em>的指针数组，之后再由ngx_hash_elt_t</em>指向ngx_hash_elt_t结构，这个图片我个人感觉更类似于<a href="http://www.cnblogs.com/0x2D-0x22/p/4139805.html这个blog上画的图" target="_blank" rel="noopener">http://www.cnblogs.com/0x2D-0x22/p/4139805.html这个blog上画的图</a></p>
+<p> 作者回复<br>buckets就是指向的一个指针数组，数组每个成员就是ngx_hash_elt_t*成员。我看了下你给的页面上的图，两幅图意思完全一致啊。</p>
+<h1 id="40-Nginx中最常用的容器：红黑树"><a href="#40-Nginx中最常用的容器：红黑树" class="headerlink" title="40 | Nginx中最常用的容器：红黑树"></a>40 | Nginx中最常用的容器：红黑树</h1><p>nginx 多个worker之间做进程通讯时，进程在共享内存上使用红黑树来管理许多对象，实际上在nginx的内存中也大量使用红黑树。</p>
+<p>nginx第二个非常常用的容器</p>
+<p>红黑树</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-8c174d7e9ae8b5cd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>这样的二叉树有可能退化成右边的链表。也是一个二叉查找树，只是没有左子节点，查找某个元素遍历复杂度O(N)。而红黑树，有一个重要的特点，高度不会差太大，不会超过两倍。</p>
+<p>在nginx中描述每个红黑树，有个数据结构——ngx_rbtree_t。ngx_rbtree_t的root结点就指向与树的根节点。红黑树会提供一些方法，在红黑树里很容易的找到最小结点。在红黑树使用定时器的时候经常使用这样的一个特性。红黑树还有如下优点：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-6886ee3be3b1691d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>有了这些特点，我们就可以判断使用了红黑树的一些模块，使用增删改查时可以预测，效率是很高的。而且如果它提供了遍历这样的方法，我们也完全可以使用。特别是针对许多lua模块。因为lua模块，底层实现我们不太清楚，但是我们知道是基于红黑树实现的。比如：lua_shared_dict。那么就可以放心大胆的使用它的遍历，或者它的遍历或者增删改查等等方法。</p>
+<p>常用的一些模块或数据结构</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-ffd46c73fa9a2600.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>ngx_conf_module、ngx_event_timer_rbtree在本地内存里做了一个红黑树。</p>
+<h2 id="课后问题-1"><a href="#课后问题-1" class="headerlink" title="课后问题"></a>课后问题</h2><p>1.阿里云cdn到Nginx 访问提示504错误，The gateway did not receive a timely response from the upstream server or application.</p>
+<p>Powered by Tengine，可能原因有哪些？</p>
+<p> 作者回复<br>从上面的log来看，就是上游服务没有在超时范围内发回响应，要么网络出问题，要么上游服务出问题了。</p>
+<p>2.nginx的 share_dirt 也是用的红黑树吗</p>
+<p> 作者回复<br>你是说openresty吗？是的</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/avatar.png" alt="avatar">
+    <div class="grid-item">
+      <p class="title"> jiwei </p>
+      <p class="subtitle"> It`s a type of habit </p>
+    <div>
+  </div></div></section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a class="twitter-share-button" data-size="large" data-via="DrakeLeung" href="https://twitter.com/intent/tweet?text= id=" 39-哈希表的max-size"="">
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"live2d-widget-model-wanko    //妹子有很多个，叫名字他才出来"},"display":{"position":"right   //位置","width":"150    //妹子宽度","height":"300    //妹子高度"},"mobile":{"show":true},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

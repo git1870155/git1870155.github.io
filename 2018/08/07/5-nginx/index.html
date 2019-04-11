@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  <title>(5)nginx连接池 | jiwei</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/css/app.css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+  
+</head>
+</html>
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/08/07/5-nginx/">(5)nginx连接池</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">August 07 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <h2 id="Nginx如何通过连接池处理网络请求"><a href="#Nginx如何通过连接池处理网络请求" class="headerlink" title="Nginx如何通过连接池处理网络请求"></a>Nginx如何通过连接池处理网络请求</h2><a id="more"></a>
+<p>1.链接池</p>
+<p>{F8954}</p>
+<ol>
+<li>nginx的链接池究竟是怎么使用的？</li>
+</ol>
+<p>每个worker 独立的进程都有一个ngx_cycle_t这样的一个数据结构。ngx_cycle_t有三个主要的数组数组connections、read_events、write_events。</p>
+<p>connections就是所谓的连接池，它指向了这个数组有多大呢？从官方文档<code>http://nginx.org/en/docs/ngx_core_module.html#worker_connections</code>看到默认是 <code>512</code>。这个值比较小， nginx 动辄几万，几十万的链接，这个值往往需要修改。这个链接不止用于客户端的连接也用于面向上游服务器的。所以我们做反向代理的时候，每一个客户端意味着消耗我们两个connection。</p>
+<p>read_events 这个数组（大小跟connections配置一样），所以，那三个（图中三个深色小方格）怎么对应起来呢？是通过序号。在考虑nginx 能够释放多大性能的时候，首先需要保证worker connections 足够你使用。connections指向的数组同时影响了我们打开的内存。当我们使用了配置了更大的connections，nginx就使用了更大的内存。</p>
+<ol>
+<li>如何计算connections用了多少内存？</li>
+</ol>
+<p>{F8956}</p>
+<p>ngx_connections_s 这样的结构体，在64位操作系统占用的字节数大约是232。不同的nginx版本不同可能有微小的差异。</p>
+<p>4.连接跟事件是如何对应到一起的？</p>
+<p>每一个ngx_connections_s 对应两个事件：读写事件。</p>
+<p>每一个事件对应一个结构体ngx_event_s，这样的一个结构体占用的字节数大约96。</p>
+<p>所以，每一次连接消耗的内存大约是（232+96）*2。connections配置的越大，初始时就会消耗预分配那么多（connection_pool_size）的内存。</p>
+<ol>
+<li>ngx_event_s成员</li>
+</ol>
+<p>handler 是一个回调方法，很多第三方模块会把这个handler设为自己的实现。</p>
+<p> timer，当对http请求做读超时写超时等等设置的时候，其实是在操作读事件跟写事件的timer。这个timer就是nginx实现超时定时器，基于rbtree（红黑树实现的结构体），红黑树中每个成员叫做 rbtree_node（这个timer是就它的node），用来指向读事件是否超时，写事件是否超时。这些定时器也是可配的。比如：client_header_timeout（<a href="http://nginx.org/en/docs/http/ngx_http_core_module.html#client_header_timeout）" target="_blank" rel="noopener">http://nginx.org/en/docs/http/ngx_http_core_module.html#client_header_timeout）</a> 默认60秒。这个60秒也是在刚刚某个连接上，在准备读取header时，在它的读事件上加了60秒超时。</p>
+<p>ngx_queue_t，当多个事件形成队列的时候可以用它形成队列。 </p>
+<p>6.ngx_connections_s 的成员 <code>send</code>，它的类型off_t可以理解为一个无符号的整型。它表示这个连接上发送了多少个字节。也就是我们经常在配置中使用到的bytes_sent 变量。</p>
+<p>7.bytes_sent 的作用。</p>
+<p><a href="http://nginx.org/en/docs/http/ngx_http_core_module.html#client_header_timeout" target="_blank" rel="noopener">http://nginx.org/en/docs/http/ngx_http_core_module.html#client_header_timeout</a></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$bytes_sent</span><br><span class="line">number of bytes sent to a client (1.3.8, 1.2.5) 向客户端发送了多少字节。</span><br></pre></td></tr></table></figure>
+<p>在access_log记录nginx处理了哪些请求中，可以记录这个变量。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">log_format  main  &apos;$remote_addr - $remote_user [$time_local] &quot;$request&quot; &apos;</span><br><span class="line">                  &apos;$status $body_bytes_sent &quot;$http_referer&quot; &apos;</span><br><span class="line">                  &apos;&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot;&apos;;</span><br></pre></td></tr></table></figure>
+<p>{F8958}</p>
+<p>这个623就是发送了多少个字节。</p>
+<ol>
+<li>最后总结</li>
+</ol>
+<p>当我们需要配置高并发的nginx时，必须把connection的数目配置到足够大， 而每个connection相对应的两个event都会消耗一定的内存，需要我们注意。</p>
+<p>nginx 中像很多结构体中它们的一些成员和我们的内置变量是可以对应起来的。比如说bytes_sent，比如说body_bytes_sent。</p>
+<p>9.如果启用gzip，那byte_sent是指压缩后的字节吗</p>
+<p> 作者回复<br>是的</p>
+<p>10.502通常是连接建立失败</p>
+<p>11.一个 连接 232+(96*2) = 424 字节<br>如果预分配给 nginx 4G 的内存, 那连接数connection 是不是就是 4G/424B 的数量<br>这个值是最大并发连接数么 ?<br>老师, 有一些概念只有一点感觉, 一直很模糊, 65535, 这个到底是什么, 什么操作能占用这个数值?<br>还有比如 nginx. conf 里的一些数值设置, 比如 buffer_size 数值之类的, 根据系统资源, 怎么应该合理的去设置一些数值?<br>!谢谢!</p>
+<p> 作者回复<br>不是，这只是描述连接的结构体需要的内存，在第3部分第4节课里会介绍处理http请求还会分配的内存，默认至少有5K会被分配出，你可以等下周课程推出后仔细看下。第2个问题，第5部分课程会详细介绍的。</p>
+<p>12.nginx作为四层反向代理时。<br>配置文件的worker_connections如果设置为200000，那么nginx作为客户端向上游服务器发起tcp连接，是否会有端口65535个的限制？那该如何解决？使用虚拟网卡吗？还是有其他办法？</p>
+<p> 作者回复<br>会有限制，这是操作系统限制的。使用多网卡是解决办法，虚拟的也可以</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/avatar.png" alt="avatar">
+    <div class="grid-item">
+      <p class="title"> jiwei </p>
+      <p class="subtitle"> It`s a type of habit </p>
+    <div>
+  </div></div></section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a class="twitter-share-button" data-size="large" data-via="DrakeLeung" href="https://twitter.com/intent/tweet?text= id=" nginx如何通过连接池处理网"="">
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"live2d-widget-model-wanko    //妹子有很多个，叫名字他才出来"},"display":{"position":"right   //位置","width":"150    //妹子宽度","height":"300    //妹子高度"},"mobile":{"show":true},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

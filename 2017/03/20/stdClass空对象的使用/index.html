@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  <title>stdClass空对象的使用 | jiwei</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/css/app.css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+  
+</head>
+</html>
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2017/03/20/stdClass空对象的使用/">stdClass空对象的使用</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">March 20 2017</p>
+  </section>
+
+  <section class="article-entry">
+    <p>PHP可以用 $object = new StdClass(); 创建一个没有成员方法和属性的空对象。<br>很多时候会将一些参数配置项之类的信息放在数组中使用，但是数组操作起来并不是很方便，很多时候使用对象操作符-&gt;xxx比数组操作符[‘xxx’]要方便不少。<br>数组在程序的使用中应该是最方便的，然而数组的每次被引用（$a = $b），其实都是创建了一个副本，<a id="more"></a><br>而且，数组被unset后，还是占用了内存(听说)，对象在任何地方被调用，都是引用地址型的，所以相对消耗的资源会少一点。<br><figure class="highlight php"><table><tr><td class="code"><pre><span class="line">$user = <span class="keyword">new</span> stdClass();</span><br><span class="line">$user-&gt;name = <span class="string">'gouki'</span>;</span><br><span class="line">$myUser = $user;</span><br><span class="line">$myUser-&gt;name = <span class="string">'flypig'</span>;</span><br></pre></td></tr></table></figure></p>
+<p>PHP中没有Javascript里面 var object = {}; 这样的语法。<br>StdClass类没有任何成员方法，也没有任何成员属性，实例化以后就是一个空对象。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/avatar.png" alt="avatar">
+    <div class="grid-item">
+      <p class="title"> jiwei </p>
+      <p class="subtitle"> It`s a type of habit </p>
+    <div>
+  </div></div></section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a class="twitter-share-button" data-size="large" data-via="DrakeLeung" href="https://twitter.com/intent/tweet?text=PHP可以用 $object = new">
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"live2d-widget-model-wanko    //妹子有很多个，叫名字他才出来"},"display":{"position":"right   //位置","width":"150    //妹子宽度","height":"300    //妹子高度"},"mobile":{"show":true},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

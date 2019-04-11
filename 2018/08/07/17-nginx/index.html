@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  <title>(17)find_config阶段 | jiwei</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/css/app.css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+  
+</head>
+</html>
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/08/07/17-nginx/">(17)find_config阶段</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">August 07 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <h1 id="54-find-config阶段：找到处理请求的location指令块"><a href="#54-find-config阶段：找到处理请求的location指令块" class="headerlink" title="54 | find_config阶段：找到处理请求的location指令块"></a>54 | find_config阶段：找到处理请求的location指令块</h1><a id="more"></a>
+<p>在server块下的rewrite系列指令执行完毕之后，开始根据用户请求中的location后面相对应的前缀或者正则表达式去匹配，匹配完成之后就确定了由哪个location进行请求处理。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-f9c747391ecb3949.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h2 id="location-指令"><a href="#location-指令" class="headerlink" title="location 指令"></a>location 指令</h2><p><img src="https://upload-images.jianshu.io/upload_images/550939-aae8f05a5827fda9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>merge_slashes 可以合并url中的斜杠，当两个斜杠在一起的时候呢？merge_slashes 设置为<code>on</code>可以合并成一个斜杠。什么时候需要关闭呢？当url中做了base64编码等等情况才需要关闭。</p>
+<h2 id="location-匹配规则"><a href="#location-匹配规则" class="headerlink" title="location 匹配规则"></a>location 匹配规则</h2><p><img src="https://upload-images.jianshu.io/upload_images/550939-87df4ae6415e23f8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-f0287a1b6fcdac5f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h2 id="location-匹配顺序"><a href="#location-匹配顺序" class="headerlink" title="location 匹配顺序"></a>location 匹配顺序</h2><p><img src="https://upload-images.jianshu.io/upload_images/550939-e7b3d2ee63653dbf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h2 id="留言问题"><a href="#留言问题" class="headerlink" title="留言问题"></a>留言问题</h2><p>1.ngx状态中的活跃数就是当前链接的并发数吗？活跃数是否可以作为一个监控指标</p>
+<p> 作者回复<br>是的，可以的</p>
+<p>2.我在location下配置了该句：return 200 “location ~ /Test1/$”;<br>提示该行有错，把$用反斜杠转移无效，请问怎么正确转移$？</p>
+<p> 作者回复<br>return指令不支持参数中含有$却没有表示变量。如果阅读源码可以参见ngx_http_compile_complex_value方法。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/avatar.png" alt="avatar">
+    <div class="grid-item">
+      <p class="title"> jiwei </p>
+      <p class="subtitle"> It`s a type of habit </p>
+    <div>
+  </div></div></section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a class="twitter-share-button" data-size="large" data-via="DrakeLeung" href="https://twitter.com/intent/tweet?text= id=" 54-find-config阶"="">
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"live2d-widget-model-wanko    //妹子有很多个，叫名字他才出来"},"display":{"position":"right   //位置","width":"150    //妹子宽度","height":"300    //妹子高度"},"mobile":{"show":true},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

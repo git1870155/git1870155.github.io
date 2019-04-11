@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  <title>php-fpm配置文件 | jiwei</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/css/app.css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+  
+</head>
+</html>
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/08/07/公司php-fpm配置文件/">php-fpm配置文件</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">August 07 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <h2 id="php-fpm-配置"><a href="#php-fpm-配置" class="headerlink" title="php-fpm 配置"></a>php-fpm 配置</h2><a id="more"></a>
+<p>下面配置项的注释，是或摘或借鉴，有的没找到的。我翻译文档了（安装默认的一个<a href="http://www.conf.defaulf。每一项上面都会有对应的英文说明。）。" target="_blank" rel="noopener">www.conf.defaulf。每一项上面都会有对应的英文说明。）。</a></p>
+<p>这些配置对应的struct 在<code>./sapi/fpm/fpm/fpm_conf.h</code><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[sock0]</span><br><span class="line">listen = /dev/shm/php-fpm-7.0.sock ;指定sock通讯的文件地址 or  listen = 0.0.0.0:9000</span><br><span class="line">listen.allowed_clients = 127.0.0.1 ;允许访问FastCGI进程的IP址</span><br><span class="line">listen.backlog = 51200 ;跟tcp有关。参考[《TCP SOCKET中backlog参数的用途是什么？》](https://www.cnxct.com/something-about-phpfpm-s-backlog/)</span><br><span class="line">listen.owner = nobody ;启动进程的用户</span><br><span class="line">listen.group = nobody ;启动进程的组</span><br><span class="line">listen.mode = 0660 ;用socket连接方式时，指定拥有unix socket权限的用户，默认和运行的用户一样；用tcp连接可以注释掉</span><br><span class="line">user = nobody</span><br><span class="line">group = nobody</span><br><span class="line">pm = dynamic ;fpm 进程管理的三种模式 ，选项有static、dynamic、ondemand（按需模式）</span><br><span class="line">pm.max_children = 256 ;子进程最大数</span><br><span class="line">pm.start_servers = 10 ;启动时进程最大数</span><br><span class="line">pm.min_spare_servers = 5 ;保证空闲进程数最小值，如果空闲进程小于此值，则创建新的子进程</span><br><span class="line">pm.max_spare_servers = 10 ;保证空闲进程数最小值，如果空闲进程小于此值，则创建新的子进程</span><br><span class="line">pm.max_requests = 51200 ;设置每个子进程重生之前服务的请求数. 对于可能存在内存泄漏的第三方模块来说是非常有用的. 如果设置为 &apos;0′ 则一直接受请求. 等同于 PHP_FCGI_MAX_REQUESTS 环境变量. 默认值: 0.</span><br><span class="line">pm.status_path = /php-fpm-7-status ;FPM状态页面的网址. 如果没有设置, 则无法访问状态页面. 默认值: none.</span><br><span class="line">ping.path = /heart ;FPM监控页面的ping网址. 如果没有设置, 则无法访问ping页面. 该页面用于外部检测FPM是否存活并且可以响应请求. 请注意必须以斜线开头 (/)。</span><br><span class="line">ping.response = check_ok ;用于定义ping请求的返回相应. 返回为 HTTP 200 的 text/plain 格式文本. 默认值: pong.</span><br><span class="line">request_terminate_timeout = 10 ;设置单个请求的超时中止时间. 该选项可能会对php.ini设置中的&apos;max_execution_time&apos;因为某些特殊原因没有中止运行的脚本有用. 设置为 &apos;0′ 表示 ‘Off&apos;.</span><br><span class="line">当经常出现502错误时可以尝试更改此选项。</span><br><span class="line">request_slowlog_timeout = 5  ;当一个请求该设置的超时时间后，就会将对应的PHP调用堆栈信息完整写入到慢日志中. 设置为 &apos;0′ 表示 ‘Off&apos;</span><br><span class="line">slowlog = /home/nobody/logs/php-fpm-7/www-slow.log ;慢请求的记录日志,配合request_slowlog_timeout使用</span><br><span class="line">php_admin_value[error_log] = /app/webserver/logs/php-fpm-7/www-error.log ;可以覆盖php.ini的配置。你可以在一个php脚本里 输出phpinfo()然后看下配置的值。就明白了。另外文档中也说了这个配置不会被ini_set 覆盖。</span><br><span class="line">php_admin_flag[log_errors] = on</span><br><span class="line">rlimit_files = 102400 ;设置文件打开描述符的rlimit限制. 默认值: 系统定义值</span><br><span class="line">系统默认可打开句柄是1024，可使用 ulimit -n查看，ulimit -n 2048修改。</span><br></pre></td></tr></table></figure></p>
+<p>上面<code>pm = dynamic</code>是配置进程的管理方式。有三种：</p>
+<ul>
+<li><p>静态模式（static）：启动时master根据pm.max_children 配置fork出相应数量的worker进程，也就是worker进程数是固定不变是</p>
+</li>
+<li><p>动态模式（dynamic）：这种模式比较常用，fpm启动根据pm.start_servers 配置初始化一定数量的worker。运行期间master发现空闲worker数低于pm.min_spare_servers配置数（表示请求比较多，worker处理不过来）会fork worker进程，但总的worker数补鞥呢超过pm.max_children；如果master发现空闲worker数超过了pm.max_spare_servers（表示闲着的worker太多了）会杀掉一些worker，避免占用过多资源，master通过这4个值动态控制worker的数量。</p>
+</li>
+<li><p>按需模式（ondemand）：这种模式很像传统的cgi，在启动时不分配worker进程，等到有请求了后再通知master进程fork worker进程，来了请求后再fork子进程进行处理，总的worker数不超过pm.max_children，处理完后worker进程不会立即退出，当空闲时间超过pm.process_idle_timeout后再退出。</p>
+</li>
+</ul>
+<h2 id="monitor-php-fpm"><a href="#monitor-php-fpm" class="headerlink" title="monitor php-fpm"></a>monitor php-fpm</h2><p>可以方便zabbix 监控</p>
+<p>我根据这篇<a href="https://easyengine.io/tutorials/php/fpm-status-page" target="_blank" rel="noopener">《Nginx – Enable PHP-FPM Status Page》</a>配置。curl yan.com/status 为空白。根据这篇<a href="https://www.tecmint.com/enable-monitor-php-fpm-status-in-nginx/" target="_blank" rel="noopener">《How to Enable and Monitor PHP-FPM Status in Nginx》</a> 对照了下少了一行<code>fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;</code></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@bogon php-fpm.d]# curl yan.com/status</span><br><span class="line">pool:                 www</span><br><span class="line">process manager:      dynamic</span><br><span class="line">start time:           01/Apr/2019:23:19:44 +0800</span><br><span class="line">start since:          5</span><br><span class="line">accepted conn:        1</span><br><span class="line">listen queue:         0</span><br><span class="line">max listen queue:     0</span><br><span class="line">listen queue len:     128</span><br><span class="line">idle processes:       9</span><br><span class="line">active processes:     1</span><br><span class="line">total processes:      10</span><br><span class="line">max active processes: 1</span><br><span class="line">max children reached: 0</span><br><span class="line">slow requests:        0</span><br></pre></td></tr></table></figure>
+<p>参考资料：</p>
+<ul>
+<li><p>《Nginx – Enable PHP-FPM Status Page》<a href="https://easyengine.io/tutorials/php/fpm-status-page" target="_blank" rel="noopener">https://easyengine.io/tutorials/php/fpm-status-page</a></p>
+</li>
+<li><p>《php-fpm.conf 全局配置段》<a href="https://www.php.net/manual/zh/install.fpm.configuration.php" target="_blank" rel="noopener">https://www.php.net/manual/zh/install.fpm.configuration.php</a></p>
+</li>
+<li><p>《How to Enable and Monitor PHP-FPM Status in Nginx》<a href="https://www.tecmint.com/enable-monitor-php-fpm-status-in-nginx/" target="_blank" rel="noopener">https://www.tecmint.com/enable-monitor-php-fpm-status-in-nginx/</a></p>
+</li>
+<li><p>《基于php-fpm的配置详解》<a href="https://www.jb51.net/article/37749.htm" target="_blank" rel="noopener">https://www.jb51.net/article/37749.htm</a></p>
+</li>
+<li><p>《启用php-fpm状态详解》<a href="http://www.ttlsa.com/php/use-php-fpm-status-page-detail/" target="_blank" rel="noopener">http://www.ttlsa.com/php/use-php-fpm-status-page-detail/</a></p>
+</li>
+<li><p>《TCP SOCKET中backlog参数的用途是什么？》<a href="https://www.cnxct.com/something-about-phpfpm-s-backlog/" target="_blank" rel="noopener">https://www.cnxct.com/something-about-phpfpm-s-backlog/</a></p>
+</li>
+<li><p>《php7内核剖析》秦朋</p>
+</li>
+<li><p>《php-fpm.conf配置文件中文说明详解及重要参数说明》<a href="http://www.360doc.com/content/18/1023/17/13328254_795049788.shtml" target="_blank" rel="noopener">http://www.360doc.com/content/18/1023/17/13328254_795049788.shtml</a></p>
+</li>
+</ul>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/avatar.png" alt="avatar">
+    <div class="grid-item">
+      <p class="title"> jiwei </p>
+      <p class="subtitle"> It`s a type of habit </p>
+    <div>
+  </div></div></section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a class="twitter-share-button" data-size="large" data-via="DrakeLeung" href="https://twitter.com/intent/tweet?text= id=" php-fpm-配置"=""><a "="">
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+</a>
+  </section>
+</div>
+
+
+  
+</main>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"live2d-widget-model-wanko    //妹子有很多个，叫名字他才出来"},"display":{"position":"right   //位置","width":"150    //妹子宽度","height":"300    //妹子高度"},"mobile":{"show":true},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
