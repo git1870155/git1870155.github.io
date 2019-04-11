@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  <title>(8)nginx Slab管理器 | jiwei</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/css/app.css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+  
+</head>
+</html>
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/08/07/8-nginx/">(8)nginx Slab管理器</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">August 07 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <h1 id="slab管理器"><a href="#slab管理器" class="headerlink" title="slab管理器"></a>slab管理器</h1><a id="more"></a>
+<p>nginx 不同的worker之间需要共享信息的时候，只能通过共享内存。共享内存会使用链表，红黑树这样的数据结构。但是每个红黑树上有很多节点，每个节点上都需要分配内存去存放。怎样把一整块共享内存切割成一小块给红黑树上面的每一个节点使用呢？</p>
+<p>slab内存管理</p>
+<p>{F8970}</p>
+<p>{F8972}</p>
+<p>首先，会把共享内存分为很多页面，每个页面4k，会切成很多slot。比如32字节是一种slot，64字节是一种slot，128字节也是一种slot。这些slot是以乘2的方式向上增长的。如果现在有一个51字节需要分配的内存会放到哪里呢？会放在小于它最大的slot的环节比如64字节。这样的数据结构有个缺点，就是内存浪费。比如：51字节用64字节存放，其他13字节浪费了。最多有多少内存消耗呢？两倍。这种使用的方式叫做Bestfit，这种分配方式的好处是适合小对象。如果我们分配的内存非常小，比如小于一个页面的大小就非常合适，很少有碎片。 每分配一块内存就是沿着还没使用的空白内存继续使用。当一个页面使用满以后，再拿一个空闲页面给slab slot大小的内存继续使用。</p>
+<p>有时候分配在一段内存上的数据结构是固定的，需要初始化，用Bestfit这种方式原先的数据结构都还在。当重复使用的时候，避免了初始化。</p>
+<p>slab内存，应用在Openresty的 lua_shared_dict 以及limit request 、limit connection。</p>
+<p>ngx_slab_stat:统计Slab 使用状态</p>
+<p>数据监控，数据统计。</p>
+<p>{F8974}</p>
+<p>可以看不同的slot，分配了多少，使用了多少，有多少请求在访问，失败了多少次。</p>
+<p>Openresty如何使用ngx_slab_stat模块</p>
+<p>下载<a href="http://tengine.taobao.org/download.html" target="_blank" rel="noopener">tengine</a>，该模块路径<code>tengine-2.2.3/modules/ngx_slab_stat</code>。这是一个标准的nginx第三模块，每个第三方模块会通过C文件定义好nginx_module_t这样的结构体、以及处理哪些配置项、提供哪些变量、并有一个config来帮助它编译到目标nginx中。</p>
+<p>Openresty编译的把ngx_slab_stat模块编译进去。然后使用lua_shared_dict 分配内存，再用slab_stat去查看共享内存的使用情况。</p>
+<p>{F8976}</p>
+<p>add_module 这个命令可以把一个目录下具备config这样配置项的目录添加到nginx目录中。让模块的源码让./configure 识别到。</p>
+<p>slab_stat 如何使用</p>
+<p>{F8978}</p>
+<p>location slab_stat中的slab_stat是一个slab_stat提供的配置项，会返回slab_stat统计状况。</p>
+<p>代码走起</p>
+<p>{F8980}</p>
+<p>{F8982}</p>
+<p>{F8984}</p>
+<p>slab 内存分配了Bestfit思想，也是linux操作系统经常使用的内存分配方式。通常我们使用共享内存时都需要使用slab 分配给相应的内存给对象，再使用上层的数据结构维护这个对象。</p>
+<h2 id="留言问题"><a href="#留言问题" class="headerlink" title="留言问题"></a>留言问题</h2><ol>
+<li>我编译之后将代码写进conf文件，提示nginx: [emerg] unknown directive “slab_stat”，是不是还缺少什么东西。nginx -V 是否可以查看到slab是否已经编译进去，我发现nginx -V 没有显示slab模块。<br>2018-12-20<br> 作者回复<br>你是不是没有把编译生成的新版本nginx，替换到安装sbin目录下？</li>
+</ol>
+<p>2.我在使用 –add-module 新增slab模块的时，是不是要设置 –prefix 指定我之前安装的目录，然后再替换make编译后的 nginx二进制文件，才能使用新增模块呢？如果要替换nginx二进制文件，是不是都得全部重新编译一遍呢？</p>
+<p> 作者回复<br>prefix不建议变化，这样简单点。<br>要替换nginx文件，需要确保编译出的新nginx含有你需要的全部模块。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/avatar.png" alt="avatar">
+    <div class="grid-item">
+      <p class="title"> jiwei </p>
+      <p class="subtitle"> It`s a type of habit </p>
+    <div>
+  </div></div></section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a class="twitter-share-button" data-size="large" data-via="DrakeLeung" href="https://twitter.com/intent/tweet?text= id=" slab管理器"=""><a hre"="">
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+</a>
+  </section>
+</div>
+
+
+  
+    
+<section class="article-comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+<script>
+  var disqus_shortname = 'drakeleung';
+  
+  var disqus_url = 'jiweii.com/2018/08/07/8-nginx/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+  
+</main>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"live2d-widget-model-wanko    //妹子有很多个，叫名字他才出来"},"display":{"position":"right   //位置","width":"150    //妹子宽度","height":"300    //妹子高度"},"mobile":{"show":true},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  <title>百度面试题一百盏灯 | jiwei</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/css/app.css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+  
+</head>
+</html>
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2017/02/18/百度面试题一百盏灯/">百度面试题一百盏灯</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">February 18 2017</p>
+  </section>
+
+  <section class="article-entry">
+    <p>之前一个朋友找工作，碰到这样一个面试题，据说最早是百度的笔试题，题目如下：<br>一共有100盏灯，按一下就亮，再按就灭，初始是都灭着的，<a id="more"></a><br>第一轮把所有的都按一下，第二轮把2的倍数的灯都按一下，第三轮把3的倍数的灯都按一下，以此类推，<br>问到最后会有多少盏灯是亮着的；<br>下面有两种自己研究的算法：<br><br></p>
+<h2 id="暴力类推法"><a href="#暴力类推法" class="headerlink" title="暴力类推法"></a>暴力类推法</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getResult</span><span class="params">()</span></span>&#123;</span><br><span class="line">	$new = range(<span class="number">1</span>,<span class="number">100</span>);</span><br><span class="line">	<span class="keyword">foreach</span>($new <span class="keyword">as</span> $k=&gt;$v)&#123;</span><br><span class="line">		$new[$k] = <span class="number">1</span>;<span class="comment">//初始化出100个值为1的灯，下文自动刨去第一轮按灯</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span>($i=<span class="number">2</span>; $i&lt;=<span class="number">100</span>; $i++)&#123;<span class="comment">//按灯次数循环</span></span><br><span class="line">		<span class="keyword">for</span>($j=<span class="number">1</span>; $j&lt;=<span class="number">100</span>; $j++)&#123;<span class="comment">//循环每盏灯后计算按灯次数</span></span><br><span class="line">			<span class="keyword">if</span>($j%$i == <span class="number">0</span>)&#123;</span><br><span class="line">				$new[$j<span class="number">-1</span>] += <span class="number">1</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">foreach</span>($new <span class="keyword">as</span> $k=&gt;$v)&#123;<span class="comment">//刨去偶数次的灯</span></span><br><span class="line">		<span class="keyword">if</span>($v%<span class="number">2</span> == <span class="number">0</span>)&#123;</span><br><span class="line">			<span class="keyword">unset</span>($new[$k]);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> $new;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<h2 id="简洁明朗法"><a href="#简洁明朗法" class="headerlink" title="简洁明朗法"></a>简洁明朗法</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getResult</span><span class="params">()</span></span>&#123;</span><br><span class="line">	$count = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">for</span>($i=<span class="number">1</span>;$i&lt;=<span class="number">100</span>;$i++)&#123;<span class="comment">//循环一百盏灯</span></span><br><span class="line">		$num = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">if</span>($i == <span class="number">1</span>)&#123;<span class="comment">//同样刨去第一轮按灯</span></span><br><span class="line">			$count += <span class="number">1</span>;</span><br><span class="line">			<span class="keyword">continue</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">for</span>($j=<span class="number">2</span>;$j&lt;=$i/<span class="number">2</span>;$j++)&#123;<span class="comment">//循环按灯次数</span></span><br><span class="line">			<span class="keyword">if</span>($i%$j==<span class="number">0</span>)&#123;</span><br><span class="line">				$num += <span class="number">1</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span>($num%<span class="number">2</span> != <span class="number">0</span>)&#123;<span class="comment">//计算奇数次按灯</span></span><br><span class="line">			$count += <span class="number">1</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> $count;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/avatar.png" alt="avatar">
+    <div class="grid-item">
+      <p class="title"> jiwei </p>
+      <p class="subtitle"> It`s a type of habit </p>
+    <div>
+  </div></div></section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a class="twitter-share-button" data-size="large" data-via="DrakeLeung" href="https://twitter.com/intent/tweet?text=之前一个朋友找工作，碰到这样一个面试题，">
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+    
+<section class="article-comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+<script>
+  var disqus_shortname = 'drakeleung';
+  
+  var disqus_url = 'jiweii.com/2017/02/18/百度面试题一百盏灯/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+  
+</main>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"live2d-widget-model-wanko    //妹子有很多个，叫名字他才出来"},"display":{"position":"right   //位置","width":"150    //妹子宽度","height":"300    //妹子高度"},"mobile":{"show":true},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

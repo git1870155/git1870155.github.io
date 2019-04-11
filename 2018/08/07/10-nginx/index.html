@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  <title>(10)使用动态模块来提升运维效率 | jiwei</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/css/app.css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+  
+</head>
+</html>
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/08/07/10-nginx/">(10)使用动态模块来提升运维效率</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">August 07 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <h2 id="41-使用动态模块来提升运维效率"><a href="#41-使用动态模块来提升运维效率" class="headerlink" title="41 | 使用动态模块来提升运维效率"></a>41 | 使用动态模块来提升运维效率</h2><a id="more"></a>
+<h2 id="动态模块可以在nginx升级时，减少编译环节。"><a href="#动态模块可以在nginx升级时，减少编译环节。" class="headerlink" title="动态模块可以在nginx升级时，减少编译环节。"></a>动态模块可以在nginx升级时，减少编译环节。</h2><p><img src="https://upload-images.jianshu.io/upload_images/550939-46fe440e54c5b988.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h2 id="不使用动态模块nginx如何编译"><a href="#不使用动态模块nginx如何编译" class="headerlink" title="不使用动态模块nginx如何编译"></a>不使用动态模块nginx如何编译</h2><p><img src="https://upload-images.jianshu.io/upload_images/550939-36d37c47cc32c2c1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>我们先下载完Nginx源码，有个configure的脚本，以及auto目录，都是在帮助nginx建立编译系统。nginx源代码中提供了很多官方自带的模块。但可能我们会加入很多第三方模块，比如Openresty就提供了很多第三方模块。不管是官方还是第三方。这些模块源码会和nginx的源码放在一起编译，最后编译出来一个nginx的可执行文件。</p>
+<h2 id="动态模块编译及使用流程"><a href="#动态模块编译及使用流程" class="headerlink" title="动态模块编译及使用流程"></a>动态模块编译及使用流程</h2><p><img src="https://upload-images.jianshu.io/upload_images/550939-9e3b2b2fcd542b25.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>我们在编译的手指定了 一些模块使用动态模块的方式编译，最后除了生成一个二进制执行文件，还生成了一个指定模块的动态库。</p>
+<blockquote>
+<p>动态库跟动态库的区别？静态库会直接把源代码编译到最终可执行二进制文件中。动态库在二进制可执行文件里只保留了调用它的位置（或者说地址）。在需要用到用动态库的功能时，由nginx的可执行文件调用这个动态库再去完成这样的功能，这里的好处，当我们仅仅需要修改某一个模块或者升级这个模块功能时，特别是当我们的nginx编译了大量的第三方模块。我们可仅仅编译这个动态库，然后替换掉，而不用牵一发而动全身（或许在你替换nginx文件中漏掉或加了东西呢？）。然后nginx reload下重新使用新的模块功能。</p>
+</blockquote>
+<h3 id="具体操作"><a href="#具体操作" class="headerlink" title="具体操作"></a>具体操作</h3><p><img src="https://upload-images.jianshu.io/upload_images/550939-a6a9c2fdbfd715e4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>首先，在源代码中，调用Configure加入动态模块必须指明动态模块。是用动态模块的方式编译到nginx中， 不是所有的nginx模块都可以以动态模块的方式加入到nginx中。</p>
+<p>第二步，编译进binary。</p>
+<p>第三步，启动时初始化模块数组。启动nginx的时候会去读生成的nginx modules那个数组。读到模块数组中呢，我们会发现是用了一个动态模块。</p>
+<p>第四步，读取load_module 配置。nginx config 中需要加入的一个配置项load_module ，指明了动态模块所在的路径。</p>
+<p>第五步，打开动态库并加入模块数组。 在nginx进程中打开这个动态库，把我们的模块加入到nginx中。</p>
+<p>第六步，基于模块数组开始初始化。</p>
+<p>哪些模块支持动态模块？</p>
+<p>带有 dynamic字样 </p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-f032ae4448618850.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h2 id="使用image-filter动态库"><a href="#使用image-filter动态库" class="headerlink" title="使用image_filter动态库"></a>使用image_filter动态库</h2><p><img src="https://upload-images.jianshu.io/upload_images/550939-25d0be42eb5af618.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>linux中so是动态库（windows是dll），.a是静态库。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-75a8b28b4382d6e6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"><br><img src="https://upload-images.jianshu.io/upload_images/550939-2255ee8177587c7c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>图片变成15*10。</p>
+<h2 id="课后问题"><a href="#课后问题" class="headerlink" title="课后问题"></a>课后问题</h2><p>1.nginx模块中 有没有防御 网站盗链 网站爬虫的 配置在nginx中 效果如何？</p>
+<p> 作者回复<br>有的,第三部分75课的referer和76课中的secure_link，配合50课的realip模块。<br>更复杂的防盗链，可以使用openresty中的waf模块。</p>
+<p>2.nginx编译安装动态模块时生成的mudules/目录，必须是在make install才有的么？如果之前安装的nginx能否通过替换编译的nginx二进制文件来安装动态模块？</p>
+<p> 作者回复<br>可以，但热升级前，我们需要手动建立modules目录放置动态库，并在nginx.conf在配置好目录。</p>
+<p>3.咨询个nginx监控的问题，在使用stub_status模块的时候，配置文件中每个server内都要添加单独的location /ngx_status{stub_status on;}这样的字段吗？还是说只在一个server段内添加就可以对整个nginx进行监控，例如Active connections这个指标代表的是整个nginx的活动连接数，还是配置的那个server的活动连接数？</p>
+<p> 作者回复<br>整个nginx的</p>
+<p>4.老师 动态模块有性能损失吗？ 跟直接编译进去对比</p>
+<p> 作者回复<br>没有性能损失。</p>
+<p>5.一个upstream中有多台机器标识了backup会怎么样？主要的机器挂了,是从中随机选择一台吗？若那台backup也不好呢？</p>
+<p> 作者回复<br>如果upstream策略定义的主策略失效后，都会退化为带权重的RoundRobin算法。第4部分课程会讲到。</p>
+<p>6.生产环境用了nginx正向https代理，同时也用了反向代理，但是正向代理陆陆续续总有问题，用户量多一点(并发少于100)的时候就会发生连接超时，后边就出现解析地址超时的现象，网上没有找到相关的资料，想问下老师nginx正向代理可以用于生产环境吗？有没有替代方案？</p>
+<p> 作者回复<br>nginx用于正向代理一样很稳定。具体看下超时原因吧。</p>
+<p>7.请问一下旧的APP使用http post方法访问nginx服务，现在我们想后台只用https提供服务，但是重定向不支持post方法，请问有办法解决吗？谢谢</p>
+<p> 作者回复<br>如果你原来是用302，那么可以考虑307重定向，它不允许改变方法</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/avatar.png" alt="avatar">
+    <div class="grid-item">
+      <p class="title"> jiwei </p>
+      <p class="subtitle"> It`s a type of habit </p>
+    <div>
+  </div></div></section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a class="twitter-share-button" data-size="large" data-via="DrakeLeung" href="https://twitter.com/intent/tweet?text= id=" 41-使用动态模块来提升运维效"="">
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+    
+<section class="article-comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+<script>
+  var disqus_shortname = 'drakeleung';
+  
+  var disqus_url = 'jiweii.com/2018/08/07/10-nginx/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+  
+</main>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"live2d-widget-model-wanko    //妹子有很多个，叫名字他才出来"},"display":{"position":"right   //位置","width":"150    //妹子宽度","height":"300    //妹子高度"},"mobile":{"show":true},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

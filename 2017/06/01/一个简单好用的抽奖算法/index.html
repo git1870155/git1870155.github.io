@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  <title>一个简单好用的抽奖算法 | jiwei</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/css/app.css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+  
+</head>
+</html>
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2017/06/01/一个简单好用的抽奖算法/">一个简单好用的抽奖算法</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">June 01 2017</p>
+  </section>
+
+  <section class="article-entry">
+    <p>总结一个简单好用的抽奖算法：<a id="more"></a><br><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getResult</span><span class="params">()</span></span>&#123;</span><br><span class="line">    $prize_arr = <span class="keyword">array</span>(</span><br><span class="line">        <span class="string">'0'</span> =&gt; <span class="keyword">array</span>(<span class="string">'id'</span>=&gt;<span class="number">1</span>,<span class="string">'prize'</span>=&gt;<span class="string">'平板电脑'</span>,<span class="string">'v'</span>=&gt;<span class="number">0.1</span>),</span><br><span class="line">        <span class="string">'1'</span> =&gt; <span class="keyword">array</span>(<span class="string">'id'</span>=&gt;<span class="number">2</span>,<span class="string">'prize'</span>=&gt;<span class="string">'数码相机'</span>,<span class="string">'v'</span>=&gt;<span class="number">5</span>),</span><br><span class="line">        <span class="string">'2'</span> =&gt; <span class="keyword">array</span>(<span class="string">'id'</span>=&gt;<span class="number">3</span>,<span class="string">'prize'</span>=&gt;<span class="string">'音箱设备'</span>,<span class="string">'v'</span>=&gt;<span class="number">10</span>),</span><br><span class="line">        <span class="string">'3'</span> =&gt; <span class="keyword">array</span>(<span class="string">'id'</span>=&gt;<span class="number">4</span>,<span class="string">'prize'</span>=&gt;<span class="string">'4G优盘'</span>,<span class="string">'v'</span>=&gt;<span class="number">12</span>),</span><br><span class="line">        <span class="string">'4'</span> =&gt; <span class="keyword">array</span>(<span class="string">'id'</span>=&gt;<span class="number">5</span>,<span class="string">'prize'</span>=&gt;<span class="string">'10Q币'</span>,<span class="string">'v'</span>=&gt;<span class="number">22</span>),</span><br><span class="line">        <span class="string">'5'</span> =&gt; <span class="keyword">array</span>(<span class="string">'id'</span>=&gt;<span class="number">6</span>,<span class="string">'prize'</span>=&gt;<span class="string">'下次没准就能中哦'</span>,<span class="string">'v'</span>=&gt;<span class="number">50</span>),</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">foreach</span> ($prize_arr <span class="keyword">as</span> $key =&gt; $val) &#123;</span><br><span class="line">        $arr[$val[<span class="string">'id'</span>]] = $val[<span class="string">'v'</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    $rid = <span class="keyword">$this</span>-&gt;get_rand($arr); <span class="comment">//根据概率获取奖项id</span></span><br><span class="line">    $res[<span class="string">'yes'</span>] = $prize_arr[$rid<span class="number">-1</span>][<span class="string">'prize'</span>]; <span class="comment">//中奖项</span></span><br><span class="line">    <span class="keyword">unset</span>($prize_arr[$rid<span class="number">-1</span>]); <span class="comment">//将中奖项从数组中剔除，剩下未中奖项</span></span><br><span class="line">    shuffle($prize_arr); <span class="comment">//打乱数组顺序</span></span><br><span class="line">    <span class="keyword">for</span>($i=<span class="number">0</span>;$i&lt;count($prize_arr);$i++)&#123;</span><br><span class="line">        $pr[] = $prize_arr[$i][<span class="string">'prize'</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    $res[<span class="string">'no'</span>] = $pr;</span><br><span class="line">    <span class="keyword">return</span> $res;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">get_rand</span><span class="params">($proArr)</span> </span>&#123;</span><br><span class="line">    $result = <span class="string">''</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//概率数组的总概率精度</span></span><br><span class="line">    $proSum = array_sum($proArr);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//概率数组循环</span></span><br><span class="line">    <span class="keyword">foreach</span> ($proArr <span class="keyword">as</span> $key =&gt; $proCur) &#123;</span><br><span class="line">        $randNum = mt_rand(<span class="number">1</span>, $proSum);</span><br><span class="line">        <span class="keyword">if</span> ($randNum &lt;= $proCur) &#123;</span><br><span class="line">            $result = $key;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            $proSum -= $proCur;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">unset</span> ($proArr);</span><br><span class="line">    <span class="keyword">return</span> $result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/avatar.png" alt="avatar">
+    <div class="grid-item">
+      <p class="title"> jiwei </p>
+      <p class="subtitle"> It`s a type of habit </p>
+    <div>
+  </div></div></section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a class="twitter-share-button" data-size="large" data-via="DrakeLeung" href="https://twitter.com/intent/tweet?text=总结一个简单好用的抽奖算法：<a id=">
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+    
+<section class="article-comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+<script>
+  var disqus_shortname = 'drakeleung';
+  
+  var disqus_url = 'jiweii.com/2017/06/01/一个简单好用的抽奖算法/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+  
+</main>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"live2d-widget-model-wanko    //妹子有很多个，叫名字他才出来"},"display":{"position":"right   //位置","width":"150    //妹子宽度","height":"300    //妹子高度"},"mobile":{"show":true},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

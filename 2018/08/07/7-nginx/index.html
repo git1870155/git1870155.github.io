@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  <title>(7)nginx 共享内存 | jiwei</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/css/app.css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+  
+</head>
+</html>
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/08/07/7-nginx/">(7)nginx 共享内存</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">August 07 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <h2 id="所有worker进程协同工作的关键：共享内存"><a href="#所有worker进程协同工作的关键：共享内存" class="headerlink" title="所有worker进程协同工作的关键：共享内存"></a>所有worker进程协同工作的关键：共享内存</h2><a id="more"></a>
+<p>1.nginx 进程间的通讯方式</p>
+<p>{F8964}</p>
+<p>nginx进程间通讯有两种，信号跟共享内存，如果要做数据的同步只能用共享内存。</p>
+<p>共享内存是nginx 跨worker通讯最有效的手段。只要我们需要一段业务逻辑在多个worker中同时生效，比如说做集群的流控上，必须使用共享内存，而不是在每一个worker的内存上操作。</p>
+<p>2.锁</p>
+<p>多个worker之间访问内存就会导致竞争所以我们需要加锁。</p>
+<p>nginx早期还有关于信号量的锁。信号量是linux比较久远的进程同步方式。会导致进程进入休眠状态。现在大多数nginx版本中使用的都是自旋锁。而不会基于信号量。自旋锁，当这个锁的条件没有满足，这块内存被1号worker使用，2号worker进程获取锁的时候，只要1号进程没有释放锁，2号进程会一直在不听的请求这把锁。就好像如果是基于信号量的，早期nginx锁，假设锁住了一扇门，worker 进程1拿上了锁进入物理，worker 2发现里面有人，worker 2就会就地休息 等待woker进程1从门里出来后通知它。自旋锁不一样，woker 2会持续敲门，使用自旋锁就要求nginx模块必须快速的使用共享内存。也就是快速的取得锁，快速的释放锁。一旦出现有第三方模块不遵守这样的规则，就可能导致出现死锁或者性能下降的问题。</p>
+<p>有了共享内存，会引入第二个问题。一个内存往往给许多对象使用的。如果在模块中手动的去编写分配，把这些内存给到不同的对象是非常繁琐的。于是使用slab内存管理器。</p>
+<p>3.哪些官方模块使用了共享内存</p>
+<p>{F8966}</p>
+<ol>
+<li>主要使用这两种数据结构：</li>
+</ol>
+<p>rbtree</p>
+<p>想做限速或者流控场景时，我们不能容忍在内存中做的。比如一个worker对某个用户触发了流控、限速而其他worker 还不知道。所以，只能在共享内存中做。比如：ngx_limit_conn_module 、ngx_stream_limit_req_module。http cache 做反向代理时用的。</p>
+<p>红黑树特点：插入跟删除特别快，当然也可以做遍历。这些模块都有一个特点，需要做快速的插入和删除。比如：发现了一个客户端，需要对它限速，如果限速达到了需要把客户端从限速数据结构容器中移出，都需要非常的快速。</p>
+<p>单链表</p>
+<p>把共享的元素串起来就可以了。</p>
+<p>ngx_http_lua_api 是Openresty的核心模块。Openresty在这个模块中定义了一个sdk，这个sdk叫做 lua_shared_dict。</p>
+<p>{F8968}</p>
+<p>代码中，我们同时使用了红黑树以及链表</p>
+<p>dogs（共享内存的名称，图中大小是10m） 使用红黑树保存每一个key value</p>
+<p>为什么我们需要链表呢？Lua是应用代码，很容易产生限制。当我们达到10M限制的时候呢？lua_shared_dict 采用LRU淘汰。长时间不用的节点优先被淘汰掉。lua_shared_dict 对内存的使用同时满足了红黑树跟链表。</p>
+<h2 id="留言问题"><a href="#留言问题" class="headerlink" title="留言问题"></a>留言问题</h2><p>1.共享内存使用的场景？什么时候使用，</p>
+<p> 作者回复<br>所有需要多worker进程协同配合的场景。例如upstream负载均衡算法，或者limit_conn、limit_req等。一般指令中有zone关键字都是共享内存。</p>
+<p>2.老师，对于共享变量dogs，我们在配置文件中对dogs进行插入、删除、值更新的话，需要考虑锁的问题吗？</p>
+<p> 作者回复<br>不需要，在操作这个变量时，lua模块已经对变量使用了自旋锁</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/avatar.png" alt="avatar">
+    <div class="grid-item">
+      <p class="title"> jiwei </p>
+      <p class="subtitle"> It`s a type of habit </p>
+    <div>
+  </div></div></section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a class="twitter-share-button" data-size="large" data-via="DrakeLeung" href="https://twitter.com/intent/tweet?text= id=" 所有worker进程协同工作的"="">
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+    
+<section class="article-comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+<script>
+  var disqus_shortname = 'drakeleung';
+  
+  var disqus_url = 'jiweii.com/2018/08/07/7-nginx/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+  
+</main>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"live2d-widget-model-wanko    //妹子有很多个，叫名字他才出来"},"display":{"position":"right   //位置","width":"150    //妹子宽度","height":"300    //妹子高度"},"mobile":{"show":true},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
