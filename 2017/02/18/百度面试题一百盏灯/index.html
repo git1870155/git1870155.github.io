@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>百度面试题一百盏灯 | A type of habit</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="之前一个朋友找工作，碰到这样一个面试题，据说最早是百度的笔试题，题目如下：一共有100盏灯，按一下就亮，再按就灭，初始是都灭着的，">
+<meta name="keywords" content="php">
+<meta property="og:type" content="article">
+<meta property="og:title" content="百度面试题一百盏灯">
+<meta property="og:url" content="jiweii.com/2017/02/18/百度面试题一百盏灯/index.html">
+<meta property="og:site_name" content="A type of habit">
+<meta property="og:description" content="之前一个朋友找工作，碰到这样一个面试题，据说最早是百度的笔试题，题目如下：一共有100盏灯，按一下就亮，再按就灭，初始是都灭着的，">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-04-16T02:19:08.209Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="百度面试题一百盏灯">
+<meta name="twitter:description" content="之前一个朋友找工作，碰到这样一个面试题，据说最早是百度的笔试题，题目如下：一共有100盏灯，按一下就亮，再按就灭，初始是都灭着的，">
+  
+    <link rel="alternate" href="/atom.xml" title="A type of habit" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/images/favicon.ico">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">A type of habit</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="jiweii.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-百度面试题一百盏灯" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/02/18/百度面试题一百盏灯/" class="article-date">
+  <time datetime="2017-02-18T04:49:59.000Z" itemprop="datePublished">2017-02-18</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/php/">php</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      百度面试题一百盏灯
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>之前一个朋友找工作，碰到这样一个面试题，据说最早是百度的笔试题，题目如下：<br>一共有100盏灯，按一下就亮，再按就灭，初始是都灭着的，<a id="more"></a><br>第一轮把所有的都按一下，第二轮把2的倍数的灯都按一下，第三轮把3的倍数的灯都按一下，以此类推，<br>问到最后会有多少盏灯是亮着的；<br>下面有两种自己研究的算法：<br><br></p>
+<h2 id="暴力类推法"><a href="#暴力类推法" class="headerlink" title="暴力类推法"></a>暴力类推法</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getResult</span><span class="params">()</span></span>&#123;</span><br><span class="line">	$new = range(<span class="number">1</span>,<span class="number">100</span>);</span><br><span class="line">	<span class="keyword">foreach</span>($new <span class="keyword">as</span> $k=&gt;$v)&#123;</span><br><span class="line">		$new[$k] = <span class="number">1</span>;<span class="comment">//初始化出100个值为1的灯，下文自动刨去第一轮按灯</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span>($i=<span class="number">2</span>; $i&lt;=<span class="number">100</span>; $i++)&#123;<span class="comment">//按灯次数循环</span></span><br><span class="line">		<span class="keyword">for</span>($j=<span class="number">1</span>; $j&lt;=<span class="number">100</span>; $j++)&#123;<span class="comment">//循环每盏灯后计算按灯次数</span></span><br><span class="line">			<span class="keyword">if</span>($j%$i == <span class="number">0</span>)&#123;</span><br><span class="line">				$new[$j<span class="number">-1</span>] += <span class="number">1</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">foreach</span>($new <span class="keyword">as</span> $k=&gt;$v)&#123;<span class="comment">//刨去偶数次的灯</span></span><br><span class="line">		<span class="keyword">if</span>($v%<span class="number">2</span> == <span class="number">0</span>)&#123;</span><br><span class="line">			<span class="keyword">unset</span>($new[$k]);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> $new;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<h2 id="简洁明朗法"><a href="#简洁明朗法" class="headerlink" title="简洁明朗法"></a>简洁明朗法</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getResult</span><span class="params">()</span></span>&#123;</span><br><span class="line">	$count = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">for</span>($i=<span class="number">1</span>;$i&lt;=<span class="number">100</span>;$i++)&#123;<span class="comment">//循环一百盏灯</span></span><br><span class="line">		$num = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">if</span>($i == <span class="number">1</span>)&#123;<span class="comment">//同样刨去第一轮按灯</span></span><br><span class="line">			$count += <span class="number">1</span>;</span><br><span class="line">			<span class="keyword">continue</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">for</span>($j=<span class="number">2</span>;$j&lt;=$i/<span class="number">2</span>;$j++)&#123;<span class="comment">//循环按灯次数</span></span><br><span class="line">			<span class="keyword">if</span>($i%$j==<span class="number">0</span>)&#123;</span><br><span class="line">				$num += <span class="number">1</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span>($num%<span class="number">2</span> != <span class="number">0</span>)&#123;<span class="comment">//计算奇数次按灯</span></span><br><span class="line">			$count += <span class="number">1</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> $count;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="jiweii.com/2017/02/18/百度面试题一百盏灯/" data-id="cjuc2rhp60031tgr3gsavow3e" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/php/">php</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/03/20/stdClass空对象的使用/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          stdClass空对象的使用
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/02/07/浅拷贝与深拷贝/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">浅拷贝与深拷贝</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/linux/">linux</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nginx/">nginx</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/">php</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/privately/">privately</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nginx/">nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php/">php</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/privately/">privately</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/nginx/" style="font-size: 20px;">nginx</a> <a href="/tags/php/" style="font-size: 17.5px;">php</a> <a href="/tags/privately/" style="font-size: 15px;">privately</a> <a href="/tags/数据库/" style="font-size: 12.5px;">数据库</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2019/04/04/常用书籍、资料、手册/">常用书籍、资料、手册</a>
+          </li>
+        
+          <li>
+            <a href="/2018/10/20/常用/">常用</a>
+          </li>
+        
+          <li>
+            <a href="/2018/10/19/课程链接/">课程链接</a>
+          </li>
+        
+          <li>
+            <a href="/2018/08/07/12-nginx/">(12)listen指令、处理HTTP请求头流程</a>
+          </li>
+        
+          <li>
+            <a href="/2018/08/07/13-nginx/">(13)正则、如何找server指令块</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 Jiwei<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"live2d-widget-model-wanko    //妹子有很多个，叫名字他才出来"},"display":{"position":"right   //位置","width":"150    //妹子宽度","height":"300    //妹子高度"},"mobile":{"show":true},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
