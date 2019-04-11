@@ -38,7 +38,7 @@
 <ul>
 <li>如果指定yaf.library和产品的application.ini中指定ap.library，那么无论是否在application.ini中指定了ap.library.namespace或者通过Yaf_Loader::registerLocalNamespace()注册本地的命名空间前缀，那么在程序中遇到未定义的类的时候，会自动到ap.directory.library中寻找对应的类。（ap.directory.library是Yaf必不可少的配置，该配置指定了项目的绝对路径地址）</li>
 <li>如果在产品的application.ini文件中指定了本地的ap.library，但是却没有通过ap.library.namespace或者Yaf_Loader::registerLocalNamespace()指定本地的命名空间，那么无论是都指定了yaf.library，都会去yaf.library中加载类；</li>
-<li>只有在指定了本地类的ap.library，指定了本地的命名空间且类名中包含有命名空间的前缀的时候，才回去本地的类库中加载对应的类；否则到yaf.library中指定的文件中加载对应的类。</li>
+<li>只有在指定了本地类的ap.library，指定了本地的命名空间且类名中包含有命名空间的前缀的时候，才回去本地的类库中加载对应的类；否则到yaf.library中指定的文件中加载对应的类。…..</li>
 </ul>
 <p>指定命名空间的方式为：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$loader = Yaf_Loader::getIgnstance();</span><br><span class="line">$loader-&gt;registerLocalNamespace(array(&quot;local&quot;));</span><br></pre></td></tr></table></figure></p>
 <p>或者在项目中的conf/application.ini中指定ap.library.namespace为local确定本地的命名空间。</p>
