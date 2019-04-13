@@ -2,39 +2,110 @@
 <html>
 <head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="utf-8">
-  <title>(18)preaccess阶段：连接限制limit_conn模块、请求限制limit_req模块 | jiwei</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="stylesheet" href="/css/app.css">
-  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
   
+
+  
+  <title>(18)preaccess阶段：连接限制limit_conn模块、请求限制limit_req模块 | A type of habit</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="55 | preaccess阶段：对连接做限制的limit_conn模块">
+<meta name="keywords" content="nginx">
+<meta property="og:type" content="article">
+<meta property="og:title" content="(18)preaccess阶段：连接限制limit_conn模块、请求限制limit_req模块">
+<meta property="og:url" content="jiweii.com/2018/08/07/18-nginx/index.html">
+<meta property="og:site_name" content="A type of habit">
+<meta property="og:description" content="55 | preaccess阶段：对连接做限制的limit_conn模块">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/550939-e0502a846131b37d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/550939-d430847045e7d9d7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/550939-ba55a59faf80908d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/550939-2c737c289399ee89.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/550939-06e13906df16dc30.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/550939-df472b5bfb1d389f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/550939-4d03975438c5b173.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/550939-0b4c1ffa6fecaf62.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/550939-b34231e36437ddce.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/550939-0731aa6ac2c51015.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/550939-b5fef1044550cbf5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/550939-acfe160b5ca8f4e1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/550939-64a7c6ec73e7a488.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-04-04T08:31:33.900Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="(18)preaccess阶段：连接限制limit_conn模块、请求限制limit_req模块">
+<meta name="twitter:description" content="55 | preaccess阶段：对连接做限制的limit_conn模块">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/550939-e0502a846131b37d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+  
+    <link rel="alternate" href="/atom.xml" title="A type of habit" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/images/favicon.ico">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
 </head>
 </html>
 <body>
-  <nav class="app-nav">
-  
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">A type of habit</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="jiweii.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-18-nginx" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/08/07/18-nginx/" class="article-date">
+  <time datetime="2018-08-07T08:24:25.000Z" itemprop="datePublished">2018-08-07</time>
+</a>
     
-      <a href="/.">home</a>
-    
-  
-    
-      <a href="/archives">archive</a>
-    
-  
-</nav>
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/nginx/">nginx</a>
+  </div>
 
-  <main class="post">
-  <article>
-  <h1 class="article-title">
-    <a href="/2018/08/07/18-nginx/">(18)preaccess阶段：连接限制limit_conn模块、请求限制limit_req模块</a>
-  </h1>
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      (18)preaccess阶段：连接限制limit_conn模块、请求限制limit_req模块
+    </h1>
+  
 
-  <section class="article-meta">
-    <p class="article-date">August 07 2018</p>
-  </section>
-
-  <section class="article-entry">
-    <h1 id="55-preaccess阶段：对连接做限制的limit-conn模块"><a href="#55-preaccess阶段：对连接做限制的limit-conn模块" class="headerlink" title="55 | preaccess阶段：对连接做限制的limit_conn模块"></a>55 | preaccess阶段：对连接做限制的limit_conn模块</h1><a id="more"></a>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="55-preaccess阶段：对连接做限制的limit-conn模块"><a href="#55-preaccess阶段：对连接做限制的limit-conn模块" class="headerlink" title="55 | preaccess阶段：对连接做限制的limit_conn模块"></a>55 | preaccess阶段：对连接做限制的limit_conn模块</h1><a id="more"></a>
 <p>在preaccess阶段限制用户并发连接数的limit_conn模块。上一节讲到匹配location，匹配到之后，接下来的模块往往它们的指令都可以出现在location 中。preaccess阶段中有两个模块limit_req、limit_conn。一个是用来限制每秒处理请求数，一个是限制并发连接数。</p>
 <h2 id="问题：如何限制每个客户端的并发链接数"><a href="#问题：如何限制每个客户端的并发链接数" class="headerlink" title="问题：如何限制每个客户端的并发链接数"></a>问题：如何限制每个客户端的并发链接数</h2><p><img src="https://upload-images.jianshu.io/upload_images/550939-e0502a846131b37d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>使用了共享内存。接下来会看到它用到了一个zone指令。所有的nginx的 zone指令都是在分配共享内存。</p>
@@ -84,50 +155,147 @@
 <p>5.limit_**指令中的key究竟是什么意思呢？它和限制的数量有什么关系？比如说key是用户ip，limit_conn是2，就表示每个不同的用户只能同时有两个连接到服务器吗？</p>
 <p> 作者回复<br>是的</p>
 
-  </section>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="jiweii.com/2018/08/07/18-nginx/" data-id="cjufm0fqd000wkcr3coi6esvz" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/08/07/15-nginx/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          (15)postread阶段：获取真实客户端地址的realip模块
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/08/07/2-nginx/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">(2)静态资源服务器、缓存、HTTPS、Openresty+Lua</div>
+    </a>
+  
+</nav>
+
+  
 </article>
 
-  <div class="sharing grid">
-  <section class="profile grid-item grid">
-    <img class="avatar" src="/images/avatar.png" alt="avatar">
-    <div class="grid-item">
-      <p class="title"> jiwei </p>
-      <p class="subtitle"> It`s a type of habit </p>
-    <div>
-  </div></div></section>
-
-  <section class="share-btns">
-    <!-- <p> share it if you like it~ </p> -->
-    <a class="twitter-share-button" data-size="large" data-via="DrakeLeung" href="https://twitter.com/intent/tweet?text= id=" 55-preaccess阶段："="">
-  Tweet
-</a>
-
-<script>
-  window.twttr = (function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0],
-    t = window.twttr || {};
-  if (d.getElementById(id)) return t;
-  js = d.createElement(s);
-  js.id = id;
-  js.src = "https://platform.twitter.com/widgets.js";
-  js.async = true;
-  fjs.parentNode.insertBefore(js, fjs);
-
-  t._e = [];
-  t.ready = function(f) {
-    t._e.push(f);
-  };
-
-  return t;
-}(document, "script", "twitter-wjs"));
-</script>
-
-  </section>
-</div>
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/linux/">linux</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nginx/">nginx</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/">php</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/privately/">privately</a></li></ul>
+    </div>
+  </div>
 
 
   
-</main>
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nginx/">nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php/">php</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/privately/">privately</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a></li></ul>
+    </div>
+  </div>
 
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/nginx/" style="font-size: 20px;">nginx</a> <a href="/tags/php/" style="font-size: 17.5px;">php</a> <a href="/tags/privately/" style="font-size: 15px;">privately</a> <a href="/tags/数据库/" style="font-size: 12.5px;">数据库</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2019/04/04/常用书籍、资料、手册/">常用书籍、资料、手册</a>
+          </li>
+        
+          <li>
+            <a href="/2018/10/20/常用/">常用 [置顶]</a>
+          </li>
+        
+          <li>
+            <a href="/2018/10/19/课程链接/">课程链接</a>
+          </li>
+        
+          <li>
+            <a href="/2018/08/07/10-nginx/">(10)使用动态模块来提升运维效率</a>
+          </li>
+        
+          <li>
+            <a href="/2018/08/07/13-nginx/">(13)正则、如何找server指令块</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 Jiwei<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
 <script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"live2d-widget-model-wanko    //妹子有很多个，叫名字他才出来"},"display":{"position":"right   //位置","width":"150    //妹子宽度","height":"300    //妹子高度"},"mobile":{"show":true},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
 </html>
