@@ -5,20 +5,18 @@
   
 
   
-  <title>stdClass空对象的使用 | A type of habit</title>
+  <title>Tag: php | A type of habit</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="PHP可以用 $object = new StdClass(); 创建一个没有成员方法和属性的空对象。很多时候会将一些参数配置项之类的信息放在数组中使用，但是数组操作起来并不是很方便，很多时候使用对象操作符-&amp;gt;xxx比数组操作符[‘xxx’]要方便不少。数组在程序的使用中应该是最方便的，然而数组的每次被引用（$a = $b），其实都是创建了一个副本，">
-<meta name="keywords" content="php">
-<meta property="og:type" content="article">
-<meta property="og:title" content="stdClass空对象的使用">
-<meta property="og:url" content="jiweii.com/2017/03/20/stdClass空对象的使用/index.html">
+  <meta name="description" content="private blog">
+<meta property="og:type" content="website">
+<meta property="og:title" content="A type of habit">
+<meta property="og:url" content="jiweii.com/tags/php/page/2/index.html">
 <meta property="og:site_name" content="A type of habit">
-<meta property="og:description" content="PHP可以用 $object = new StdClass(); 创建一个没有成员方法和属性的空对象。很多时候会将一些参数配置项之类的信息放在数组中使用，但是数组操作起来并不是很方便，很多时候使用对象操作符-&amp;gt;xxx比数组操作符[‘xxx’]要方便不少。数组在程序的使用中应该是最方便的，然而数组的每次被引用（$a = $b），其实都是创建了一个副本，">
+<meta property="og:description" content="private blog">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-04-16T02:19:24.615Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="stdClass空对象的使用">
-<meta name="twitter:description" content="PHP可以用 $object = new StdClass(); 创建一个没有成员方法和属性的空对象。很多时候会将一些参数配置项之类的信息放在数组中使用，但是数组操作起来并不是很方便，很多时候使用对象操作符-&amp;gt;xxx比数组操作符[‘xxx’]要方便不少。数组在程序的使用中应该是最方便的，然而数组的每次被引用（$a = $b），其实都是创建了一个副本，">
+<meta name="twitter:title" content="A type of habit">
+<meta name="twitter:description" content="private blog">
   
     <link rel="alternate" href="/atom.xml" title="A type of habit" type="application/atom+xml">
   
@@ -65,68 +63,45 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-stdClass空对象的使用" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/03/20/stdClass空对象的使用/" class="article-date">
-  <time datetime="2017-03-20T11:08:07.000Z" itemprop="datePublished">2017-03-20</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/php/">php</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
+        <section id="main">
   
-    <h1 class="article-title" itemprop="name">
-      stdClass空对象的使用
+  
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2017" class="archive-year">2017</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      <a href="/2017/01/07/php设计模式浅析-一/" class="archive-article-date">
+  <time datetime="2017-01-07T04:45:16.000Z" itemprop="datePublished">Jan 7</time>
+</a>
+      
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2017/01/07/php设计模式浅析-一/">php设计模式浅析(一)</a>
     </h1>
   
 
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>PHP可以用 $object = new StdClass(); 创建一个没有成员方法和属性的空对象。<br>很多时候会将一些参数配置项之类的信息放在数组中使用，但是数组操作起来并不是很方便，很多时候使用对象操作符-&gt;xxx比数组操作符[‘xxx’]要方便不少。<br>数组在程序的使用中应该是最方便的，然而数组的每次被引用（$a = $b），其实都是创建了一个副本，<a id="more"></a><br>而且，数组被unset后，还是占用了内存(听说)，对象在任何地方被调用，都是引用地址型的，所以相对消耗的资源会少一点。<br><figure class="highlight php"><table><tr><td class="code"><pre><span class="line">$user = <span class="keyword">new</span> stdClass();</span><br><span class="line">$user-&gt;name = <span class="string">'gouki'</span>;</span><br><span class="line">$myUser = $user;</span><br><span class="line">$myUser-&gt;name = <span class="string">'flypig'</span>;</span><br></pre></td></tr></table></figure></p>
-<p>PHP中没有Javascript里面 var object = {}; 这样的语法。<br>StdClass类没有任何成员方法，也没有任何成员属性，实例化以后就是一个空对象。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="jiweii.com/2017/03/20/stdClass空对象的使用/" data-id="cjuqg0o0p002bxkr308oxkkdh" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/php/">php</a></li></ul>
-
-    </footer>
+    </header>
   </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2017/03/20/trait详解/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          trait详解
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2017/02/18/百度面试题一百盏灯/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">百度面试题一百盏灯</div>
-    </a>
-  
-</nav>
-
-  
 </article>
+  
+  
+    </div></section>
+  
+
+
+  <nav id="page-nav">
+    
+    <a class="extend prev" rel="prev" href="/tags/php/">&laquo; Prev</a><a class="page-number" href="/tags/php/">1</a><span class="page-number current">2</span>
+  </nav>
 
 </section>
         
