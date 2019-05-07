@@ -7,18 +7,18 @@
   
   <title>(8)nginx Slab管理器 | A type of habit</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="slab管理器">
+  <meta name="description" content="slab管理器 &amp;lt;!--more--&amp;gt; nginx 不同的worker之间需要共享信息的时候，只能通过共享内存。共享内存会使用链表，红黑树这样的数据结构。但是每个红黑树上有很多节点，每个节点上都需要分配内存去存放。怎样把一整块共享内存切割成一小块给红黑树上面的每一个节点使用呢？ slab内存管理 {F8970} {F8972} 首先，会把共享内存分为很多页面，每个页面4k，会切成很多s">
 <meta name="keywords" content="nginx">
 <meta property="og:type" content="article">
 <meta property="og:title" content="(8)nginx Slab管理器">
 <meta property="og:url" content="jiweii.com/2018/08/07/8-nginx/index.html">
 <meta property="og:site_name" content="A type of habit">
-<meta property="og:description" content="slab管理器">
+<meta property="og:description" content="slab管理器 &amp;lt;!--more--&amp;gt; nginx 不同的worker之间需要共享信息的时候，只能通过共享内存。共享内存会使用链表，红黑树这样的数据结构。但是每个红黑树上有很多节点，每个节点上都需要分配内存去存放。怎样把一整块共享内存切割成一小块给红黑树上面的每一个节点使用呢？ slab内存管理 {F8970} {F8972} 首先，会把共享内存分为很多页面，每个页面4k，会切成很多s">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:updated_time" content="2019-04-04T08:30:25.541Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="(8)nginx Slab管理器">
-<meta name="twitter:description" content="slab管理器">
+<meta name="twitter:description" content="slab管理器 &amp;lt;!--more--&amp;gt; nginx 不同的worker之间需要共享信息的时候，只能通过共享内存。共享内存会使用链表，红黑树这样的数据结构。但是每个红黑树上有很多节点，每个节点上都需要分配内存去存放。怎样把一整块共享内存切割成一小块给红黑树上面的每一个节点使用呢？ slab内存管理 {F8970} {F8972} 首先，会把共享内存分为很多页面，每个页面4k，会切成很多s">
   
     <link rel="alternate" href="/atom.xml" title="A type of habit" type="application/atom+xml">
   
@@ -91,8 +91,9 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="slab管理器"><a href="#slab管理器" class="headerlink" title="slab管理器"></a>slab管理器</h1><a id="more"></a>
-<p>nginx 不同的worker之间需要共享信息的时候，只能通过共享内存。共享内存会使用链表，红黑树这样的数据结构。但是每个红黑树上有很多节点，每个节点上都需要分配内存去存放。怎样把一整块共享内存切割成一小块给红黑树上面的每一个节点使用呢？</p>
+        <h1>slab管理器</h1>
+<p>&lt;!--more--&gt;
+nginx 不同的worker之间需要共享信息的时候，只能通过共享内存。共享内存会使用链表，红黑树这样的数据结构。但是每个红黑树上有很多节点，每个节点上都需要分配内存去存放。怎样把一整块共享内存切割成一小块给红黑树上面的每一个节点使用呢？</p>
 <p>slab内存管理</p>
 <p>{F8970}</p>
 <p>{F8972}</p>
@@ -116,16 +117,22 @@
 <p>{F8982}</p>
 <p>{F8984}</p>
 <p>slab 内存分配了Bestfit思想，也是linux操作系统经常使用的内存分配方式。通常我们使用共享内存时都需要使用slab 分配给相应的内存给对象，再使用上层的数据结构维护这个对象。</p>
-<h2 id="留言问题"><a href="#留言问题" class="headerlink" title="留言问题"></a>留言问题</h2><ol>
-<li>我编译之后将代码写进conf文件，提示nginx: [emerg] unknown directive “slab_stat”，是不是还缺少什么东西。nginx -V 是否可以查看到slab是否已经编译进去，我发现nginx -V 没有显示slab模块。<br>2018-12-20<br> 作者回复<br>你是不是没有把编译生成的新版本nginx，替换到安装sbin目录下？</li>
+<h2>留言问题</h2>
+<ol>
+<li>我编译之后将代码写进conf文件，提示nginx: [emerg] unknown directive &quot;slab_stat&quot;，是不是还缺少什么东西。nginx -V 是否可以查看到slab是否已经编译进去，我发现nginx -V 没有显示slab模块。
+2018-12-20
+ 作者回复
+你是不是没有把编译生成的新版本nginx，替换到安装sbin目录下？</li>
 </ol>
-<p>2.我在使用 –add-module 新增slab模块的时，是不是要设置 –prefix 指定我之前安装的目录，然后再替换make编译后的 nginx二进制文件，才能使用新增模块呢？如果要替换nginx二进制文件，是不是都得全部重新编译一遍呢？</p>
-<p> 作者回复<br>prefix不建议变化，这样简单点。<br>要替换nginx文件，需要确保编译出的新nginx含有你需要的全部模块。</p>
+<p>2.我在使用 --add-module 新增slab模块的时，是不是要设置 --prefix 指定我之前安装的目录，然后再替换make编译后的 nginx二进制文件，才能使用新增模块呢？如果要替换nginx二进制文件，是不是都得全部重新编译一遍呢？</p>
+<p> 作者回复
+prefix不建议变化，这样简单点。
+要替换nginx文件，需要确保编译出的新nginx含有你需要的全部模块。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2018/08/07/8-nginx/" data-id="cjvdqa4kx001c78r36vzsco4y" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2018/08/07/8-nginx/" data-id="cjvdqd6vv001io4r347rmp4di" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li></ul>
@@ -136,19 +143,19 @@
     
 <nav id="article-nav">
   
-    <a href="/2018/08/07/7-nginx/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2018/08/07/公司php-fpm配置文件/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          (7)nginx 共享内存
+          php-fpm配置文件
         
       </div>
     </a>
   
   
-    <a href="/2018/08/07/9-nginx/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2017/09/08/Yaf框架自动加载/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">(9)nginx 哈希表、红黑树</div>
+      <div class="article-nav-title">Yaf框架类的自动加载</div>
     </a>
   
 </nav>

@@ -7,13 +7,13 @@
   
   <title>(19)access 阶段：ip限制、auth_basic 模块、auth_request模块、satisfy指令 | A type of habit</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="57 | access阶段：对ip做限制的access模块">
+  <meta name="description" content="57 | access阶段：对ip做限制的access模块 &amp;lt;!--more--&amp;gt;  这个模块可以控制，哪些ip可以控制哪些url或者不可以访问。access阶段就是用来控制请求是否可以继续向下访问。access模块是这一阶段的第一个模块。 ngx_http_access_module 介绍  默认是编译到nginx中的。进入access阶段前不生效，虽然deny了某些地址，对某些ip">
 <meta name="keywords" content="nginx">
 <meta property="og:type" content="article">
 <meta property="og:title" content="(19)access 阶段：ip限制、auth_basic 模块、auth_request模块、satisfy指令">
 <meta property="og:url" content="jiweii.com/2018/08/07/19-nginx/index.html">
 <meta property="og:site_name" content="A type of habit">
-<meta property="og:description" content="57 | access阶段：对ip做限制的access模块">
+<meta property="og:description" content="57 | access阶段：对ip做限制的access模块 &amp;lt;!--more--&amp;gt;  这个模块可以控制，哪些ip可以控制哪些url或者不可以访问。access阶段就是用来控制请求是否可以继续向下访问。access模块是这一阶段的第一个模块。 ngx_http_access_module 介绍  默认是编译到nginx中的。进入access阶段前不生效，虽然deny了某些地址，对某些ip">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/550939-20e71428a4a62d43.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/550939-51a2ace4bd06cc46.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
@@ -34,7 +34,7 @@
 <meta property="og:updated_time" content="2019-04-04T08:31:50.402Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="(19)access 阶段：ip限制、auth_basic 模块、auth_request模块、satisfy指令">
-<meta name="twitter:description" content="57 | access阶段：对ip做限制的access模块">
+<meta name="twitter:description" content="57 | access阶段：对ip做限制的access模块 &amp;lt;!--more--&amp;gt;  这个模块可以控制，哪些ip可以控制哪些url或者不可以访问。access阶段就是用来控制请求是否可以继续向下访问。access模块是这一阶段的第一个模块。 ngx_http_access_module 介绍  默认是编译到nginx中的。进入access阶段前不生效，虽然deny了某些地址，对某些ip">
 <meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/550939-20e71428a4a62d43.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
   
     <link rel="alternate" href="/atom.xml" title="A type of habit" type="application/atom+xml">
@@ -108,23 +108,37 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="57-access阶段：对ip做限制的access模块"><a href="#57-access阶段：对ip做限制的access模块" class="headerlink" title="57 | access阶段：对ip做限制的access模块"></a>57 | access阶段：对ip做限制的access模块</h1><a id="more"></a>
+        <h1>57 | access阶段：对ip做限制的access模块</h1>
+<p>&lt;!--more--&gt;</p>
 <p><img src="https://upload-images.jianshu.io/upload_images/550939-20e71428a4a62d43.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>这个模块可以控制，哪些ip可以控制哪些url或者不可以访问。access阶段就是用来控制请求是否可以继续向下访问。access模块是这一阶段的第一个模块。</p>
-<h2 id="ngx-http-access-module"><a href="#ngx-http-access-module" class="headerlink" title="ngx_http_access_module"></a>ngx_http_access_module</h2><h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p><img src="https://upload-images.jianshu.io/upload_images/550939-51a2ace4bd06cc46.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h2>ngx_http_access_module</h2>
+<h3>介绍</h3>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-51a2ace4bd06cc46.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>默认是编译到nginx中的。进入access阶段前不生效，虽然deny了某些地址，对某些ip做限制了。limit_conn、limit_req照样生效。</p>
-<h3 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h3><p><img src="https://upload-images.jianshu.io/upload_images/550939-19f0faa68b3adee7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h3>语法</h3>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-19f0faa68b3adee7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>location里面是顺序执行的。当满足了一条之后，剩余的不在执行了。</p>
-<h2 id="留言问题"><a href="#留言问题" class="headerlink" title="留言问题"></a>留言问题</h2><p>1.顺带这里想通了一件事，一般封ip用于内部吧，不用于对外。因为Nginx获取到的其实是用户的公网IP，而获取不到更细节那个用户的实际IP，所以一般对外不直接封IP，那样会误伤，因为那个局域网下其他用户也被限制了。</p>
-<p> 作者回复<br>实际情况中也要封IP的，比如针对爬虫时。</p>
+<h2>留言问题</h2>
+<p>1.顺带这里想通了一件事，一般封ip用于内部吧，不用于对外。因为Nginx获取到的其实是用户的公网IP，而获取不到更细节那个用户的实际IP，所以一般对外不直接封IP，那样会误伤，因为那个局域网下其他用户也被限制了。</p>
+<p> 作者回复
+实际情况中也要封IP的，比如针对爬虫时。</p>
 <p>2.前两节limi-conn模块和limit-req模块中，他们是用到了共享内存，但这作用范围是全部work进程什么含义呢？</p>
-<p> 作者回复<br>含义是：如果你限制一个客户端最多1个连接，但nginx上配了2个worker进程，那么即使该客户端发起2次连接分别落在两台worker进程上，也会被拒绝。</p>
-<p>3.这个内存（zone）设置的意义是什么？是代表本模块所开辟的内存空间吗？就是您举例说的那个碗的大小吗？<br>另外，您讲到会作用到所有work进程，这是什么意思呢？</p>
-<p> 作者回复<br>1、worker进程通常与cpu数量保持一致，所有worker进程即当前master生成的所有worker子进程。<br>2、nginx中常用的配置指令里，以zone结尾表示开辟的共享内存，可以同时被所有worker进程使用。</p>
-<h1 id="58-access阶段：对用户名密码做限制的auth-basic模块"><a href="#58-access阶段：对用户名密码做限制的auth-basic模块" class="headerlink" title="58 | access阶段：对用户名密码做限制的auth_basic模块"></a>58 | access阶段：对用户名密码做限制的auth_basic模块</h1><p>校验用户名密码是否匹配，来决定是否拒绝请求访问。</p>
-<h2 id="HTTP-Basic-Authentication"><a href="#HTTP-Basic-Authentication" class="headerlink" title="HTTP Basic Authentication"></a>HTTP Basic Authentication</h2><p><img src="https://upload-images.jianshu.io/upload_images/550939-8f5d06f1f14fbbee.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<h3 id="模块基本流程"><a href="#模块基本流程" class="headerlink" title="模块基本流程"></a>模块基本流程</h3><p>比如我们访问一个url（/） ，nginx首先返回一个401，这个401不会在客户端显示，因为我们注明了<code>WWW-Authenticate: Basic</code>，使用了这样的协议。浏览器就会弹出一个框让我们输入用户名密码。然后浏览器就会以明文的方式发送给nginx。这个协议本身不保证安全性。当然我们使用了https加密就没问题了。</p>
-<h3 id="auth-basic-模块的指令"><a href="#auth-basic-模块的指令" class="headerlink" title="auth_basic 模块的指令"></a>auth_basic 模块的指令</h3><p><img src="https://upload-images.jianshu.io/upload_images/550939-1e6fbb3305783e7c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p> 作者回复
+含义是：如果你限制一个客户端最多1个连接，但nginx上配了2个worker进程，那么即使该客户端发起2次连接分别落在两台worker进程上，也会被拒绝。</p>
+<p>3.这个内存（zone）设置的意义是什么？是代表本模块所开辟的内存空间吗？就是您举例说的那个碗的大小吗？
+另外，您讲到会作用到所有work进程，这是什么意思呢？</p>
+<p> 作者回复
+1、worker进程通常与cpu数量保持一致，所有worker进程即当前master生成的所有worker子进程。
+2、nginx中常用的配置指令里，以zone结尾表示开辟的共享内存，可以同时被所有worker进程使用。</p>
+<h1>58 | access阶段：对用户名密码做限制的auth_basic模块</h1>
+<p>校验用户名密码是否匹配，来决定是否拒绝请求访问。</p>
+<h2>HTTP Basic Authentication</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-8f5d06f1f14fbbee.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h3>模块基本流程</h3>
+<p>比如我们访问一个url（/） ，nginx首先返回一个401，这个401不会在客户端显示，因为我们注明了<code>WWW-Authenticate: Basic</code>，使用了这样的协议。浏览器就会弹出一个框让我们输入用户名密码。然后浏览器就会以明文的方式发送给nginx。这个协议本身不保证安全性。当然我们使用了https加密就没问题了。</p>
+<h3>auth_basic 模块的指令</h3>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-1e6fbb3305783e7c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>怎么生成刚刚那种file（auth_basic_user_file） 的文件格式呢？</p>
 <p><img src="https://upload-images.jianshu.io/upload_images/550939-1fe3388a3fd12a04.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>可以通过apache里面的工具包httpd-tools（yum安装即可）。大概生成后的文件的格式看左半边图。</p>
@@ -134,13 +148,16 @@
 <p><img src="https://upload-images.jianshu.io/upload_images/550939-00fdaf2fa0575e6b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p><img src="https://upload-images.jianshu.io/upload_images/550939-59b3189c26e6c43f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>当我们提供一些非常简单的页面服务时比如说goaccess界面，想对它做一些安全保护，使用auth_basic是非常快捷的办法。</p>
-<h1 id="59-access阶段：使用第三方做权限控制的auth-request模块"><a href="#59-access阶段：使用第三方做权限控制的auth-request模块" class="headerlink" title="59 | access阶段：使用第三方做权限控制的auth_request模块"></a>59 | access阶段：使用第三方做权限控制的auth_request模块</h1><p>无论我们通过access模块限制ip，或者使用auth_basic模块限制用户名密码，这些都是非常简单的用户验证方式。在我们的生产环境中，我们很有可能有一个动态的web服务器或者相应的一些应用服务器，它们提供更复杂的用户名权限验证。这个时候可通过访问nginx资源时，把这个请求传递给应用服务器，根据应用服务器返回的结果再判断这个请求资源能否继续执行。auth_request模块就可以完成这样的功能。</p>
-<h2 id="统一的用户权限验证系统"><a href="#统一的用户权限验证系统" class="headerlink" title="统一的用户权限验证系统"></a>统一的用户权限验证系统</h2><p><img src="https://upload-images.jianshu.io/upload_images/550939-43343aec5620f593.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h1>59 | access阶段：使用第三方做权限控制的auth_request模块</h1>
+<p>无论我们通过access模块限制ip，或者使用auth_basic模块限制用户名密码，这些都是非常简单的用户验证方式。在我们的生产环境中，我们很有可能有一个动态的web服务器或者相应的一些应用服务器，它们提供更复杂的用户名权限验证。这个时候可通过访问nginx资源时，把这个请求传递给应用服务器，根据应用服务器返回的结果再判断这个请求资源能否继续执行。auth_request模块就可以完成这样的功能。</p>
+<h2>统一的用户权限验证系统</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-43343aec5620f593.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>这个模块默认不编译进去nginx。</p>
 <p>生成子请求，子请求的内容与请求的内容是相同的。然后通过反向代理把子请求传递给上游服务，根据上游服务返回的响应再决定是否处理当前这个请求。</p>
 <p>auth_request指令，默认是关闭的，如果加上uri，默认会生成一个子请求。这个子请求会访问这个uri。根据这个uri返回的结果决定这个请求是否继续向下执行。</p>
 <p>auth_request_set指令，方便我们进一步处理，执行完之后可以设置新的变量。变量的值value还可以含有一些变量。比如说根据上游返回的upstream相关变量，添加到新的变量中（$variable）。</p>
-<h2 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h2><p><img src="https://upload-images.jianshu.io/upload_images/550939-fc5a4f64eac7d8e1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h2>例子</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-fc5a4f64eac7d8e1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>proxy_pass_request_body off，这里没传递body，因为没有必要传。conten-lenght自然为空（没有请求body）。</p>
 <p>如果请求成功，会访问，html下面的index.html。如果被8090机器拒绝了呢？会返回8090这台机器返回的错误码。</p>
 <p>来看下8090的配置</p>
@@ -152,27 +169,44 @@
 <p><img src="https://upload-images.jianshu.io/upload_images/550939-c1eca8eabe8936a6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>做这个实验的时候别忘了关闭浏览器缓存。</p>
 <p>这个模块对于我们拥有一个统一的鉴权系统是非常有用的</p>
-<h2 id="留言问题："><a href="#留言问题：" class="headerlink" title="留言问题："></a>留言问题：</h2><p>1.auth_request 模块是可以传参数的吧 请求后端的登录接口</p>
-<p> 作者回复<br>可以</p>
-<h1 id="60-access阶段的satisfy指令"><a href="#60-access阶段的satisfy指令" class="headerlink" title="60 | access阶段的satisfy指令"></a>60 | access阶段的satisfy指令</h1><p>前面我们提到了access阶段的三个http模块，是不是说任何一个模块拒绝了用户的请求，用户的请求就得不到执行了呢？并不是。是不是这三个模块要严格的按照顺序执行呢？也不是。这是因为nginx的http框架中提供了一个satisfy这样一个指令。这个指令允许我们改变了模块的执行顺序。</p>
-<h2 id="satisfy指令"><a href="#satisfy指令" class="headerlink" title="satisfy指令"></a>satisfy指令</h2><p><img src="https://upload-images.jianshu.io/upload_images/550939-318d616d6a47884d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h2>留言问题：</h2>
+<p>1.auth_request 模块是可以传参数的吧 请求后端的登录接口</p>
+<p> 作者回复
+可以</p>
+<h1>60 | access阶段的satisfy指令</h1>
+<p>前面我们提到了access阶段的三个http模块，是不是说任何一个模块拒绝了用户的请求，用户的请求就得不到执行了呢？并不是。是不是这三个模块要严格的按照顺序执行呢？也不是。这是因为nginx的http框架中提供了一个satisfy这样一个指令。这个指令允许我们改变了模块的执行顺序。</p>
+<h2>satisfy指令</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-318d616d6a47884d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>all或者any是什么意思呢？我们access阶段中有很多模块。satisfy all就是说access、auth_basic、auth_request这三个模块必须放行这个请求。这个请求才能向下执行。任何一个模块拒绝了这个请求，我们都将返回400或500系列的错误给用户。如果是 any呢？虽然我们的执行顺序还是ccess、auth_basic、auth_request，但是只要有任意一个模块它同一这个请求放行了。不管之前的模块拒绝还是之后的模块拒绝，没有关系，我们仍然可以继续执行这个请求。</p>
 <p>看下流程图，执行一个access模块，可能会给我们返回三个结果：允许放行、忽略、请求被拒绝。</p>
 <p>允许放行分支：判断satisfy的开关，如果配置的all，表示必须所有的access模块都同意放行这个请求才可以（所以继续执行下一个模块）。如果是any就不用考虑后面的access模块是否同意了，直接跳到接下来的postaccess阶段执行就可以了。</p>
 <p>忽略分支：我们直接跳到下一个access模块。</p>
 <p>请求被拒绝分支：同样判断satisfy开关，如果配置的是all，直接拒绝请求，不用继续执行了，如果是any，虽然当前这个模块拒绝了，也许下一个模块它就会同意放行，所以继续执行access模块。</p>
-<h2 id="几个问题"><a href="#几个问题" class="headerlink" title="几个问题"></a>几个问题</h2><p><img src="https://upload-images.jianshu.io/upload_images/550939-9b1169ef77ec2b21.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>第一个：如果return 指令跟access阶段的指令在一起，那么access阶段还会生效吗？<br>根据我们刚刚的介绍肯定不会生效。因为return指令，它的生效指令在server_rewrite和rewrite阶段，它们都领先于access阶段。这种配置return指令非常常见，我们配置了return也许放在access阶段前面，也许放在后面。access阶段的指令放在return指令前面access阶段也没有机会执行。</p>
+<h2>几个问题</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-9b1169ef77ec2b21.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>第一个：如果return 指令跟access阶段的指令在一起，那么access阶段还会生效吗？
+根据我们刚刚的介绍肯定不会生效。因为return指令，它的生效指令在server_rewrite和rewrite阶段，它们都领先于access阶段。这种配置return指令非常常见，我们配置了return也许放在access阶段前面，也许放在后面。access阶段的指令放在return指令前面access阶段也没有机会执行。</p>
 <p>第二个：肯定有影响，比如我们配置了satisfy all，虽然auth_basic是允许的，我们也许没有机会输入用户名密码，因为可能access就拒绝了。</p>
 <p>第三个：是可以的。虽然deny all了。但是我们配置的是satisfy any，auth_basic 里面只要输入对了密码，仍然是可以访问的。</p>
 <p>第四个：如果把deny all放到 satisfy any之前，可不可以访问到文件呢？可以的。因为没有顺序要求。模块是有执行顺序的，但是配置有没有顺序无关紧要。</p>
 <p>第五个：没有机会输入，因为我们配置的是satisfy any。也就是任意一个模块通过就彻底放行了。另外，allow all 是access模块的，它先于auth_basic 模块执行。</p>
 <p>satisfy指令，对于我们控制access的行为很有帮助，但也会引起我们很多困惑。熟悉这个指令对我们控制请求的访问权限很有帮助</p>
-<h2 id="留言问题-1"><a href="#留言问题-1" class="headerlink" title="留言问题"></a>留言问题</h2><p>1.感觉最近这些好少用的。不知道使用场景（见识少-.-!）</p>
-<p> 作者回复<br>如果用了多个http模块做access访问控制的话，并且需要做“与”以及“或”这种逻辑操作时，才用得上的：-）</p>
-<p>2.请问如何根据url参数中的key做限流呢?<br>例如，对于url <a href="http://api.abc.com?key=1234-sdwe-1222-ddw2" target="_blank" rel="noopener">http://api.abc.com?key=1234-sdwe-1222-ddw2</a><br>根据参数key限制QPS。<br>如果是集群的情况应该怎么做呢？</p>
-<p> 作者回复<br>需要结合两节课一起看：<br>1、第56节课中，limit_req_zone key中可以把key定义为参数的值。<br>2、第73课介绍的arg_key变量，可以取出url参数值，http_key变量，可以取出request中header的值。<br>3、如果是集群，需要编程开发，开源版nginx不支持。可以用openresty，并做lua语言的开发，成本较小。<br>4.authrequest 是子请求的方式，我的理解是不能满足cas认证的方式，是不是只能通过第三方模块来做了</p>
-<p> 作者回复<br>因为生产环境中认证这个流程很复杂，对密码学、数据库、业务特点要求多，特别是当今认证还涉及到各种生物识别技术，让nginx来做是不合适的，所以authrequest的应用场景就是利用了nginx的高效，以及通常是由专业的动态应用服务器做认证的。</p>
+<h2>留言问题</h2>
+<p>1.感觉最近这些好少用的。不知道使用场景（见识少-.-!）</p>
+<p> 作者回复
+如果用了多个http模块做access访问控制的话，并且需要做“与”以及“或”这种逻辑操作时，才用得上的：-）</p>
+<p>2.请问如何根据url参数中的key做限流呢?
+例如，对于url http://api.abc.com?key=1234-sdwe-1222-ddw2
+根据参数key限制QPS。
+如果是集群的情况应该怎么做呢？</p>
+<p> 作者回复
+需要结合两节课一起看：
+1、第56节课中，limit_req_zone key中可以把key定义为参数的值。
+2、第73课介绍的arg_key变量，可以取出url参数值，http_key变量，可以取出request中header的值。
+3、如果是集群，需要编程开发，开源版nginx不支持。可以用openresty，并做lua语言的开发，成本较小。
+4.authrequest 是子请求的方式，我的理解是不能满足cas认证的方式，是不是只能通过第三方模块来做了</p>
+<p> 作者回复
+因为生产环境中认证这个流程很复杂，对密码学、数据库、业务特点要求多，特别是当今认证还涉及到各种生物识别技术，让nginx来做是不合适的，所以authrequest的应用场景就是利用了nginx的高效，以及通常是由专业的动态应用服务器做认证的。</p>
 <p>5.相当于 或 且 的权限验证</p>
 <p> 作者回复</p>
 <p>对</p>
@@ -180,7 +214,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2018/08/07/19-nginx/" data-id="cjvdqa4kf000r78r3bdnq7s90" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2018/08/07/19-nginx/" data-id="cjvdqd6ve000xo4r3a8rbh3jk" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li></ul>
@@ -191,19 +225,19 @@
     
 <nav id="article-nav">
   
-    <a href="/2018/08/07/17-nginx/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2018/08/07/2-nginx/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          (17)find_config阶段
+          (2)静态资源服务器、缓存、HTTPS、Openresty+Lua
         
       </div>
     </a>
   
   
-    <a href="/2018/08/07/18-nginx/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2018/08/07/20-nginx/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">(18)preaccess阶段：连接限制limit_conn模块、请求限制limit_req模块</div>
+      <div class="article-nav-title">(20)precontent阶段：try_files模块</div>
     </a>
   
 </nav>

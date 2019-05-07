@@ -7,13 +7,13 @@
   
   <title>(11)冲突的配置指令以谁为准 | A type of habit</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="#43 | 冲突的配置指令以谁为准？">
+  <meta name="description" content="#43 | 冲突的配置指令以谁为准？ &amp;lt;!--more--&amp;gt; http配置指令的一个嵌套结构，很多http模块提供的指令很多时候它可以出现在的context（上下文）。可以在location中、server中、http中，甚至在if这样的配置块中。当一个指令出现在多个配置块中的时候，它们可能值是冲突的。到底以谁为准呢？或者说在有些配置块下，没有这条指令，但是在使用的过程中发现它生效了，">
 <meta name="keywords" content="nginx">
 <meta property="og:type" content="article">
 <meta property="og:title" content="(11)冲突的配置指令以谁为准">
 <meta property="og:url" content="jiweii.com/2018/08/07/11-nginx/index.html">
 <meta property="og:site_name" content="A type of habit">
-<meta property="og:description" content="#43 | 冲突的配置指令以谁为准？">
+<meta property="og:description" content="#43 | 冲突的配置指令以谁为准？ &amp;lt;!--more--&amp;gt; http配置指令的一个嵌套结构，很多http模块提供的指令很多时候它可以出现在的context（上下文）。可以在location中、server中、http中，甚至在if这样的配置块中。当一个指令出现在多个配置块中的时候，它们可能值是冲突的。到底以谁为准呢？或者说在有些配置块下，没有这条指令，但是在使用的过程中发现它生效了，">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/550939-65b944191c94d807.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/550939-d65883eb9a06ef54.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
@@ -28,7 +28,7 @@
 <meta property="og:updated_time" content="2019-04-04T08:30:44.648Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="(11)冲突的配置指令以谁为准">
-<meta name="twitter:description" content="#43 | 冲突的配置指令以谁为准？">
+<meta name="twitter:description" content="#43 | 冲突的配置指令以谁为准？ &amp;lt;!--more--&amp;gt; http配置指令的一个嵌套结构，很多http模块提供的指令很多时候它可以出现在的context（上下文）。可以在location中、server中、http中，甚至在if这样的配置块中。当一个指令出现在多个配置块中的时候，它们可能值是冲突的。到底以谁为准呢？或者说在有些配置块下，没有这条指令，但是在使用的过程中发现它生效了，">
 <meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/550939-65b944191c94d807.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
   
     <link rel="alternate" href="/atom.xml" title="A type of habit" type="application/atom+xml">
@@ -102,19 +102,27 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>#43 | 冲突的配置指令以谁为准？<br><a id="more"></a><br>http配置指令的一个嵌套结构，很多http模块提供的指令很多时候它可以出现在的context（上下文）。可以在location中、server中、http中，甚至在if这样的配置块中。当一个指令出现在多个配置块中的时候，它们可能值是冲突的。到底以谁为准呢？或者说在有些配置块下，没有这条指令，但是在使用的过程中发现它生效了，这是怎样的机制呢？还有很多第三方模块不是非常的遵循官方模块既定的一些规则。这个时候应该怎样判断配置指令时怎么生效或者说发生冲突以谁为准呢？</p>
-<h2 id="配置块典型的嵌套"><a href="#配置块典型的嵌套" class="headerlink" title="配置块典型的嵌套"></a>配置块典型的嵌套</h2><p><img src="https://upload-images.jianshu.io/upload_images/550939-65b944191c94d807.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+        <p>#43 | 冲突的配置指令以谁为准？
+&lt;!--more--&gt;
+http配置指令的一个嵌套结构，很多http模块提供的指令很多时候它可以出现在的context（上下文）。可以在location中、server中、http中，甚至在if这样的配置块中。当一个指令出现在多个配置块中的时候，它们可能值是冲突的。到底以谁为准呢？或者说在有些配置块下，没有这条指令，但是在使用的过程中发现它生效了，这是怎样的机制呢？还有很多第三方模块不是非常的遵循官方模块既定的一些规则。这个时候应该怎样判断配置指令时怎么生效或者说发生冲突以谁为准呢？</p>
+<h2>配置块典型的嵌套</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-65b944191c94d807.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>http、server、location这三个是非常核心的。这是http的框架来定义的。我们处理一个请求的时候，需要先按照请求中的指示的域名，比如host，找到相应的server块，再根据uri找到每一个location，根据location下面具体的指令来处理请求。在这么一个典型的配置块的配置中，我们会发现冲突或者奇怪的指令。</p>
-<h2 id="指令的Context"><a href="#指令的Context" class="headerlink" title="指令的Context"></a>指令的Context</h2><p><img src="https://upload-images.jianshu.io/upload_images/550939-d65883eb9a06ef54.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h2>指令的Context</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-d65883eb9a06ef54.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>图中的Context就是作用范围。如果把log_format 放到了server中，nginx检查配置文件语法失败，不会让我们启动。</p>
-<h2 id="指令的合并"><a href="#指令的合并" class="headerlink" title="指令的合并"></a>指令的合并</h2><p>值指令、动作类指令</p>
+<h2>指令的合并</h2>
+<p>值指令、动作类指令</p>
 <p><img src="https://upload-images.jianshu.io/upload_images/550939-9ca0f25fa461e9d9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>怎么判断一个指令到底是可以合并还是不可以合并呢？就是很简单，生效阶段。<br>server_rewrite与rewrite 阶段，只有http rewrite模块才会提供。content阶段一般是反向代理。这一部分（第三部分）的课程会介绍到5个content模块，这些content模块通常提供了一些方法只能是动作类指令的。当然还可以通过源码判断出来。相对来说动作类指令不是很多。</p>
-<h2 id="存储值的指令继承规则：向上覆盖"><a href="#存储值的指令继承规则：向上覆盖" class="headerlink" title="存储值的指令继承规则：向上覆盖"></a>存储值的指令继承规则：向上覆盖</h2><p><img src="https://upload-images.jianshu.io/upload_images/550939-e330c6a9d8ca1524.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>怎么判断一个指令到底是可以合并还是不可以合并呢？就是很简单，生效阶段。
+server_rewrite与rewrite 阶段，只有http rewrite模块才会提供。content阶段一般是反向代理。这一部分（第三部分）的课程会介绍到5个content模块，这些content模块通常提供了一些方法只能是动作类指令的。当然还可以通过源码判断出来。相对来说动作类指令不是很多。</p>
+<h2>存储值的指令继承规则：向上覆盖</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-e330c6a9d8ca1524.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>listen这个指令只能出现在server这个context中。alias指令可以出现在很多地方server中，http中。上图中只在location中出现了。当一个请求匹配上<code>/dlib</code>时，alias就产生作用了。</p>
 <p>需要我们考虑值合并的场景。比如图中定义了一个root指令,查找静态文件到<code>/home/geek/nginx/html</code>中查找,但是在<code>location /</code>匹配剩余的url时并没有定义root，但是它可以使用server中定义的root指令。这里就是<code>子配置不存在时，直接使用父配置块</code>。</p>
 <p>图中<code>location /test</code>里定义了一个root跟access_log。<code>子配置存在时，直接覆盖父配置块</code>。</p>
-<h2 id="HTTP模块合并配置的实现"><a href="#HTTP模块合并配置的实现" class="headerlink" title="HTTP模块合并配置的实现"></a>HTTP模块合并配置的实现</h2><p>所有nginx的官方模块或者openresty的一些nginx模块，它们都遵循上面的两个合并规则。但是有一些第三方模块没有遵循这个规则。如果相应的说明文档不是非常详细的话，就需要我们通过源码来判断。当它们的子指令出现冲突的时候，究竟以哪个为准。怎么通过源码来判断。抓住下面四个点：</p>
+<h2>HTTP模块合并配置的实现</h2>
+<p>所有nginx的官方模块或者openresty的一些nginx模块，它们都遵循上面的两个合并规则。但是有一些第三方模块没有遵循这个规则。如果相应的说明文档不是非常详细的话，就需要我们通过源码来判断。当它们的子指令出现冲突的时候，究竟以哪个为准。怎么通过源码来判断。抓住下面四个点：</p>
 <p><img src="https://upload-images.jianshu.io/upload_images/550939-fa5c6c58b48e399c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>大部分指令都是在location中生效的。</p>
 <p>当这个指令在server块生效的时候，会定义一个方法merge_srv_conf。这个指令即出现在http下又出现在server下，从http向server合并的时候会提供一个函数merge_srv_conf。如果是在location下生效那么就是merge_loc_conf。下面以http referer（用来做防盗链）为例。</p>
@@ -131,13 +139,15 @@
 <blockquote>
 <p>简单介绍了http模块指令的合并规则，为下面讲解每一个http模块的用法提供了基础的帮助。</p>
 </blockquote>
-<h2 id="课后留言"><a href="#课后留言" class="headerlink" title="课后留言"></a>课后留言</h2><p>1.不可以合并的指令发生冲突时是怎么处理的呢？课程中只讲了可以合并的指令行为</p>
-<p> 作者回复<br>合并中，父子冲突时，以子配置为准</p>
+<h2>课后留言</h2>
+<p>1.不可以合并的指令发生冲突时是怎么处理的呢？课程中只讲了可以合并的指令行为</p>
+<p> 作者回复
+合并中，父子冲突时，以子配置为准</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2018/08/07/11-nginx/" data-id="cjvdqa4jc000178r3rg56wkah" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2018/08/07/11-nginx/" data-id="cjvdqd6u90006o4r3rsffg8fg" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li></ul>
@@ -148,19 +158,19 @@
     
 <nav id="article-nav">
   
-    <a href="/2018/08/07/3-nginx/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2018/08/07/1-nginx/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          (3)信号、nginx事件、同步&amp;异步、阻塞&amp;非阻塞
+          (1)编译、配置、命令行
         
       </div>
     </a>
   
   
-    <a href="/2018/08/07/6-nginx/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2018/08/07/12-nginx/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">(6)nginx内存池</div>
+      <div class="article-nav-title">(12)listen指令、处理HTTP请求头流程</div>
     </a>
   
 </nav>

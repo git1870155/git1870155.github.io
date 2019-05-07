@@ -7,18 +7,18 @@
   
   <title>Yaf框架类的自动加载 | A type of habit</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Yaf框架分为全局类、本地类的自动加载">
+  <meta name="description" content="Yaf框架分为全局类、本地类的自动加载&amp;lt;!--more--&amp;gt; 全局类是所谓的公司或部门级别的现有类库，该类可以在多个项目中共同使用，而不只在当前的项目中可用。这些类的路径一般是通过在yaf.liabrary在php的配置文件php.ini中指定。 本地类指的是只应用于本项目的类，这些类所在的路径也可以通过在Yaf的配置文件中通过ap.liabrary指定。在Yaf中可以通过Yaf_Lo">
 <meta name="keywords" content="php">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Yaf框架类的自动加载">
 <meta property="og:url" content="jiweii.com/2017/09/08/Yaf框架自动加载/index.html">
 <meta property="og:site_name" content="A type of habit">
-<meta property="og:description" content="Yaf框架分为全局类、本地类的自动加载">
+<meta property="og:description" content="Yaf框架分为全局类、本地类的自动加载&amp;lt;!--more--&amp;gt; 全局类是所谓的公司或部门级别的现有类库，该类可以在多个项目中共同使用，而不只在当前的项目中可用。这些类的路径一般是通过在yaf.liabrary在php的配置文件php.ini中指定。 本地类指的是只应用于本项目的类，这些类所在的路径也可以通过在Yaf的配置文件中通过ap.liabrary指定。在Yaf中可以通过Yaf_Lo">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:updated_time" content="2019-04-11T06:59:08.395Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Yaf框架类的自动加载">
-<meta name="twitter:description" content="Yaf框架分为全局类、本地类的自动加载">
+<meta name="twitter:description" content="Yaf框架分为全局类、本地类的自动加载&amp;lt;!--more--&amp;gt; 全局类是所谓的公司或部门级别的现有类库，该类可以在多个项目中共同使用，而不只在当前的项目中可用。这些类的路径一般是通过在yaf.liabrary在php的配置文件php.ini中指定。 本地类指的是只应用于本项目的类，这些类所在的路径也可以通过在Yaf的配置文件中通过ap.liabrary指定。在Yaf中可以通过Yaf_Lo">
   
     <link rel="alternate" href="/atom.xml" title="A type of habit" type="application/atom+xml">
   
@@ -91,17 +91,26 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>Yaf框架分为全局类、本地类的自动加载<a id="more"></a><br>全局类是所谓的公司或部门级别的现有类库，该类可以在多个项目中共同使用，而不只在当前的项目中可用。这些类的路径一般是通过在yaf.liabrary在php的配置文件php.ini中指定。<br>本地类指的是只应用于本项目的类，这些类所在的路径也可以通过在Yaf的配置文件中通过ap.liabrary指定。在Yaf中可以通过Yaf_Loader::registerLocalNamespace()申明那些本地类的前缀，那么带有该前缀的类，需要在本地的类库中加载。<br>无论是全局类还是本地类，Yaf中使用PSR0规则进行加载的时候，类名中的”_”都会被转换成目录分隔符“/”。<br>根据所看过的博客，全局类和本地类的加载规则可总结如下：</p>
+        <p>Yaf框架分为全局类、本地类的自动加载&lt;!--more--&gt;
+全局类是所谓的公司或部门级别的现有类库，该类可以在多个项目中共同使用，而不只在当前的项目中可用。这些类的路径一般是通过在yaf.liabrary在php的配置文件php.ini中指定。
+本地类指的是只应用于本项目的类，这些类所在的路径也可以通过在Yaf的配置文件中通过ap.liabrary指定。在Yaf中可以通过Yaf_Loader::registerLocalNamespace()申明那些本地类的前缀，那么带有该前缀的类，需要在本地的类库中加载。
+无论是全局类还是本地类，Yaf中使用PSR0规则进行加载的时候，类名中的&quot;_&quot;都会被转换成目录分隔符“/”。
+根据所看过的博客，全局类和本地类的加载规则可总结如下：</p>
 <ul>
 <li>如果指定yaf.library和产品的application.ini中指定ap.library，那么无论是否在application.ini中指定了ap.library.namespace或者通过Yaf_Loader::registerLocalNamespace()注册本地的命名空间前缀，那么在程序中遇到未定义的类的时候，会自动到ap.directory.library中寻找对应的类。（ap.directory.library是Yaf必不可少的配置，该配置指定了项目的绝对路径地址）</li>
 <li>如果在产品的application.ini文件中指定了本地的ap.library，但是却没有通过ap.library.namespace或者Yaf_Loader::registerLocalNamespace()指定本地的命名空间，那么无论是都指定了yaf.library，都会去yaf.library中加载类；</li>
-<li>只有在指定了本地类的ap.library，指定了本地的命名空间且类名中包含有命名空间的前缀的时候，才回去本地的类库中加载对应的类；否则到yaf.library中指定的文件中加载对应的类。…..</li>
+<li>只有在指定了本地类的ap.library，指定了本地的命名空间且类名中包含有命名空间的前缀的时候，才回去本地的类库中加载对应的类；否则到yaf.library中指定的文件中加载对应的类。.....</li>
 </ul>
-<p>指定命名空间的方式为：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$loader = Yaf_Loader::getIgnstance();</span><br><span class="line">$loader-&gt;registerLocalNamespace(array(&quot;local&quot;));</span><br></pre></td></tr></table></figure></p>
+<p>指定命名空间的方式为：
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$loader = Yaf_Loader::getIgnstance();</span><br><span class="line">$loader-&gt;registerLocalNamespace(array(&quot;local&quot;));</span><br></pre></td></tr></table></figure></p>
 <p>或者在项目中的conf/application.ini中指定ap.library.namespace为local确定本地的命名空间。</p>
-<h3 id="下面以类名local-sublocal-test-php说明上面三种情况分别对应的加载规则。"><a href="#下面以类名local-sublocal-test-php说明上面三种情况分别对应的加载规则。" class="headerlink" title="下面以类名local_sublocal_test.php说明上面三种情况分别对应的加载规则。"></a>下面以类名local_sublocal_test.php说明上面三种情况分别对应的加载规则。</h3><p>这种情况下，ap.directory一般在application.ini指定为APP_PATH（APP_PATH在入口文件index.php中定义），此时的加载路径为APP_PATH/library/local/sublocal/test.php;<br>这种情况下加载路径一般是yaf.library+’/local/sublocal/test.php’;<br>这种情况下加载路径为ap.library+’/local/sublocal/test.php’;</p>
-<p><br></p>
-<h2 id="与MVC框架相关的类的自动加载"><a href="#与MVC框架相关的类的自动加载" class="headerlink" title="与MVC框架相关的类的自动加载"></a>与MVC框架相关的类的自动加载</h2><p>与MVC框架相关的类的的自动加载是通过使用特定的前缀或者后缀名确定类的加载路径的，通过类与其所在的文件的特定映射完成类的自动加载：类名=文件名+后缀。</p>
+<h3>下面以类名local_sublocal_test.php说明上面三种情况分别对应的加载规则。</h3>
+<p>这种情况下，ap.directory一般在application.ini指定为APP_PATH（APP_PATH在入口文件index.php中定义），此时的加载路径为APP_PATH/library/local/sublocal/test.php;
+这种情况下加载路径一般是yaf.library+'/local/sublocal/test.php';
+这种情况下加载路径为ap.library+'/local/sublocal/test.php';</p>
+<p>&lt;br&gt;</p>
+<h2>与MVC框架相关的类的自动加载</h2>
+<p>与MVC框架相关的类的的自动加载是通过使用特定的前缀或者后缀名确定类的加载路径的，通过类与其所在的文件的特定映射完成类的自动加载：类名=文件名+后缀。</p>
 <p>对于控制器 Controller 默认模块下为{项目路径}/controllers/, 否则为{项目路径}/modules/{模块名}/controllers。例如，IndexController，该类自动加载文件 {项目目录}/Controllers/Index.php。</p>
 <p>对于Model 加载路径为{项目目录}/models/， 类似比如UserModel则自动加载{项目目录}/models/User.php。</p>
 <p>对于和V相关的视图文件不属于本文的讨论范围。</p>
@@ -110,7 +119,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2017/09/08/Yaf框架自动加载/" data-id="cjvdqa4l8001t78r36srltpt4" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2017/09/08/Yaf框架自动加载/" data-id="cjvdqd6w3001ro4r3wxunrve6" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/php/">php</a></li></ul>
@@ -121,11 +130,11 @@
     
 <nav id="article-nav">
   
-    <a href="/2018/08/07/12-nginx/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2018/08/07/8-nginx/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          (12)listen指令、处理HTTP请求头流程
+          (8)nginx Slab管理器
         
       </div>
     </a>

@@ -7,13 +7,13 @@
   
   <title>(9)nginx 哈希表、红黑树 | A type of habit</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="39 | 哈希表的max_size与bucket_size如何配置">
+  <meta name="description" content="39 | 哈希表的max_size与bucket_size如何配置 &amp;lt;!--more--&amp;gt; nginx的容器是很多nginx高级功能的实现基础。即使不需要编写第三方模块、查看nginx源代码。但变更nginx配置文件达到最大化的性能，也需要了解nginx的容器是怎样使用的。 nginx 六个容器  数组 （和平常理解的数组是不同的，是多块连续内存，其中每一块连续内存汇中可以存放许多元素">
 <meta name="keywords" content="nginx">
 <meta property="og:type" content="article">
 <meta property="og:title" content="(9)nginx 哈希表、红黑树">
 <meta property="og:url" content="jiweii.com/2018/08/07/9-nginx/index.html">
 <meta property="og:site_name" content="A type of habit">
-<meta property="og:description" content="39 | 哈希表的max_size与bucket_size如何配置">
+<meta property="og:description" content="39 | 哈希表的max_size与bucket_size如何配置 &amp;lt;!--more--&amp;gt; nginx的容器是很多nginx高级功能的实现基础。即使不需要编写第三方模块、查看nginx源代码。但变更nginx配置文件达到最大化的性能，也需要了解nginx的容器是怎样使用的。 nginx 六个容器  数组 （和平常理解的数组是不同的，是多块连续内存，其中每一块连续内存汇中可以存放许多元素">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/550939-da9022b00176870b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/550939-3095c8111285b138.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
@@ -23,7 +23,7 @@
 <meta property="og:updated_time" content="2019-04-04T08:30:30.283Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="(9)nginx 哈希表、红黑树">
-<meta name="twitter:description" content="39 | 哈希表的max_size与bucket_size如何配置">
+<meta name="twitter:description" content="39 | 哈希表的max_size与bucket_size如何配置 &amp;lt;!--more--&amp;gt; nginx的容器是很多nginx高级功能的实现基础。即使不需要编写第三方模块、查看nginx源代码。但变更nginx配置文件达到最大化的性能，也需要了解nginx的容器是怎样使用的。 nginx 六个容器  数组 （和平常理解的数组是不同的，是多块连续内存，其中每一块连续内存汇中可以存放许多元素">
 <meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/550939-da9022b00176870b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
   
     <link rel="alternate" href="/atom.xml" title="A type of habit" type="application/atom+xml">
@@ -97,8 +97,9 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="39-哈希表的max-size与bucket-size如何配置"><a href="#39-哈希表的max-size与bucket-size如何配置" class="headerlink" title="39 | 哈希表的max_size与bucket_size如何配置"></a>39 | 哈希表的max_size与bucket_size如何配置</h1><a id="more"></a>
-<p>nginx的容器是很多nginx高级功能的实现基础。即使不需要编写第三方模块、查看nginx源代码。但变更nginx配置文件达到最大化的性能，也需要了解nginx的容器是怎样使用的。</p>
+        <h1>39 | 哈希表的max_size与bucket_size如何配置</h1>
+<p>&lt;!--more--&gt;
+nginx的容器是很多nginx高级功能的实现基础。即使不需要编写第三方模块、查看nginx源代码。但变更nginx配置文件达到最大化的性能，也需要了解nginx的容器是怎样使用的。</p>
 <p>nginx 六个容器</p>
 <ul>
 <li>数组 （和平常理解的数组是不同的，是多块连续内存，其中每一块连续内存汇中可以存放许多元素）</li>
@@ -117,20 +118,24 @@
 <p>哈希表中有一个bucket size ，在里面有一些默认值，这个默认值在nginx配置文档中说是cpu cache line 会对齐到这样一个值。有什么意义呢？影响了怎样配置bucket size。现在主流的cpu有L1、L2、L3缓存的，它在去主存的数据时，不是按照大家所想象的那样。按照所谓的64位，32位取。现在主流的cpu一次取主存去的字节数就是cpu cache line 。现在是64字节。</p>
 <p>哈希表为什么要向64字节对齐呢？这是因为，假设我们每个哈希表的bucket 是59字节，如果我们是紧密排在一起的，取第一个哈希表元素只需要访问一次，还多取了6个字节。但你去第二个元素的时候需要访问主存两次包括64字节中的最后6个字节，以及第二个单元的58个字节。为了避免这种取两次的问题。nginx在它的代码中自动的向上对齐了。所以在配置bucket_size 的时候需要注意两个问题。第一如果配置的bucket size 不是cpu cache line，而是配置了70字节，就会分配每个元素128字节。第二如果有可能的情况下，我们尽量不要超过64字节。以减少cpu访问每个hash表元素的次数。</p>
 <p>实际上还有很多第三方模块使用了hash表，使用hash表需要注意，它只为静态不变的内容服务。第二，hash表的bucket size 需要考虑cpu cache line的对齐问题。</p>
-<h2 id="课后问题"><a href="#课后问题" class="headerlink" title="课后问题"></a>课后问题</h2><ol>
+<h2>课后问题</h2>
+<ol>
 <li>两个问题</li>
 </ol>
 <ul>
 <li>1、这节课开头的hash表的图用的是书上7-10的图，图上写的是size个ngx_hash_elt_t结构体，我的理解是size个ngx_hash_elt_t结构体指针，然后每个指针指向ngx_hash_elt_t结构体数组，所以这幅图我有点困惑，还希望老师您解惑</li>
 <li>2、这节课最后举了个例子，说cacheline是64Byte，bucket size是59Byte，然后取第一个元素老师您讲的是多取了1个字节，这个地方不是多取了5个字节吗？为什么是1个字节，我有点不太理解</li>
 </ul>
-<p> 作者回复<br>*1、书中的图，是最终的存储结构，即，每个elt_t指针其实指向的是连续内存中的一个元素，所以，这里的buckets**不是语言上的指向，而是最终真实线性内存的指向。你可以再读读ngx_hash_init这个函数的实现。确实是比较难懂的。</p>
+<p> 作者回复
+<em>1、书中的图，是最终的存储结构，即，每个elt_t指针其实指向的是连续内存中的一个元素，所以，这里的buckets</em>*不是语言上的指向，而是最终真实线性内存的指向。你可以再读读ngx_hash_init这个函数的实现。确实是比较难懂的。</p>
 <ul>
 <li>2、我的口误，呵呵，意思就是第1个比cacheline少的话，总有一个会占有2个cacheline。</li>
 </ul>
-<p>2.在ngx_hash_t中，buckets是一个二重指针，所以我感觉这个关于书上7-10的ngx_hash_t的基本散列表的结构示意图有点疑问，buckets这个为什么不是先指向一个ngx_hash_elt_t<em>的指针数组，之后再由ngx_hash_elt_t</em>指向ngx_hash_elt_t结构，这个图片我个人感觉更类似于<a href="http://www.cnblogs.com/0x2D-0x22/p/4139805.html这个blog上画的图" target="_blank" rel="noopener">http://www.cnblogs.com/0x2D-0x22/p/4139805.html这个blog上画的图</a></p>
-<p> 作者回复<br>buckets就是指向的一个指针数组，数组每个成员就是ngx_hash_elt_t*成员。我看了下你给的页面上的图，两幅图意思完全一致啊。</p>
-<h1 id="40-Nginx中最常用的容器：红黑树"><a href="#40-Nginx中最常用的容器：红黑树" class="headerlink" title="40 | Nginx中最常用的容器：红黑树"></a>40 | Nginx中最常用的容器：红黑树</h1><p>nginx 多个worker之间做进程通讯时，进程在共享内存上使用红黑树来管理许多对象，实际上在nginx的内存中也大量使用红黑树。</p>
+<p>2.在ngx_hash_t中，buckets是一个二重指针，所以我感觉这个关于书上7-10的ngx_hash_t的基本散列表的结构示意图有点疑问，buckets这个为什么不是先指向一个ngx_hash_elt_t<em>的指针数组，之后再由ngx_hash_elt_t</em>指向ngx_hash_elt_t结构，这个图片我个人感觉更类似于http://www.cnblogs.com/0x2D-0x22/p/4139805.html这个blog上画的图</p>
+<p> 作者回复
+buckets就是指向的一个指针数组，数组每个成员就是ngx_hash_elt_t*成员。我看了下你给的页面上的图，两幅图意思完全一致啊。</p>
+<h1>40 | Nginx中最常用的容器：红黑树</h1>
+<p>nginx 多个worker之间做进程通讯时，进程在共享内存上使用红黑树来管理许多对象，实际上在nginx的内存中也大量使用红黑树。</p>
 <p>nginx第二个非常常用的容器</p>
 <p>红黑树</p>
 <p><img src="https://upload-images.jianshu.io/upload_images/550939-8c174d7e9ae8b5cd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
@@ -141,16 +146,19 @@
 <p>常用的一些模块或数据结构</p>
 <p><img src="https://upload-images.jianshu.io/upload_images/550939-ffd46c73fa9a2600.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>ngx_conf_module、ngx_event_timer_rbtree在本地内存里做了一个红黑树。</p>
-<h2 id="课后问题-1"><a href="#课后问题-1" class="headerlink" title="课后问题"></a>课后问题</h2><p>1.阿里云cdn到Nginx 访问提示504错误，The gateway did not receive a timely response from the upstream server or application.</p>
+<h2>课后问题</h2>
+<p>1.阿里云cdn到Nginx 访问提示504错误，The gateway did not receive a timely response from the upstream server or application.</p>
 <p>Powered by Tengine，可能原因有哪些？</p>
-<p> 作者回复<br>从上面的log来看，就是上游服务没有在超时范围内发回响应，要么网络出问题，要么上游服务出问题了。</p>
+<p> 作者回复
+从上面的log来看，就是上游服务没有在超时范围内发回响应，要么网络出问题，要么上游服务出问题了。</p>
 <p>2.nginx的 share_dirt 也是用的红黑树吗</p>
-<p> 作者回复<br>你是说openresty吗？是的</p>
+<p> 作者回复
+你是说openresty吗？是的</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2018/08/07/9-nginx/" data-id="cjvdqa4kz001f78r3ftlpm9o0" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2018/08/07/9-nginx/" data-id="cjvdqd6vx001lo4r3v75w0kw9" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li></ul>
@@ -161,11 +169,11 @@
     
 <nav id="article-nav">
   
-    <a href="/2018/08/07/8-nginx/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2018/08/07/10-nginx/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          (8)nginx Slab管理器
+          (10)使用动态模块来提升运维效率
         
       </div>
     </a>

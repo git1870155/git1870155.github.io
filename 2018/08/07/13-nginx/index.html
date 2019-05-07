@@ -7,13 +7,13 @@
   
   <title>(13)正则、如何找server指令块 | A type of habit</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="46 | Nginx中的正则表达式">
+  <meta name="description" content="46 | Nginx中的正则表达式 &amp;lt;!--more--&amp;gt; 当在nginx确定那个域名处理请求时，或者用location匹配哪个url的时候，往往我们使用正则表达式，正则表达式让匹配的功能更加强大。 正则表达式   如何验证你的正则表达式呢？如果放在nginx配置中验证，你需要重启nginx。所以推荐pcretest工具（下载源代码安装）验证。   注意：在nginx使用中不用加转义符">
 <meta name="keywords" content="nginx">
 <meta property="og:type" content="article">
 <meta property="og:title" content="(13)正则、如何找server指令块">
 <meta property="og:url" content="jiweii.com/2018/08/07/13-nginx/index.html">
 <meta property="og:site_name" content="A type of habit">
-<meta property="og:description" content="46 | Nginx中的正则表达式">
+<meta property="og:description" content="46 | Nginx中的正则表达式 &amp;lt;!--more--&amp;gt; 当在nginx确定那个域名处理请求时，或者用location匹配哪个url的时候，往往我们使用正则表达式，正则表达式让匹配的功能更加强大。 正则表达式   如何验证你的正则表达式呢？如果放在nginx配置中验证，你需要重启nginx。所以推荐pcretest工具（下载源代码安装）验证。   注意：在nginx使用中不用加转义符">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/550939-c0a291d6a32d9695.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/550939-783f752a6c69a468.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
@@ -27,7 +27,7 @@
 <meta property="og:updated_time" content="2019-04-04T08:31:02.585Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="(13)正则、如何找server指令块">
-<meta name="twitter:description" content="46 | Nginx中的正则表达式">
+<meta name="twitter:description" content="46 | Nginx中的正则表达式 &amp;lt;!--more--&amp;gt; 当在nginx确定那个域名处理请求时，或者用location匹配哪个url的时候，往往我们使用正则表达式，正则表达式让匹配的功能更加强大。 正则表达式   如何验证你的正则表达式呢？如果放在nginx配置中验证，你需要重启nginx。所以推荐pcretest工具（下载源代码安装）验证。   注意：在nginx使用中不用加转义符">
 <meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/550939-c0a291d6a32d9695.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
   
     <link rel="alternate" href="/atom.xml" title="A type of habit" type="application/atom+xml">
@@ -101,9 +101,11 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="46-Nginx中的正则表达式"><a href="#46-Nginx中的正则表达式" class="headerlink" title="46 | Nginx中的正则表达式"></a>46 | Nginx中的正则表达式</h1><a id="more"></a>
-<p>当在nginx确定那个域名处理请求时，或者用location匹配哪个url的时候，往往我们使用正则表达式，正则表达式让匹配的功能更加强大。</p>
-<h2 id="正则表达式"><a href="#正则表达式" class="headerlink" title="正则表达式"></a>正则表达式</h2><p><img src="https://upload-images.jianshu.io/upload_images/550939-c0a291d6a32d9695.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+        <h1>46 | Nginx中的正则表达式</h1>
+<p>&lt;!--more--&gt;
+当在nginx确定那个域名处理请求时，或者用location匹配哪个url的时候，往往我们使用正则表达式，正则表达式让匹配的功能更加强大。</p>
+<h2>正则表达式</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-c0a291d6a32d9695.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p><img src="https://upload-images.jianshu.io/upload_images/550939-783f752a6c69a468.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>如何验证你的正则表达式呢？如果放在nginx配置中验证，你需要重启nginx。所以推荐pcretest工具（下载源代码安装）验证。</p>
 <p><img src="https://upload-images.jianshu.io/upload_images/550939-6d7a587e4e456689.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
@@ -111,10 +113,14 @@
 <p>注意：在nginx使用中不用加转义符<code>\</code>，但是在pcretest要使用。</p>
 </blockquote>
 <p>掌握好的正则表达式的使用。可以在配置location、server name 或者rewrite的时候如虎添翼。</p>
-<h2 id="留言问题"><a href="#留言问题" class="headerlink" title="留言问题"></a>留言问题</h2><p>1.NGINX中的正则用的也是PCRE标准吗</p>
-<p> 作者回复<br>是的，configure中可以用–with-pcre=选项指定pcre版本。</p>
-<h1 id="47-如何找到处理请求的server指令块"><a href="#47-如何找到处理请求的server指令块" class="headerlink" title="47 | 如何找到处理请求的server指令块"></a>47 | 如何找到处理请求的server指令块</h1><p>在nginx http模块处理请求之前，首先确保它的指令被正确的解析出来了。为了处理请求到底使用哪个指令的值。因为指令的配置可以出现在http下，server下，location下。首先必须确保这个请求时被哪个server块处理。</p>
-<h2 id="server-name"><a href="#server-name" class="headerlink" title="server name"></a>server name</h2><p>server name 它可以保证在处理11阶段的http模块处理之前，先决定哪个server块指令被使用。</p>
+<h2>留言问题</h2>
+<p>1.NGINX中的正则用的也是PCRE标准吗</p>
+<p> 作者回复
+是的，configure中可以用--with-pcre=选项指定pcre版本。</p>
+<h1>47 | 如何找到处理请求的server指令块</h1>
+<p>在nginx http模块处理请求之前，首先确保它的指令被正确的解析出来了。为了处理请求到底使用哪个指令的值。因为指令的配置可以出现在http下，server下，location下。首先必须确保这个请求时被哪个server块处理。</p>
+<h2>server name</h2>
+<p>server name 它可以保证在处理11阶段的http模块处理之前，先决定哪个server块指令被使用。</p>
 <p>server name 后面可以跟三种域名</p>
 <p><img src="https://upload-images.jianshu.io/upload_images/550939-d9351dc8f15f03a9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>主域名概念。这个主域名有什么用呢？当我们跟多个域名的时候，前面就是主域名。有个控制主域名用法的配置<code>server_name_in_redirect</code>，默认值是off。可以出现在http,server,location。</p>
@@ -126,29 +132,41 @@
 <p>当server_name后面跟正则表达式的时候，这个正则表达式还可以为我们创建新的变量。还是用小括号()分组提取的方式。</p>
 <p><img src="https://upload-images.jianshu.io/upload_images/550939-a7379a59721804ea.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>$2 取上面第二个()。也可以使用命名变量的方式$domain。</p>
-<h2 id="server-匹配顺序"><a href="#server-匹配顺序" class="headerlink" title="server 匹配顺序"></a>server 匹配顺序</h2><p><img src="https://upload-images.jianshu.io/upload_images/550939-c17ef695d0db582f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h2>server 匹配顺序</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-c17ef695d0db582f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>上图1，2，3条跟顺序无关，第4条跟文件顺序有关。第5条，如果访问了没有指定的子域名的时候，将会default server处理，保证后面11个阶段各个http模块找到它在server配置块下一个指令的值。default server 有两种指定方式。如果我们没有指定的时候，我们按照顺序来，所有的server大括号块，第一个就是default server。当我们指定了 default。这个listen所属的server块 就将变成default server。</p>
 <p>##留言问题</p>
 <p>1.如果没有server_name指令，只有listen指令，是不是只检查端口就行了？不再检查host了</p>
-<p> 作者回复<br>如果所有server{}都没有server_name，那么唯一的就是default server，host匹配不上其他 server_name时，就会选用它</p>
+<p> 作者回复
+如果所有server{}都没有server_name，那么唯一的就是default server，host匹配不上其他 server_name时，就会选用它</p>
 <p>2.如果没有Host头部呢？是不是使用url中的域名做匹配？</p>
-<p> 作者回复<br>没有Host头部会报错。</p>
+<p> 作者回复
+没有Host头部会报错。</p>
 <p>3.server name是和请求中的Host头部做匹配吗？还是和url中的域名做匹配？</p>
-<p> 作者回复<br>与Host头部匹配</p>
+<p> 作者回复
+与Host头部匹配</p>
 <p>4.最近在配置nginx反向代理时被location后匹配规则和转发机制给绕晕了，希望您给解答一下</p>
-<p>location /test/ {<br>proxy_pass <a href="http://127.0.0.1" target="_blank" rel="noopener">http://127.0.0.1</a><br>}</p>
-<p>location /test/ {<br>proxy_pass <a href="http://127.0.0.1/" target="_blank" rel="noopener">http://127.0.0.1/</a><br>}</p>
+<p>location /test/ {
+proxy_pass http://127.0.0.1
+}</p>
+<p>location /test/ {
+proxy_pass http://127.0.0.1/
+}</p>
 <p>末尾带斜杠，对最后的代理地址会有直接的影响，这是为啥，没想明白</p>
-<p> 作者回复<br>当末尾有斜杠时,认为带url了，此时location对请求URL采用替换关系，把location后的url1替换为proxy_pass中的url2。<br>第4部分课程中会详细介绍。</p>
+<p> 作者回复
+当末尾有斜杠时,认为带url了，此时location对请求URL采用替换关系，把location后的url1替换为proxy_pass中的url2。
+第4部分课程中会详细介绍。</p>
 <p>5.系统内核不应该是和master交互，有master进程调用worker进程处理请求么</p>
-<p> 作者回复<br>不是哦，这样性能可以想见会非常差，环节太多！</p>
+<p> 作者回复
+不是哦，这样性能可以想见会非常差，环节太多！</p>
 <p>6.什么场景一下会使用server_name_in_redirect？ 如果server_name后面跟3个域名，设置为on时，结果是哪个呢？</p>
-<p> 作者回复<br>后面在谈到处理/结尾的url时，会深入谈这个指令。大概在说static模块提供的root/alias指令时，你关注下这一课。</p>
+<p> 作者回复
+后面在谈到处理/结尾的url时，会深入谈这个指令。大概在说static模块提供的root/alias指令时，你关注下这一课。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2018/08/07/13-nginx/" data-id="cjvdqa4jv000a78r3zcoisvsg" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2018/08/07/13-nginx/" data-id="cjvdqd6uh000ao4r30b36n3kc" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li></ul>

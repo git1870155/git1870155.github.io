@@ -7,18 +7,18 @@
   
   <title>(4)nginx模块 | A type of habit</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Nginx的模块究竟是什么？">
+  <meta name="description" content="Nginx的模块究竟是什么？ &amp;lt;!--more--&amp;gt; 1.了解Nginx 模块 {F8948} 有的模块编译进去就可以使用。有的模块只有配置了配置项才可以使用。 看源码的方式，看看每个配置项是怎样被提供的。 怎么确定模块确实被编译进去了呢？./configure 完成之后去 objs 目录，该目录下会生成一个ngx_modules.c。里面有个数组 ngx_modules包含了所有编译">
 <meta name="keywords" content="nginx">
 <meta property="og:type" content="article">
 <meta property="og:title" content="(4)nginx模块">
 <meta property="og:url" content="jiweii.com/2018/08/07/4-nginx/index.html">
 <meta property="og:site_name" content="A type of habit">
-<meta property="og:description" content="Nginx的模块究竟是什么？">
+<meta property="og:description" content="Nginx的模块究竟是什么？ &amp;lt;!--more--&amp;gt; 1.了解Nginx 模块 {F8948} 有的模块编译进去就可以使用。有的模块只有配置了配置项才可以使用。 看源码的方式，看看每个配置项是怎样被提供的。 怎么确定模块确实被编译进去了呢？./configure 完成之后去 objs 目录，该目录下会生成一个ngx_modules.c。里面有个数组 ngx_modules包含了所有编译">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:updated_time" content="2019-04-04T08:29:25.705Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="(4)nginx模块">
-<meta name="twitter:description" content="Nginx的模块究竟是什么？">
+<meta name="twitter:description" content="Nginx的模块究竟是什么？ &amp;lt;!--more--&amp;gt; 1.了解Nginx 模块 {F8948} 有的模块编译进去就可以使用。有的模块只有配置了配置项才可以使用。 看源码的方式，看看每个配置项是怎样被提供的。 怎么确定模块确实被编译进去了呢？./configure 完成之后去 objs 目录，该目录下会生成一个ngx_modules.c。里面有个数组 ngx_modules包含了所有编译">
   
     <link rel="alternate" href="/atom.xml" title="A type of habit" type="application/atom+xml">
   
@@ -91,22 +91,25 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="Nginx的模块究竟是什么？"><a href="#Nginx的模块究竟是什么？" class="headerlink" title="Nginx的模块究竟是什么？"></a>Nginx的模块究竟是什么？</h2><a id="more"></a>
-<p>1.了解Nginx 模块</p>
+        <h2>Nginx的模块究竟是什么？</h2>
+<p>&lt;!--more--&gt;
+1.了解Nginx 模块</p>
 <p>{F8948}</p>
 <p>有的模块编译进去就可以使用。有的模块只有配置了配置项才可以使用。</p>
 <p>看源码的方式，看看每个配置项是怎样被提供的。</p>
 <p>怎么确定模块确实被编译进去了呢？./configure 完成之后去 objs 目录，该目录下会生成一个ngx_modules.c。里面有个数组 <code>ngx_modules</code>包含了所有编译进nginx中的模块。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ngx_module_t *ngx_modules[] = &#123;</span><br><span class="line">    &amp;ngx_core_module,</span><br><span class="line">    &amp;ngx_errlog_module,</span><br><span class="line">    &amp;ngx_conf_module,</span><br><span class="line">    &amp;ngx_regex_module,</span><br><span class="line">    &amp;ngx_events_module,</span><br><span class="line">    ……</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ngx_module_t *ngx_modules[] = &#123;</span><br><span class="line">    &amp;ngx_core_module,</span><br><span class="line">    &amp;ngx_errlog_module,</span><br><span class="line">    &amp;ngx_conf_module,</span><br><span class="line">    &amp;ngx_regex_module,</span><br><span class="line">    &amp;ngx_events_module,</span><br><span class="line">    ……</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>以gzip为例，我们找下。发现是有的。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># cat ngx_modules.c |grep gzip</span><br><span class="line">extern ngx_module_t  ngx_http_gzip_filter_module;</span><br><span class="line">    &amp;ngx_http_gzip_filter_module,</span><br><span class="line">    &quot;ngx_http_gzip_filter_module&quot;</span><br></pre></td></tr></table></figure>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># cat ngx_modules.c |grep gzip</span><br><span class="line">extern ngx_module_t  ngx_http_gzip_filter_module;</span><br><span class="line">    &amp;ngx_http_gzip_filter_module,</span><br><span class="line">    &quot;ngx_http_gzip_filter_module&quot;</span><br></pre></td></tr></table></figure></p>
 <p>来看下gzip模块（<code>nginx-1.13.6/src/http/modules</code>）提供了哪些指令。<code>vim ngx_http_gzip_filter_module.c</code>。</p>
-<p>能看到有这样的结构体<code>ngx_command_t</code>。这是每个模块必包含的结构体。这个结构体是一个数组。数组中的每个成员都是它所支持的指令名。比如：<code>gzip</code>（ ngx_string(“gzip”)）、<code>gzip_buffers</code>。这个指令名后面携带的参数，这个参数什么类型（空间类还是时间类）。可不可以加相关的参数。等等。<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">static ngx_command_t  ngx_http_gzip_filter_commands[] = &#123;</span><br><span class="line"></span><br><span class="line">    &#123; ngx_string(&quot;gzip&quot;),</span><br><span class="line">      NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_HTTP_LIF_CONF</span><br><span class="line">                        |NGX_CONF_FLAG,</span><br><span class="line">      ngx_conf_set_flag_slot,</span><br><span class="line">      NGX_HTTP_LOC_CONF_OFFSET,</span><br><span class="line">      offsetof(ngx_http_gzip_conf_t, enable),</span><br><span class="line">      NULL &#125;,</span><br><span class="line"></span><br><span class="line">    &#123; ngx_string(&quot;gzip_buffers&quot;),</span><br><span class="line">      NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE2,</span><br><span class="line">      ngx_conf_set_bufs_slot,</span><br><span class="line">      NGX_HTTP_LOC_CONF_OFFSET,</span><br><span class="line">      offsetof(ngx_http_gzip_conf_t, bufs),</span><br><span class="line">      NULL &#125;,</span><br><span class="line">      ……</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>能看到有这样的结构体<code>ngx_command_t</code>。这是每个模块必包含的结构体。这个结构体是一个数组。数组中的每个成员都是它所支持的指令名。比如：<code>gzip</code>（ ngx_string(&quot;gzip&quot;)）、<code>gzip_buffers</code>。这个指令名后面携带的参数，这个参数什么类型（空间类还是时间类）。可不可以加相关的参数。等等。
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">static ngx_command_t  ngx_http_gzip_filter_commands[] = &#123;</span><br><span class="line"></span><br><span class="line">    &#123; ngx_string(&quot;gzip&quot;),</span><br><span class="line">      NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_HTTP_LIF_CONF</span><br><span class="line">                        |NGX_CONF_FLAG,</span><br><span class="line">      ngx_conf_set_flag_slot,</span><br><span class="line">      NGX_HTTP_LOC_CONF_OFFSET,</span><br><span class="line">      offsetof(ngx_http_gzip_conf_t, enable),</span><br><span class="line">      NULL &#125;,</span><br><span class="line"></span><br><span class="line">    &#123; ngx_string(&quot;gzip_buffers&quot;),</span><br><span class="line">      NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE2,</span><br><span class="line">      ngx_conf_set_bufs_slot,</span><br><span class="line">      NGX_HTTP_LOC_CONF_OFFSET,</span><br><span class="line">      offsetof(ngx_http_gzip_conf_t, bufs),</span><br><span class="line">      NULL &#125;,</span><br><span class="line">      ……</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>模块细分的ngx_core_module_t 、ngx_http_module_t、ngx_event_module_t、ngx_mail_conf_ctx_t 都必须遵循与ngx_modue_t同样的规则。</p>
 <p>模块的顺序非常重要。 如果两个模块冲突。先生效的模块会阻碍后生效的模块。</p>
 <p>nginx 模块首先要高内聚（相应独立的功能是在同一个代码中的）。它的抽象做的是非常好的（commands提供了配置）。启停回调方法在ngx_module_t下面的7个方法。）。如果你想做一些定制化的需求（比如：你想在集群刚启动的时候做一些什么样的事情）那就在回调方法中做。</p>
 <p>nginx模块拥有非常好的设计。从第一版本开始没发生过变化。理解nginx模块是理解nginx诸多特性的基础。</p>
-<h2 id="Nginx模块的分类"><a href="#Nginx模块的分类" class="headerlink" title="Nginx模块的分类"></a>Nginx模块的分类</h2><p>1.分类</p>
+<h2>Nginx模块的分类</h2>
+<p>1.分类</p>
 <p>{F8950}</p>
 <p>ngx_module_t中的type字段，定义了是哪个类型的模块。</p>
 <p>{F8952}</p>
@@ -116,21 +119,23 @@
 <p>每个module都有一个index来表示它的顺序。所以每个子类型模块中也有顺序的。每一个core肯定是排第一的，因为它定义了所有子类型模块共同的特性。</p>
 <p>2.了解http模块</p>
 <p>ngx_http_core_module 定义了许多特殊的规则，比如一个http请求进入nginx的时候，需要生成响应。为请求生成响应的模块叫做请求处理模块。把响应发送给浏览器的时候，如果对响应中的文件做特定处理（比如：发css文件，对css文件做zip压缩，如果是图片，我想裁剪或缩放，我可以用image filter）， 响应过滤模块专注于把响应做二次处理。upstream（顾名思义，上游）模块，当nginx做代理（正向或者反向），把请求传递给相关的服务处理的时候，这类模块都会有upstream处理的字样，专注在一个请求的内部访问上游的服务。</p>
-<ol>
+<ol start="3">
 <li>分析一下这些目录怎样对应到子类型模块中的。</li>
 </ol>
 <p>所有子类型的模块都在<code>nginx-1.13.6/src</code>下（有个目录名叫做core，这个只是nginx核心代码，不要理解位core 模块。）。我们拿http模块分析。</p>
-<p>在http文件夹还有一些框架代码，这类代码不算模块，是辅助于核心流程的，不用care。但每一类子模块中，都有一个核心模块，定义了http模块的工作方式（比如：ngx_http.c）。<br>ngx_http文件中，NGX_CORE_MODULE定义了所有的http模块。</p>
+<p>在http文件夹还有一些框架代码，这类代码不算模块，是辅助于核心流程的，不用care。但每一类子模块中，都有一个核心模块，定义了http模块的工作方式（比如：ngx_http.c）。
+ngx_http文件中，NGX_CORE_MODULE定义了所有的http模块。</p>
 <p>所有的框架代码，包括ngx_http_core_module也是放在http目录下，官方提供非框架类（也就是可有可无）放在了modules文件夹下。里面分三类，一类是处理请求生成响应，一类是响应过滤（关键字filter），还有一类是与上游模块发生交互的（带有upstream，都在做负载均衡等等相关的工作），其他模块都是在做生成响应的。</p>
 <p>4.理解模块分类的意义</p>
 <p>以后看到新的第三方模块，首先应该看属于哪一类的模块，这一类模块还有一些共通的特性可以帮助我们理解它。</p>
 <p>5.Nginx是不支持ftp协议的吧？</p>
-<p> 作者回复<br>nginx支持tcp协议，从这个角度上说是支持ftp协议的，因为ftp协议也是跑在tcp协议之上的。即，如果你有多台ftp服务，用nginx做反向代理是合适的。但如果你希望用nginx搭建ftp服务，目前我还没有了解到有这样的nginx模块。</p>
+<p> 作者回复
+nginx支持tcp协议，从这个角度上说是支持ftp协议的，因为ftp协议也是跑在tcp协议之上的。即，如果你有多台ftp服务，用nginx做反向代理是合适的。但如果你希望用nginx搭建ftp服务，目前我还没有了解到有这样的nginx模块。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2018/08/07/4-nginx/" data-id="cjvdqa4kq001378r3pkdnbfhd" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2018/08/07/4-nginx/" data-id="cjvdqd6vl0016o4r3es316mqm" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li></ul>
@@ -141,11 +146,11 @@
     
 <nav id="article-nav">
   
-    <a href="/2018/08/07/20-nginx/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2018/08/07/3-nginx/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          (20)precontent阶段：try_files模块
+          (3)信号、nginx事件、同步&amp;异步、阻塞&amp;非阻塞
         
       </div>
     </a>

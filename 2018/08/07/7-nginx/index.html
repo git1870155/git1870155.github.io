@@ -7,18 +7,18 @@
   
   <title>(7)nginx 共享内存 | A type of habit</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="所有worker进程协同工作的关键：共享内存">
+  <meta name="description" content="所有worker进程协同工作的关键：共享内存 &amp;lt;!--more--&amp;gt; 1.nginx 进程间的通讯方式 {F8964} nginx进程间通讯有两种，信号跟共享内存，如果要做数据的同步只能用共享内存。 共享内存是nginx 跨worker通讯最有效的手段。只要我们需要一段业务逻辑在多个worker中同时生效，比如说做集群的流控上，必须使用共享内存，而不是在每一个worker的内存上操作。">
 <meta name="keywords" content="nginx">
 <meta property="og:type" content="article">
 <meta property="og:title" content="(7)nginx 共享内存">
 <meta property="og:url" content="jiweii.com/2018/08/07/7-nginx/index.html">
 <meta property="og:site_name" content="A type of habit">
-<meta property="og:description" content="所有worker进程协同工作的关键：共享内存">
+<meta property="og:description" content="所有worker进程协同工作的关键：共享内存 &amp;lt;!--more--&amp;gt; 1.nginx 进程间的通讯方式 {F8964} nginx进程间通讯有两种，信号跟共享内存，如果要做数据的同步只能用共享内存。 共享内存是nginx 跨worker通讯最有效的手段。只要我们需要一段业务逻辑在多个worker中同时生效，比如说做集群的流控上，必须使用共享内存，而不是在每一个worker的内存上操作。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:updated_time" content="2019-04-04T08:29:49.501Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="(7)nginx 共享内存">
-<meta name="twitter:description" content="所有worker进程协同工作的关键：共享内存">
+<meta name="twitter:description" content="所有worker进程协同工作的关键：共享内存 &amp;lt;!--more--&amp;gt; 1.nginx 进程间的通讯方式 {F8964} nginx进程间通讯有两种，信号跟共享内存，如果要做数据的同步只能用共享内存。 共享内存是nginx 跨worker通讯最有效的手段。只要我们需要一段业务逻辑在多个worker中同时生效，比如说做集群的流控上，必须使用共享内存，而不是在每一个worker的内存上操作。">
   
     <link rel="alternate" href="/atom.xml" title="A type of habit" type="application/atom+xml">
   
@@ -91,8 +91,9 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="所有worker进程协同工作的关键：共享内存"><a href="#所有worker进程协同工作的关键：共享内存" class="headerlink" title="所有worker进程协同工作的关键：共享内存"></a>所有worker进程协同工作的关键：共享内存</h2><a id="more"></a>
-<p>1.nginx 进程间的通讯方式</p>
+        <h2>所有worker进程协同工作的关键：共享内存</h2>
+<p>&lt;!--more--&gt;
+1.nginx 进程间的通讯方式</p>
 <p>{F8964}</p>
 <p>nginx进程间通讯有两种，信号跟共享内存，如果要做数据的同步只能用共享内存。</p>
 <p>共享内存是nginx 跨worker通讯最有效的手段。只要我们需要一段业务逻辑在多个worker中同时生效，比如说做集群的流控上，必须使用共享内存，而不是在每一个worker的内存上操作。</p>
@@ -102,7 +103,7 @@
 <p>有了共享内存，会引入第二个问题。一个内存往往给许多对象使用的。如果在模块中手动的去编写分配，把这些内存给到不同的对象是非常繁琐的。于是使用slab内存管理器。</p>
 <p>3.哪些官方模块使用了共享内存</p>
 <p>{F8966}</p>
-<ol>
+<ol start="4">
 <li>主要使用这两种数据结构：</li>
 </ol>
 <p>rbtree</p>
@@ -115,15 +116,18 @@
 <p>代码中，我们同时使用了红黑树以及链表</p>
 <p>dogs（共享内存的名称，图中大小是10m） 使用红黑树保存每一个key value</p>
 <p>为什么我们需要链表呢？Lua是应用代码，很容易产生限制。当我们达到10M限制的时候呢？lua_shared_dict 采用LRU淘汰。长时间不用的节点优先被淘汰掉。lua_shared_dict 对内存的使用同时满足了红黑树跟链表。</p>
-<h2 id="留言问题"><a href="#留言问题" class="headerlink" title="留言问题"></a>留言问题</h2><p>1.共享内存使用的场景？什么时候使用，</p>
-<p> 作者回复<br>所有需要多worker进程协同配合的场景。例如upstream负载均衡算法，或者limit_conn、limit_req等。一般指令中有zone关键字都是共享内存。</p>
+<h2>留言问题</h2>
+<p>1.共享内存使用的场景？什么时候使用，</p>
+<p> 作者回复
+所有需要多worker进程协同配合的场景。例如upstream负载均衡算法，或者limit_conn、limit_req等。一般指令中有zone关键字都是共享内存。</p>
 <p>2.老师，对于共享变量dogs，我们在配置文件中对dogs进行插入、删除、值更新的话，需要考虑锁的问题吗？</p>
-<p> 作者回复<br>不需要，在操作这个变量时，lua模块已经对变量使用了自旋锁</p>
+<p> 作者回复
+不需要，在操作这个变量时，lua模块已经对变量使用了自旋锁</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2018/08/07/7-nginx/" data-id="cjvdqa4ku001978r33miuwfuy" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2018/08/07/7-nginx/" data-id="cjvdqd6vs001fo4r3glqqi9jq" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li></ul>
@@ -134,19 +138,19 @@
     
 <nav id="article-nav">
   
-    <a href="/2018/08/07/5-nginx/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2018/08/07/6-nginx/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          (5)nginx连接池
+          (6)nginx内存池
         
       </div>
     </a>
   
   
-    <a href="/2018/08/07/8-nginx/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2018/08/07/10-nginx/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">(8)nginx Slab管理器</div>
+      <div class="article-nav-title">(10)使用动态模块来提升运维效率</div>
     </a>
   
 </nav>

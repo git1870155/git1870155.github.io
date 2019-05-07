@@ -7,13 +7,13 @@
   
   <title>(20)precontent阶段：try_files模块 | A type of habit</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="61 | precontent阶段：按序访问资源的try_files模块">
+  <meta name="description" content="61 | precontent阶段：按序访问资源的try_files模块 &amp;lt;!--more--&amp;gt; 这个模块只提供一个try_files指令，这个指令对我们使用反向代理，非常有帮助。 try_files 指令  这个try_files 模块是默认编译到nginx模块。try_files 两种用法。  /first 里面配置try_files依次匹配。/second里面如果匹配不到就报40">
 <meta name="keywords" content="nginx">
 <meta property="og:type" content="article">
 <meta property="og:title" content="(20)precontent阶段：try_files模块">
 <meta property="og:url" content="jiweii.com/2018/08/07/20-nginx/index.html">
 <meta property="og:site_name" content="A type of habit">
-<meta property="og:description" content="61 | precontent阶段：按序访问资源的try_files模块">
+<meta property="og:description" content="61 | precontent阶段：按序访问资源的try_files模块 &amp;lt;!--more--&amp;gt; 这个模块只提供一个try_files指令，这个指令对我们使用反向代理，非常有帮助。 try_files 指令  这个try_files 模块是默认编译到nginx模块。try_files 两种用法。  /first 里面配置try_files依次匹配。/second里面如果匹配不到就报40">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/550939-8712f7a68138d505.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/550939-5a3c680892fff9b8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
@@ -23,7 +23,7 @@
 <meta property="og:updated_time" content="2019-04-04T08:32:06.346Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="(20)precontent阶段：try_files模块">
-<meta name="twitter:description" content="61 | precontent阶段：按序访问资源的try_files模块">
+<meta name="twitter:description" content="61 | precontent阶段：按序访问资源的try_files模块 &amp;lt;!--more--&amp;gt; 这个模块只提供一个try_files指令，这个指令对我们使用反向代理，非常有帮助。 try_files 指令  这个try_files 模块是默认编译到nginx模块。try_files 两种用法。  /first 里面配置try_files依次匹配。/second里面如果匹配不到就报40">
 <meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/550939-8712f7a68138d505.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
   
     <link rel="alternate" href="/atom.xml" title="A type of habit" type="application/atom+xml">
@@ -97,12 +97,15 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="61-precontent阶段：按序访问资源的try-files模块"><a href="#61-precontent阶段：按序访问资源的try-files模块" class="headerlink" title="61 | precontent阶段：按序访问资源的try_files模块"></a>61 | precontent阶段：按序访问资源的try_files模块</h1><a id="more"></a>
+        <h1>61 | precontent阶段：按序访问资源的try_files模块</h1>
+<p>&lt;!--more--&gt;</p>
 <p>这个模块只提供一个try_files指令，这个指令对我们使用反向代理，非常有帮助。</p>
-<h2 id="try-files-指令"><a href="#try-files-指令" class="headerlink" title="try_files 指令"></a>try_files 指令</h2><p><img src="https://upload-images.jianshu.io/upload_images/550939-8712f7a68138d505.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h2>try_files 指令</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-8712f7a68138d505.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>这个try_files 模块是默认编译到nginx模块。try_files 两种用法。</p>
 <p><img src="https://upload-images.jianshu.io/upload_images/550939-5a3c680892fff9b8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>/first 里面配置try_files依次匹配。/second里面如果匹配不到就报404。<br>我们经常在搭wordpress的时候，会用到try_files。try_ifles对反向代理场景非常有用。我们可以尝试在nginx上获取磁盘内容，如果没有整个文件，我们再反向代理到上游服务。</p>
+<p>/first 里面配置try_files依次匹配。/second里面如果匹配不到就报404。
+我们经常在搭wordpress的时候，会用到try_files。try_ifles对反向代理场景非常有用。我们可以尝试在nginx上获取磁盘内容，如果没有整个文件，我们再反向代理到上游服务。</p>
 <blockquote>
 <p>62 | 实时拷贝流量：precontent阶段的mirror模块</p>
 </blockquote>
@@ -111,7 +114,7 @@
 <p>每次请求到了nginx之后我们可以生成一个子请求，通过反向代理去访问我们的其他环境，子请求的返回值不做处理。因为我们只做镜像。</p>
 <p>只有两个指令 <code>mirror</code> 跟mirror_request_body</p>
 <p>1.mirror，把同步复制的请求，访问到另一个url，通常这个url会指向一个反向代理。</p>
-<ol>
+<ol start="2">
 <li>mirror_request_body 是否把请求中的body转发到上游服务中。</li>
 </ol>
 <p>一个例子</p>
@@ -119,15 +122,18 @@
 <p><img src="https://upload-images.jianshu.io/upload_images/550939-7c7023ded679de8b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>处理用户请求的服务</p>
 <p><img src="https://upload-images.jianshu.io/upload_images/550939-5b0aa01fc98c72e0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<h2 id="留言问题"><a href="#留言问题" class="headerlink" title="留言问题"></a>留言问题</h2><p>1.陶老师您好，mirror模块能否在拷贝前做规则匹配，如判定http头标识再执行拷贝</p>
-<p> 作者回复<br>可以，你可以参考我提出的11个阶段的流程：if是在rewrite阶段，而mirror是在precontent阶段。</p>
+<h2>留言问题</h2>
+<p>1.陶老师您好，mirror模块能否在拷贝前做规则匹配，如判定http头标识再执行拷贝</p>
+<p> 作者回复
+可以，你可以参考我提出的11个阶段的流程：if是在rewrite阶段，而mirror是在precontent阶段。</p>
 <p>2.tcpcopy 也可以做到这个效果 mirror跟tcpcopy区别在哪里</p>
-<p> 作者回复<br>区别很大，mirror基于nginx，所以分享nginx的所有功能，也就是这门课介绍的所有模块、指令你都可以配合到mirror里用。tcpcopy是四层的，没有那么多功能。</p>
+<p> 作者回复
+区别很大，mirror基于nginx，所以分享nginx的所有功能，也就是这门课介绍的所有模块、指令你都可以配合到mirror里用。tcpcopy是四层的，没有那么多功能。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2018/08/07/20-nginx/" data-id="cjvdqa4kn001078r3ldl73gl9" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2018/08/07/20-nginx/" data-id="cjvdqd6vg0010o4r3bpfakrxi" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li></ul>
@@ -138,19 +144,19 @@
     
 <nav id="article-nav">
   
-    <a href="/2018/08/07/2-nginx/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2018/08/07/19-nginx/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          (2)静态资源服务器、缓存、HTTPS、Openresty+Lua
+          (19)access 阶段：ip限制、auth_basic 模块、auth_request模块、satisfy指令
         
       </div>
     </a>
   
   
-    <a href="/2018/08/07/4-nginx/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2018/08/07/3-nginx/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">(4)nginx模块</div>
+      <div class="article-nav-title">(3)信号、nginx事件、同步&amp;异步、阻塞&amp;非阻塞</div>
     </a>
   
 </nav>

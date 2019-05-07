@@ -7,13 +7,13 @@
   
   <title>(16)rewrite阶段的rewrite模块：return指令、重新URL、if条件判断 | A type of habit</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="51 | rewrite阶段的rewrite模块：return指令">
+  <meta name="description" content="51 | rewrite阶段的rewrite模块：return指令 &amp;lt;!--more--&amp;gt;  http rewrite 模块提供的return 指令。return 指令在哪里生效呢?在find_config之前的rewrite阶段，以及find_config之后的那个rewrite阶段。return指令生效以后，其实所有其他阶段的http模块是没有机会执行的。nginx conf中的指">
 <meta name="keywords" content="nginx">
 <meta property="og:type" content="article">
 <meta property="og:title" content="(16)rewrite阶段的rewrite模块：return指令、重新URL、if条件判断">
 <meta property="og:url" content="jiweii.com/2018/08/07/16-nginx/index.html">
 <meta property="og:site_name" content="A type of habit">
-<meta property="og:description" content="51 | rewrite阶段的rewrite模块：return指令">
+<meta property="og:description" content="51 | rewrite阶段的rewrite模块：return指令 &amp;lt;!--more--&amp;gt;  http rewrite 模块提供的return 指令。return 指令在哪里生效呢?在find_config之前的rewrite阶段，以及find_config之后的那个rewrite阶段。return指令生效以后，其实所有其他阶段的http模块是没有机会执行的。nginx conf中的指">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/550939-abdffc016cfb19b5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/550939-c1940ad4f6d25f16.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
@@ -42,7 +42,7 @@
 <meta property="og:updated_time" content="2019-04-04T08:31:20.744Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="(16)rewrite阶段的rewrite模块：return指令、重新URL、if条件判断">
-<meta name="twitter:description" content="51 | rewrite阶段的rewrite模块：return指令">
+<meta name="twitter:description" content="51 | rewrite阶段的rewrite模块：return指令 &amp;lt;!--more--&amp;gt;  http rewrite 模块提供的return 指令。return 指令在哪里生效呢?在find_config之前的rewrite阶段，以及find_config之后的那个rewrite阶段。return指令生效以后，其实所有其他阶段的http模块是没有机会执行的。nginx conf中的指">
 <meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/550939-abdffc016cfb19b5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
   
     <link rel="alternate" href="/atom.xml" title="A type of habit" type="application/atom+xml">
@@ -116,14 +116,17 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="51-rewrite阶段的rewrite模块：return指令"><a href="#51-rewrite阶段的rewrite模块：return指令" class="headerlink" title="51 | rewrite阶段的rewrite模块：return指令"></a>51 | rewrite阶段的rewrite模块：return指令</h1><a id="more"></a>
-<p><img src="https://upload-images.jianshu.io/upload_images/550939-abdffc016cfb19b5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+        <h1>51 | rewrite阶段的rewrite模块：return指令</h1>
+<p>&lt;!--more--&gt;
+<img src="https://upload-images.jianshu.io/upload_images/550939-abdffc016cfb19b5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>http rewrite 模块提供的return 指令。return 指令在哪里生效呢?在find_config之前的rewrite阶段，以及find_config之后的那个rewrite阶段。return指令生效以后，其实所有其他阶段的http模块是没有机会执行的。nginx conf中的指令要注意到，不管下面配什么样的proxy pass都是得不到执行的。</p>
-<h2 id="return-语法"><a href="#return-语法" class="headerlink" title="return 语法"></a>return 语法</h2><p><img src="https://upload-images.jianshu.io/upload_images/550939-c1940ad4f6d25f16.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h2>return 语法</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-c1940ad4f6d25f16.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>302：我们最常使用的。告诉浏览器你应该怎样处理返回的location。本来访问网站A我们给了B，然后它访问B。下次再访问A还会给B。但是301就不一样了，会记录到缓存中，下次访问A，实际上直接访问的B。</p>
 <p>HTTP1.1中的303、307、308跟HTTP1.0中的区别在于是否允许改变请求方法。</p>
 <p>这些状态码中，大部分是返回给客户端的，浏览器可以收到这个Code，但是有一个code收不到，那就是444。立刻关闭连接，不在向用户返回内容。</p>
-<h2 id="error-page"><a href="#error-page" class="headerlink" title="error_page"></a>error_page</h2><p><img src="https://upload-images.jianshu.io/upload_images/550939-108c8c1f873348e3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h2>error_page</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-108c8c1f873348e3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>error page的用法： 收到某一个返回码的时候，可以重定向为另一个URL，也可以指定给用户返回不一样的内容。比如：收到404返回码，如果是默认的话是404，为了给用户体验好点，可能返回一个图片或者页面。这些页面提示比较友好。</p>
 <p><img src="https://upload-images.jianshu.io/upload_images/550939-734d1cb92de09f6d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>当我们出现了return的时候，error page的 404还会执行吗？当return这个指令同时出现在server块下跟location块下，还有合并的关系吗？之前介绍return 是动作类指令是没有合并关系的。</p>
@@ -133,9 +136,13 @@
 <p><img src="https://upload-images.jianshu.io/upload_images/550939-a3def86f77057ded.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>从刚介绍的11个阶段可以看出来，server阶段的return 先于location阶段的return执行，一定是返回405的。</p>
 <p><img src="https://upload-images.jianshu.io/upload_images/550939-1b439a7f85111ec0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<h2 id="课后留言"><a href="#课后留言" class="headerlink" title="课后留言"></a>课后留言</h2><p>1.由proxy_pass指定的后段服务器返回的404 500等状态会触发return和error_page的执行吗？你在示例中使用了root指令来说明</p>
-<p> 作者回复<br>不会触发return，可以应用在error_page上</p>
-<h1 id="52-rewrite阶段的rewrite模块：重写URL"><a href="#52-rewrite阶段的rewrite模块：重写URL" class="headerlink" title="52 | rewrite阶段的rewrite模块：重写URL"></a>52 | rewrite阶段的rewrite模块：重写URL</h1><h2 id="rewrite-指令"><a href="#rewrite-指令" class="headerlink" title="rewrite 指令"></a>rewrite 指令</h2><p><img src="https://upload-images.jianshu.io/upload_images/550939-922aacaf8dd8acbf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h2>课后留言</h2>
+<p>1.由proxy_pass指定的后段服务器返回的404 500等状态会触发return和error_page的执行吗？你在示例中使用了root指令来说明</p>
+<p> 作者回复
+不会触发return，可以应用在error_page上</p>
+<h1>52 | rewrite阶段的rewrite模块：重写URL</h1>
+<h2>rewrite 指令</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-922aacaf8dd8acbf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>什么是脚本指令呢？实际上rewrite模块提供的所有指令都是脚本指令。</p>
 <p><img src="https://upload-images.jianshu.io/upload_images/550939-1c275c27dcee3efb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>实际演练</p>
@@ -153,31 +160,39 @@
 <p><img src="https://upload-images.jianshu.io/upload_images/550939-2486573835c5e55f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>rewrite_log 默认是不开。如果打开之后。都会在指定的error log中出现。</p>
 <p><img src="https://upload-images.jianshu.io/upload_images/550939-cf2f7e88b0d0166a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<h2 id="留言问题"><a href="#留言问题" class="headerlink" title="留言问题"></a>留言问题</h2><p>1.按照你的操作步骤，可以生成notice_error.log文件，但rewrite执行生效了，但在log中看不到日志记录。请问为啥呢？</p>
-<p> 作者回复<br>1、rewrite_log确保打开；2、确保error.log的日志级别允许打印rewrite日志，比如设成info。</p>
+<h2>留言问题</h2>
+<p>1.按照你的操作步骤，可以生成notice_error.log文件，但rewrite执行生效了，但在log中看不到日志记录。请问为啥呢？</p>
+<p> 作者回复
+1、rewrite_log确保打开；2、确保error.log的日志级别允许打印rewrite日志，比如设成info。</p>
 <p>2.我访问静态资源时，优先访问本地资源，如果404 就访问到文件存储服务器，但是现在页面存在跨域的问题，能不能在nginx实现不跨域请求呢。</p>
-<p> 作者回复<br>try_files就可以哦，第1个参数配置本地资源路径，第2个参数用@内部重定向，到另一个proxy_pass反向代理中</p>
+<p> 作者回复
+try_files就可以哦，第1个参数配置本地资源路径，第2个参数用@内部重定向，到另一个proxy_pass反向代理中</p>
 <p>3.rewrite和proxy_pass的区别在哪里呢？有一些别的Http服务器(比如IIS)，就是利用rewrite实现反向代理的。不都是把请求写给另外一个地址吗？</p>
 <p> 作者回复</p>
 <ul>
 <li>1、关于重写URL。proxy_pass的重写URL能力非常弱，而且依赖location后的URL。rewrite可以重写任意URL。</li>
 <li>2、关于反向代理。rewrite没有反向代理功能。第4部分有关于反向代理流程和原理的介绍。</li>
 </ul>
-<h1 id="53-rewrite阶段的rewrite模块：条件判断"><a href="#53-rewrite阶段的rewrite模块：条件判断" class="headerlink" title="53 | rewrite阶段的rewrite模块：条件判断"></a>53 | rewrite阶段的rewrite模块：条件判断</h1><h2 id="if-指令"><a href="#if-指令" class="headerlink" title="if 指令"></a>if 指令</h2><p>这个指令使我们根据请求中的变量的值，判断变量的值是否满足某一个条件以后，再执行if块下面的配置指令，根据这些指令再调用相应的模块处理请求。</p>
+<h1>53 | rewrite阶段的rewrite模块：条件判断</h1>
+<h2>if 指令</h2>
+<p>这个指令使我们根据请求中的变量的值，判断变量的值是否满足某一个条件以后，再执行if块下面的配置指令，根据这些指令再调用相应的模块处理请求。</p>
 <p><img src="https://upload-images.jianshu.io/upload_images/550939-6e30db44d63785d8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>if也是脚本指令，所有脚本类指令遵循的规则，它也遵循。</p>
 <p><img src="https://upload-images.jianshu.io/upload_images/550939-3e509ece36bf466d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>示例</p>
 <p><img src="https://upload-images.jianshu.io/upload_images/550939-b397cb69eebbc965.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<h2 id="留言问题-1"><a href="#留言问题-1" class="headerlink" title="留言问题"></a>留言问题</h2><p>1.很期待老师讲解if的坑，我一直没太理解它的成因，只是简单记住在if里只有rewrite的模块指令是安全的</p>
-<p> 作者回复<br>嗯,第6部分我会拿个例子讲.其实你对照第三部分里所讲的11个阶段，也能分析出if指令如果与其他模块的值指令混用时，由于值指令所属模块在不同阶段，或者在过滤模块中，比如add_header，那么结果通常与我们理解的编程语言中的if就完全不同了</p>
+<h2>留言问题</h2>
+<p>1.很期待老师讲解if的坑，我一直没太理解它的成因，只是简单记住在if里只有rewrite的模块指令是安全的</p>
+<p> 作者回复
+嗯,第6部分我会拿个例子讲.其实你对照第三部分里所讲的11个阶段，也能分析出if指令如果与其他模块的值指令混用时，由于值指令所属模块在不同阶段，或者在过滤模块中，比如add_header，那么结果通常与我们理解的编程语言中的if就完全不同了</p>
 <p>2.老师为啥没有提”if is evil“</p>
-<p> 作者回复<br>这一节课应该提下的，谢谢提醒，准备放在第6部分讲源码时讲一下脚本式指令再提这个事。问题的出现，是因为nginx的分阶段执行以及脚本式指令统一在rewrite阶段执行的原因。我们常用的if {rewrite}和if {return}都是没问题的，这些都是rewrite阶段的脚本式指令。</p>
+<p> 作者回复
+这一节课应该提下的，谢谢提醒，准备放在第6部分讲源码时讲一下脚本式指令再提这个事。问题的出现，是因为nginx的分阶段执行以及脚本式指令统一在rewrite阶段执行的原因。我们常用的if {rewrite}和if {return}都是没问题的，这些都是rewrite阶段的脚本式指令。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2018/08/07/16-nginx/" data-id="cjvdqa4k9000l78r3wt0rmej8" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2018/08/07/16-nginx/" data-id="cjvdqd6v1000lo4r3iip77mnh" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li></ul>

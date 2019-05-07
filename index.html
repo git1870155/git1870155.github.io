@@ -100,7 +100,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2018/10/20/常用/" data-id="cjvdqa4lm002d78r32rpto9ag" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2018/10/20/常用/" data-id="cjvdqd6wr002lo4r3kte19njy" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/php/">php</a></li></ul>
@@ -138,16 +138,29 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="寻找最长不含有重复字符的子串长度"><a href="#寻找最长不含有重复字符的子串长度" class="headerlink" title="寻找最长不含有重复字符的子串长度"></a>寻找最长不含有重复字符的子串长度</h1>
-        
-          <p class="article-more-link">
-            <a href="/2019/05/05/面试题/#more">Read More</a>
-          </p>
-        
+        <h1>寻找最长不含有重复字符的子串长度</h1>
+<p>&lt;!--more--&gt;
+例：abcabcbdbc，最长不含重复字符的长度为3,abc、bca、cab、dbc等，如果abcabcdcbe，那就是4，abcd、dcbe</p>
+<h2>php写法</h2>
+<p><figure class="highlight php"><table><tr><td class="code"><pre><span class="line">$a = $str = <span class="string">'abcabcdbdc'</span>;</span><br><span class="line">$str=preg_split(<span class="string">'/(?&lt;!^)(?!$)/u'</span>,$str);<span class="comment">//中文字符识别</span></span><br><span class="line">$length=<span class="number">0</span>;<span class="comment">//长度</span></span><br><span class="line">$start=<span class="number">0</span>;<span class="comment">//分段的起始位置</span></span><br><span class="line">$arr=[];<span class="comment">//更新每个值得键</span></span><br><span class="line">$new_str = <span class="string">''</span>;</span><br><span class="line"><span class="keyword">echo</span> $a . <span class="string">'&lt;br&gt;'</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">'$k-$start+1&lt;br&gt;'</span>;</span><br><span class="line"><span class="keyword">foreach</span> ($str <span class="keyword">as</span> $k=&gt;$v)&#123;</span><br><span class="line">    <span class="keyword">if</span>(@$arr[$v]!==<span class="keyword">null</span>&amp;&amp;$arr[$v]&gt;=$start)&#123;</span><br><span class="line">        $start=$arr[$v]+<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">echo</span> $k . <span class="string">' - '</span> . $start . <span class="string">' + 1 &gt; '</span> . $length;<span class="keyword">echo</span> <span class="string">' ---------&lt;br&gt;'</span>;</span><br><span class="line">    <span class="keyword">if</span>(($k-$start+<span class="number">1</span>)&gt;$length)&#123;</span><br><span class="line">        $length=$k-$start+<span class="number">1</span>;</span><br><span class="line">        $new_str .= $v;</span><br><span class="line">    &#125;</span><br><span class="line">    $arr[$v]=$k;</span><br><span class="line">&#125;</span><br><span class="line">var_dump($new_str);<span class="keyword">exit</span>;</span><br></pre></td></tr></table></figure></p>
+<h2>go写法</h2>
+<p><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 思路：遍历字符串，记录每一个字符串x最后一次出现的位置lastOccurred[x]，有如下三种情况</span></span><br><span class="line"><span class="comment">// lastOccurred[x]不存在，或者&lt;start位置，则不需要操作</span></span><br><span class="line"><span class="comment">// lastOccurred[x] &gt;= start，更新start位置为lastOccurred[x]+1</span></span><br><span class="line"><span class="comment">// 更新lastOccurred[x], 更新maxLength</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">lengthOfNonRepeatingSubStr</span><span class="params">(s <span class="keyword">string</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	lastOccurred := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">byte</span>]<span class="keyword">int</span>)</span><br><span class="line">	start := <span class="number">0</span></span><br><span class="line">	maxLength := <span class="number">0</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> i, ch := <span class="keyword">range</span> []<span class="keyword">byte</span>(s) &#123;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> lastI, ok := lastOccurred[ch]; ok &amp;&amp; lastI &gt;= start &#123;</span><br><span class="line">			start = lastI + <span class="number">1</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> i-start+<span class="number">1</span> &gt; maxLength &#123;</span><br><span class="line">			maxLength = i - start + <span class="number">1</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		lastOccurred[ch] = i</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> maxLength</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Println(lengthOfNonRepeatingSubStr(<span class="string">"abcabcdefabc"</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1>百度100盏灯面试题</h1>
+<p>之前一个朋友找工作，碰到这样一个面试题，据说最早是百度的笔试题，题目如下：
+一共有100盏灯，按一下就亮，再按就灭，初始是都灭着的，
+第一轮把所有的都按一下，第二轮把2的倍数的灯都按一下，第三轮把3的倍数的灯都按一下，以此类推，
+问到最后会有多少盏灯是亮着的；
+下面有两种自己研究的算法：
+&lt;br&gt;</p>
+<h2>暴力类推法</h2>
+<p><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getResult</span><span class="params">()</span></span>&#123;</span><br><span class="line">	$new = range(<span class="number">1</span>,<span class="number">100</span>);</span><br><span class="line">	<span class="keyword">foreach</span>($new <span class="keyword">as</span> $k=&gt;$v)&#123;</span><br><span class="line">		$new[$k] = <span class="number">1</span>;<span class="comment">//初始化出100个值为1的灯，下文自动刨去第一轮按灯</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span>($i=<span class="number">2</span>; $i&lt;=<span class="number">100</span>; $i++)&#123;<span class="comment">//按灯次数循环</span></span><br><span class="line">		<span class="keyword">for</span>($j=<span class="number">1</span>; $j&lt;=<span class="number">100</span>; $j++)&#123;<span class="comment">//循环每盏灯后计算按灯次数</span></span><br><span class="line">			<span class="keyword">if</span>($j%$i == <span class="number">0</span>)&#123;</span><br><span class="line">				$new[$j<span class="number">-1</span>] += <span class="number">1</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">foreach</span>($new <span class="keyword">as</span> $k=&gt;$v)&#123;<span class="comment">//刨去偶数次的灯</span></span><br><span class="line">		<span class="keyword">if</span>($v%<span class="number">2</span> == <span class="number">0</span>)&#123;</span><br><span class="line">			<span class="keyword">unset</span>($new[$k]);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> $new;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2>简洁明朗法</h2>
+<p><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getResult</span><span class="params">()</span></span>&#123;</span><br><span class="line">	$count = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">for</span>($i=<span class="number">1</span>;$i&lt;=<span class="number">100</span>;$i++)&#123;<span class="comment">//循环一百盏灯</span></span><br><span class="line">		$num = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">if</span>($i == <span class="number">1</span>)&#123;<span class="comment">//同样刨去第一轮按灯</span></span><br><span class="line">			$count += <span class="number">1</span>;</span><br><span class="line">			<span class="keyword">continue</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">for</span>($j=<span class="number">2</span>;$j&lt;=$i/<span class="number">2</span>;$j++)&#123;<span class="comment">//循环按灯次数</span></span><br><span class="line">			<span class="keyword">if</span>($i%$j==<span class="number">0</span>)&#123;</span><br><span class="line">				$num += <span class="number">1</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span>($num%<span class="number">2</span> != <span class="number">0</span>)&#123;<span class="comment">//计算奇数次按灯</span></span><br><span class="line">			$count += <span class="number">1</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> $count;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2019/05/05/面试题/" data-id="cjvdqa4mf003f78r3jcods7im" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2019/05/05/面试题/" data-id="cjvdqd6x80039o4r3kg6uvumu" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/php/">php</a></li></ul>
@@ -185,16 +198,45 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="前端"><a href="#前端" class="headerlink" title="前端"></a>前端</h1>
-        
-          <p class="article-more-link">
-            <a href="/2019/04/04/常用书籍、资料、手册/#more">Read More</a>
-          </p>
-        
+        <h1>前端</h1>
+<p>&lt;!--more--&gt;</p>
+<p><a href="http://nodejs.cn/api/" target="_blank" rel="noopener">node中文官方文档</a>
+<a href="https://cn.vuejs.org/v2/guide/index.html" target="_blank" rel="noopener">vue中文文档</a>   |   <a href="http://www.runoob.com/vue2/vue-tutorial.html" target="_blank" rel="noopener">vue菜鸟</a>
+<a href="https://react.docschina.org/docs/hello-world.html" target="_blank" rel="noopener">react中文文档</a>  |  <a href="http://www.runoob.com/react/react-tutorial.html" target="_blank" rel="noopener">react菜鸟</a>
+<a href="https://www.angular.cn/docs" target="_blank" rel="noopener">angular2</a>
+<a href="http://webpack.wuhaolin.cn/" target="_blank" rel="noopener">深入浅出 Webpack</a>
+<a href="https://developer.mozilla.org/zh-CN/docs/Web" target="_blank" rel="noopener">前端综合技术</a>
+<a href="https://www.charlesproxy.com/" target="_blank" rel="noopener">charles抓包工具</a></p>
+<h1>php</h1>
+<p><a href="http://www.laruence.com/" target="_blank" rel="noopener">鸟哥的php博客</a>
+<a href="https://c.runoob.com/compile/1" target="_blank" rel="noopener">在线调试</a>
+<a href="https://wiki.swoole.com/wiki/index/prid-1" target="_blank" rel="noopener">swoole文档中心</a></p>
+<h1>linux</h1>
+<p><a href="https://www.cnblogs.com/yangjig/p/6014198.html" target="_blank" rel="noopener">vim</a>
+<a href="http://man.linuxde.net/" target="_blank" rel="noopener">linux命令搜索</a>
+<a href="http://www.runoob.com/linux/linux-comm-awk.html" target="_blank" rel="noopener">awk菜鸟</a>
+<a href="https://developer.qiniu.com/dora/manual/1316/image-watermarking-processing-watermark" target="_blank" rel="noopener">七牛开发者中心</a></p>
+<h1>python</h1>
+<p><a href="https://www.runoob.com/python" target="_blank" rel="noopener">python菜鸟</a>
+<a href="https://www.liaoxuefeng.com/wiki/1016959663602400" target="_blank" rel="noopener">python廖雪峰</a></p>
+<h1>Go</h1>
+<p><a href="https://www.runoob.com/go/go-tutorial.html" target="_blank" rel="noopener">go菜鸟</a>
+<a href="https://books.studygolang.com/gopl-zh/ch0/ch0-01.html" target="_blank" rel="noopener">go文档</a>
+<a href="https://chai2010.cn/advanced-go-programming-book/" target="_blank" rel="noopener">go进阶文档</a>
+<a href="https://www.kancloud.cn/kancloud/effective" target="_blank" rel="noopener">effective go</a>
+<a href="https://studygolang.com/" target="_blank" rel="noopener">go中文</a>
+<a href="https://github.com/skywind3000/awesome-cheatsheets/blob/master/languages/golang.go" target="_blank" rel="noopener">一个go的快速简明语法</a>
+<a href="https://www.processon.com/view/link/5a9ba4c8e4b0a9d22eb3bdf0#map" target="_blank" rel="noopener">go知识图谱</a></p>
+<h1>shell</h1>
+<p><a href="https://www.runoob.com/linux/linux-shell.html" target="_blank" rel="noopener">shell菜鸟</a>
+<a href="http://c.biancheng.net/shell/" target="_blank" rel="noopener">shell学习指南</a></p>
+<h1>Git</h1>
+<p><a href="https://git-scm.com/book/zh/v2" target="_blank" rel="noopener">git文档</a></p>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2019/04/04/常用书籍、资料、手册/" data-id="cjvdqa4lu002o78r3gz5sfsu6" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2019/04/04/常用书籍、资料、手册/" data-id="cjvdqd6wu002qo4r3eamgg9eg" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/privately/">privately</a></li></ul>
@@ -241,7 +283,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2018/10/19/课程链接/" data-id="cjvdqa4m5003278r3xth0185w" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2018/10/19/课程链接/" data-id="cjvdqd6x40034o4r3hhtjmcqt" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/privately/">privately</a></li></ul>
@@ -279,16 +321,72 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="46-Nginx中的正则表达式"><a href="#46-Nginx中的正则表达式" class="headerlink" title="46 | Nginx中的正则表达式"></a>46 | Nginx中的正则表达式</h1>
-        
-          <p class="article-more-link">
-            <a href="/2018/08/07/13-nginx/#more">Read More</a>
-          </p>
-        
+        <h1>46 | Nginx中的正则表达式</h1>
+<p>&lt;!--more--&gt;
+当在nginx确定那个域名处理请求时，或者用location匹配哪个url的时候，往往我们使用正则表达式，正则表达式让匹配的功能更加强大。</p>
+<h2>正则表达式</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-c0a291d6a32d9695.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-783f752a6c69a468.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>如何验证你的正则表达式呢？如果放在nginx配置中验证，你需要重启nginx。所以推荐pcretest工具（下载源代码安装）验证。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-6d7a587e4e456689.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<blockquote>
+<p>注意：在nginx使用中不用加转义符<code>\</code>，但是在pcretest要使用。</p>
+</blockquote>
+<p>掌握好的正则表达式的使用。可以在配置location、server name 或者rewrite的时候如虎添翼。</p>
+<h2>留言问题</h2>
+<p>1.NGINX中的正则用的也是PCRE标准吗</p>
+<p> 作者回复
+是的，configure中可以用--with-pcre=选项指定pcre版本。</p>
+<h1>47 | 如何找到处理请求的server指令块</h1>
+<p>在nginx http模块处理请求之前，首先确保它的指令被正确的解析出来了。为了处理请求到底使用哪个指令的值。因为指令的配置可以出现在http下，server下，location下。首先必须确保这个请求时被哪个server块处理。</p>
+<h2>server name</h2>
+<p>server name 它可以保证在处理11阶段的http模块处理之前，先决定哪个server块指令被使用。</p>
+<p>server name 后面可以跟三种域名</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-d9351dc8f15f03a9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>主域名概念。这个主域名有什么用呢？当我们跟多个域名的时候，前面就是主域名。有个控制主域名用法的配置<code>server_name_in_redirect</code>，默认值是off。可以出现在http,server,location。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-7c18441836c3e168.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>redirect off时，主域名是不生效的。主域名怎样用呢？当我们用return这个指令，会做一个302重定向，这个指令后面没有明确的domain只有一个url（/redirect），这个时候会发生什么样的事情呢？</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-822f6f214654aece.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>如果redirect off改成on。再返回的location用的就是主域名。这就是主域名的一个用法。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-3d1721e5cef2e8d9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>当server_name后面跟正则表达式的时候，这个正则表达式还可以为我们创建新的变量。还是用小括号()分组提取的方式。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-a7379a59721804ea.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>$2 取上面第二个()。也可以使用命名变量的方式$domain。</p>
+<h2>server 匹配顺序</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-c17ef695d0db582f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>上图1，2，3条跟顺序无关，第4条跟文件顺序有关。第5条，如果访问了没有指定的子域名的时候，将会default server处理，保证后面11个阶段各个http模块找到它在server配置块下一个指令的值。default server 有两种指定方式。如果我们没有指定的时候，我们按照顺序来，所有的server大括号块，第一个就是default server。当我们指定了 default。这个listen所属的server块 就将变成default server。</p>
+<p>##留言问题</p>
+<p>1.如果没有server_name指令，只有listen指令，是不是只检查端口就行了？不再检查host了</p>
+<p> 作者回复
+如果所有server{}都没有server_name，那么唯一的就是default server，host匹配不上其他 server_name时，就会选用它</p>
+<p>2.如果没有Host头部呢？是不是使用url中的域名做匹配？</p>
+<p> 作者回复
+没有Host头部会报错。</p>
+<p>3.server name是和请求中的Host头部做匹配吗？还是和url中的域名做匹配？</p>
+<p> 作者回复
+与Host头部匹配</p>
+<p>4.最近在配置nginx反向代理时被location后匹配规则和转发机制给绕晕了，希望您给解答一下</p>
+<p>location /test/ {
+proxy_pass http://127.0.0.1
+}</p>
+<p>location /test/ {
+proxy_pass http://127.0.0.1/
+}</p>
+<p>末尾带斜杠，对最后的代理地址会有直接的影响，这是为啥，没想明白</p>
+<p> 作者回复
+当末尾有斜杠时,认为带url了，此时location对请求URL采用替换关系，把location后的url1替换为proxy_pass中的url2。
+第4部分课程中会详细介绍。</p>
+<p>5.系统内核不应该是和master交互，有master进程调用worker进程处理请求么</p>
+<p> 作者回复
+不是哦，这样性能可以想见会非常差，环节太多！</p>
+<p>6.什么场景一下会使用server_name_in_redirect？ 如果server_name后面跟3个域名，设置为on时，结果是哪个呢？</p>
+<p> 作者回复
+后面在谈到处理/结尾的url时，会深入谈这个指令。大概在说static模块提供的root/alias指令时，你关注下这一课。</p>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2018/08/07/13-nginx/" data-id="cjvdqa4jv000a78r3zcoisvsg" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2018/08/07/13-nginx/" data-id="cjvdqd6uh000ao4r30b36n3kc" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li></ul>
@@ -326,16 +424,53 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="48-详解HTTP请求的11个阶段"><a href="#48-详解HTTP请求的11个阶段" class="headerlink" title="48 | 详解HTTP请求的11个阶段"></a>48 | 详解HTTP请求的11个阶段</h1>
-        
-          <p class="article-more-link">
-            <a href="/2018/08/07/14-nginx/#more">Read More</a>
-          </p>
-        
+        <h1>48 | 详解HTTP请求的11个阶段</h1>
+<p>&lt;!--more--&gt;
+出http过滤模块和只提供变量的nginx模块之外，所有的http模块从nginx定义好的11个阶段进行请求的处理。所以每一个http模块何时生效，有没有机会生效。要看一个请求究竟处理到哪个阶段。nginx究竟如何定义这11个阶段的？</p>
+<h2>HTTP请求处理时的11个阶段</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-63bfe11aa9c3c908.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h3>先看左边的示意图：</h3>
+<p>Read Request Header： 当一个请求进入到黄色框（nginx之中的时候），首先，Read Request Header，读取到请求的头部，并且决定使用哪个server块上面配置指令处理请求。前面几节讲的流程全部在Read Request Header中。所以，这个时候我们已经知道所有指令的值如何被使用（当然location中还没有决定）。从下面开始进入到11个处理阶段中了。</p>
+<p>Configuration Block：寻找哪个location生效了。</p>
+<p>Apply Rate Limits：然后是否决定要对它限速。</p>
+<p>Perform Authentication：然后做些验证。根据referer等等字段判断，这是否是一种盗链的请求，或者用auth basic 协议验证下用户的请求权限。</p>
+<p>Generate Content：然后生成返回给用户的响应。</p>
+<p>Updsteam Services：为了生成这个响应呢。可能作为反向代理的时候，要和上游服务进行通讯，把上游发的作为响应的内容。</p>
+<p>Internal redirects and subrequests：<code>Configuration Block</code>、<code>Apply Rate Limits</code>、<code>Perform Authentication</code>、<code>Generate Content</code>，这四步过程中可能会发生重定向或字请求。这时候又会走这样的一个过程。</p>
+<p>Response Filters：在向用户返回响应的时候，要经过过滤模块。比如：使用gzip做下压缩。</p>
+<p>Log：在返回给用户时候，记录下日志。</p>
+<h3>实际流程看右边的图</h3>
+<p>实际的流程跟示意图不同，但大致相似。</p>
+<p>POST_READ：read到header所有请求头部之后。当读完http头部，没有做任何再加工之前，获取到一些原始值。</p>
+<p>SERVER_REWRITE跟REWRITE：都只有一个模块。一般没有第三方模块处理这个阶段的。</p>
+<p>FIND_CONFIG：只有nginx的框架会做。这个阶段没有任何http模块在这个阶段中。这个阶段在做location的匹配。</p>
+<p>POST_REWRITE：在刚刚rewrite 之后要做的一些事情。</p>
+<h4>access相关的三个模块，确认访问权限，为什么定义三个模块</h4>
+<p>PREACCESS：在access之前要不要做些工作。比如限速。</p>
+<p>ACCESS：核心解决的是能不能访问。auth_basic根据用户的账号密码，access能是根据用户的访问IP，auth_request根据第三方服务返回是否可以访问。</p>
+<p>POSTACCESS：在access之后要不要做些事情。</p>
+<p>PRECONTENT：在处理content之前，比如mirrors。比如怎么样往一个请求产生多个子请求，mirrors就是干这些事情的。</p>
+<p>CONTENT：干的比较多。</p>
+<p>LOG: 记录日志。</p>
+<h1>49 | 11个阶段的顺序处理</h1>
+<p>当一个http请求进入这11个阶段时，由于每个阶段有零个或多个http模块。如果某一个模块不在把一个请求向下传递，后面的模块是得不到执行的。同一个阶段多个模块并不一定每个模块都有机会执行到。可能会有前面的模块把请求传递给下一个阶段中的模块去处理。</p>
+<h2>11个阶段顺序处理</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-1bf3f8764cb3dbdd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>这里每一个模块都属于某一个阶段，每一个阶段之间，这些模块都是有序的。这个顺序如何能得到呢？我们去看<code>nginx_module.c</code>。编译后这些添加的模块都会在ngx_module_names数组中出现。它们出现的位置顺序非常关键。</p>
+<p>我们看到数组中比如limit_conn_module在limit_req_module上面（它两同属于preaccess阶段），但是实际处理是与这个配置相反的。也就是先被limit_req处理后被limit_conn处理。当它们两个同时生效取阻止一个请求的时候，假设它们的返回值不同，limit_connect是没有机会得到执行的，因为limit_req先于limit_connect把请求的结果返回给用户了。  其他所有的模块都一样。在之前课程中有个同学遇到一个问题。说auto_index没有展示响应的目录结构而是显示了index.html的内容。这里的原因就是index先于auto_index生效，所以先返回了index.html内容。</p>
+<p>像灰色那三个是nginx框架执行的，其他第三方nginx模块没有机会在这里得到执行。</p>
+<p>在有的阶段，也有可能不按照这样的顺序。比如说在access阶段中，有一个指令叫做satisfy指令，它可以指示当某一个满足，比如access满足直接跳到try_files而不会去执行auth_basic、auth_request。当content阶段中，比如：index模块执行了，它会直接跳到log阶段，而不会执行auto_index跟static。</p>
+<h2>留言问题</h2>
+<ol>
+<li>是按照 nginx_modules.c 文件的倒序执行模块的 对吧</li>
+</ol>
+<p> 作者回复
+不准确，阶段间是固定的，同一阶段内的各模块是倒序的。</p>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2018/08/07/14-nginx/" data-id="cjvdqa4k2000e78r3hhgrn440" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2018/08/07/14-nginx/" data-id="cjvdqd6ur000eo4r3xudvgqsl" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li></ul>
@@ -373,16 +508,54 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="50-postread阶段：获取真实客户端地址的realip模块"><a href="#50-postread阶段：获取真实客户端地址的realip模块" class="headerlink" title="50 | postread阶段：获取真实客户端地址的realip模块"></a>50 | postread阶段：获取真实客户端地址的realip模块</h1>
-        
-          <p class="article-more-link">
-            <a href="/2018/08/07/15-nginx/#more">Read More</a>
-          </p>
-        
+        <h1>50 | postread阶段：获取真实客户端地址的realip模块</h1>
+<p>&lt;!--more--&gt;</p>
+<h2>获取真实用户IP地址</h2>
+<p>realip模块可以帮助我们发现真实的用户ip地址。这为我们后续的模块实现，例如限速、限流等等功能提供了可能性。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-d29c2c164ed44676.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>TCP有个四元组，根据一条连接的src ip就能够判断出，用户的IP地址了。但是实际上因为中间有反向代理，反向代理会导致上游的机器建立的新的TCP连接，所以上游的服务器想通过TCP连接中的src ip是无法拿到用户的真实ip地址。上图右半部分是举的例子。</p>
+<p>怎么才能拿到真实的用户IP呢？使用X-Forwarded-For、X-Real-IP。两者区别，Real-IP只能传一个IP，Forward-For是一直往上加的。为什么累加呢？看右边的例子。CDN往后发的时候要让后面的上游服务知道CDN的地址，所以就累加了 一个<code>1.1.1.1</code>。</p>
+<h2>拿到真实用户IP后如何使用呢?</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-1a95b6ab1831a4e1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>根据我们在real_ip中配置的指令，real ip模块会把从X-Forwarded-For或者X-Real-IP 这个头部里的值，覆盖到binary_remote_addr、remote_addr变量。这样之后的限速才会有意义。所以就能理解limit_conn模块，它的顺序一定要在preaccess阶段，不能在postread阶段。</p>
+<h2>如何启动realip模块</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-937039633f1a2d78.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>因为它改变了原来的remode_addr跟remode_port，它带来了两个变量 realip_remote_addr、realip_remote_port来维护原先的变量。</p>
+<h2>提供的三个 指令</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-54ce5b708ced83ab.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>set_real_ip_from：对于什么样的tcp连接的source ip，才做替换remote_add替换这件事。</p>
+<p>real_ip_header：到底是从x-real-ip取还是x-forward-for、proxy_protocol中取。如果是x-forward-for，它有多个ip地址，那么取最后的那个。</p>
+<p>real_ip_recursive：环回地址。默认是关闭的。打开的时候，会把x-forward-for里面最后的那个地址，如果是和客户端地址相同的话，会把它pass掉，去取上一个地址。</p>
+<h2>实践</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-901582481a6d5442.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>把本机设置为可信地址<code>set_real_ip_from 116.62.160.193</code>（本机ip）。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-45cdd1f70ad9bccc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>接着把real_ip_recursive 设置为on。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-780a26b7293ed99a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>为什么会有这个结果呢？因为客户端的地址是<code>116.62.160.193</code>。触发了一个环回地址的配置，然后pass掉了，然后使用它之前的一个地址。</p>
+<p>处于postread 阶段，可以拿到未经任何加工的x-real-ip或x-forward-for里面的用户地址。因为后续有很多模块可能会修改x-forward-for等等头部的值。</p>
+<h2>留言问题</h2>
+<p>1.Nginx有办法获取IP的请求端口吗？就是发起HTTP请求连接的客服端端口。</p>
+<p> 作者回复
+如果nginx与客户端之间没有其他反向代理，可以用remote_port获取到。如果存在其他反向代理，就无法用通用的办法获取到了。</p>
+<p>2.三个问题</p>
+<ul>
+<li>1、例如 proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; 作用是将$proxy_add_x_forwarded_for的值赋值给前面的变量 X-Forwarded-For 吗？ 那变量X-Forwarded-For名称是否可以随意进行定义？该变量的用处是什么，因为nginx的日志定义log_format中并未使用到X-Forwarded-For这个变量
+*2、如果是多层nginx代理，nginx01+nginx02 nginx02如何获取到客户端的真实ip地址</li>
+<li>3、proxy_set_header中的定义，在log_format中并未应用到，各变量的作用在此次视频中也未讲解到</li>
+</ul>
+<p> 作者回复</p>
+<ul>
+<li>1、proxy_set_header是设置发向上游服务的请求头部的指令，第4部分课程会详细介绍。
+X-Forwarded-For是RFC7239定义的头部，所有各大web服务都支持，你改了后就只能自己处理，不能依赖nginx之类的服务自动处理了。这一节课介绍的realip模块，也必须通过这个名称来修改remote_addr变量。</li>
+<li>2、通过X-forwarded-for或者x-realip头部。</li>
+<li>3、proxy反向代理在第4部分介绍。咱们课程后面内容还很多</li>
+</ul>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2018/08/07/15-nginx/" data-id="cjvdqa4k5000g78r347pl2gmi" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2018/08/07/15-nginx/" data-id="cjvdqd6uw000go4r3qgp0d8sq" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li></ul>
@@ -420,16 +593,83 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="51-rewrite阶段的rewrite模块：return指令"><a href="#51-rewrite阶段的rewrite模块：return指令" class="headerlink" title="51 | rewrite阶段的rewrite模块：return指令"></a>51 | rewrite阶段的rewrite模块：return指令</h1>
-        
-          <p class="article-more-link">
-            <a href="/2018/08/07/16-nginx/#more">Read More</a>
-          </p>
-        
+        <h1>51 | rewrite阶段的rewrite模块：return指令</h1>
+<p>&lt;!--more--&gt;
+<img src="https://upload-images.jianshu.io/upload_images/550939-abdffc016cfb19b5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>http rewrite 模块提供的return 指令。return 指令在哪里生效呢?在find_config之前的rewrite阶段，以及find_config之后的那个rewrite阶段。return指令生效以后，其实所有其他阶段的http模块是没有机会执行的。nginx conf中的指令要注意到，不管下面配什么样的proxy pass都是得不到执行的。</p>
+<h2>return 语法</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-c1940ad4f6d25f16.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>302：我们最常使用的。告诉浏览器你应该怎样处理返回的location。本来访问网站A我们给了B，然后它访问B。下次再访问A还会给B。但是301就不一样了，会记录到缓存中，下次访问A，实际上直接访问的B。</p>
+<p>HTTP1.1中的303、307、308跟HTTP1.0中的区别在于是否允许改变请求方法。</p>
+<p>这些状态码中，大部分是返回给客户端的，浏览器可以收到这个Code，但是有一个code收不到，那就是444。立刻关闭连接，不在向用户返回内容。</p>
+<h2>error_page</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-108c8c1f873348e3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>error page的用法： 收到某一个返回码的时候，可以重定向为另一个URL，也可以指定给用户返回不一样的内容。比如：收到404返回码，如果是默认的话是404，为了给用户体验好点，可能返回一个图片或者页面。这些页面提示比较友好。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-734d1cb92de09f6d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>当我们出现了return的时候，error page的 404还会执行吗？当return这个指令同时出现在server块下跟location块下，还有合并的关系吗？之前介绍return 是动作类指令是没有合并关系的。</p>
+<p>实例</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-5213179a278a1520.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-c9cc4f7d57e142f4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-a3def86f77057ded.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>从刚介绍的11个阶段可以看出来，server阶段的return 先于location阶段的return执行，一定是返回405的。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-1b439a7f85111ec0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h2>课后留言</h2>
+<p>1.由proxy_pass指定的后段服务器返回的404 500等状态会触发return和error_page的执行吗？你在示例中使用了root指令来说明</p>
+<p> 作者回复
+不会触发return，可以应用在error_page上</p>
+<h1>52 | rewrite阶段的rewrite模块：重写URL</h1>
+<h2>rewrite 指令</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-922aacaf8dd8acbf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>什么是脚本指令呢？实际上rewrite模块提供的所有指令都是脚本指令。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-1c275c27dcee3efb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>实际演练</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-86a725e1a06e4d9a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-06fb513c091b1e60.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>为什么得到是second呢。rewrite后面没有跟break。然后，这两个指令（rewrite跟return）形成脚本指令的set形成一个集合，依次向下执行。如果加上break呢？</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-e22c0252b2e83ae2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-5a6940ae9da0e7ef.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>为什么返回的是<code>text3</code>呢。因为加了break 停止了。后面的return 也被停止了。开始找对应的html/third/3.text的文件。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-58be13821efaf2c0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-9d81d0fd8a99dcb7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-faed731da1f08575.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-7576ac325b000b04.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-aa81f8239396e21b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-2486573835c5e55f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>rewrite_log 默认是不开。如果打开之后。都会在指定的error log中出现。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-cf2f7e88b0d0166a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h2>留言问题</h2>
+<p>1.按照你的操作步骤，可以生成notice_error.log文件，但rewrite执行生效了，但在log中看不到日志记录。请问为啥呢？</p>
+<p> 作者回复
+1、rewrite_log确保打开；2、确保error.log的日志级别允许打印rewrite日志，比如设成info。</p>
+<p>2.我访问静态资源时，优先访问本地资源，如果404 就访问到文件存储服务器，但是现在页面存在跨域的问题，能不能在nginx实现不跨域请求呢。</p>
+<p> 作者回复
+try_files就可以哦，第1个参数配置本地资源路径，第2个参数用@内部重定向，到另一个proxy_pass反向代理中</p>
+<p>3.rewrite和proxy_pass的区别在哪里呢？有一些别的Http服务器(比如IIS)，就是利用rewrite实现反向代理的。不都是把请求写给另外一个地址吗？</p>
+<p> 作者回复</p>
+<ul>
+<li>1、关于重写URL。proxy_pass的重写URL能力非常弱，而且依赖location后的URL。rewrite可以重写任意URL。</li>
+<li>2、关于反向代理。rewrite没有反向代理功能。第4部分有关于反向代理流程和原理的介绍。</li>
+</ul>
+<h1>53 | rewrite阶段的rewrite模块：条件判断</h1>
+<h2>if 指令</h2>
+<p>这个指令使我们根据请求中的变量的值，判断变量的值是否满足某一个条件以后，再执行if块下面的配置指令，根据这些指令再调用相应的模块处理请求。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-6e30db44d63785d8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>if也是脚本指令，所有脚本类指令遵循的规则，它也遵循。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-3e509ece36bf466d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>示例</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-b397cb69eebbc965.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h2>留言问题</h2>
+<p>1.很期待老师讲解if的坑，我一直没太理解它的成因，只是简单记住在if里只有rewrite的模块指令是安全的</p>
+<p> 作者回复
+嗯,第6部分我会拿个例子讲.其实你对照第三部分里所讲的11个阶段，也能分析出if指令如果与其他模块的值指令混用时，由于值指令所属模块在不同阶段，或者在过滤模块中，比如add_header，那么结果通常与我们理解的编程语言中的if就完全不同了</p>
+<p>2.老师为啥没有提”if is evil“</p>
+<p> 作者回复
+这一节课应该提下的，谢谢提醒，准备放在第6部分讲源码时讲一下脚本式指令再提这个事。问题的出现，是因为nginx的分阶段执行以及脚本式指令统一在rewrite阶段执行的原因。我们常用的if {rewrite}和if {return}都是没问题的，这些都是rewrite阶段的脚本式指令。</p>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2018/08/07/16-nginx/" data-id="cjvdqa4k9000l78r3wt0rmej8" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2018/08/07/16-nginx/" data-id="cjvdqd6v1000lo4r3iip77mnh" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li></ul>
@@ -467,16 +707,31 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="54-find-config阶段：找到处理请求的location指令块"><a href="#54-find-config阶段：找到处理请求的location指令块" class="headerlink" title="54 | find_config阶段：找到处理请求的location指令块"></a>54 | find_config阶段：找到处理请求的location指令块</h1>
-        
-          <p class="article-more-link">
-            <a href="/2018/08/07/17-nginx/#more">Read More</a>
-          </p>
-        
+        <h1>54 | find_config阶段：找到处理请求的location指令块</h1>
+<p>&lt;!--more--&gt;
+在server块下的rewrite系列指令执行完毕之后，开始根据用户请求中的location后面相对应的前缀或者正则表达式去匹配，匹配完成之后就确定了由哪个location进行请求处理。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-f9c747391ecb3949.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h2>location 指令</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-aae8f05a5827fda9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>merge_slashes 可以合并url中的斜杠，当两个斜杠在一起的时候呢？merge_slashes 设置为<code>on</code>可以合并成一个斜杠。什么时候需要关闭呢？当url中做了base64编码等等情况才需要关闭。</p>
+<h2>location 匹配规则</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-87df4ae6415e23f8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-f0287a1b6fcdac5f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h2>location 匹配顺序</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-e7b3d2ee63653dbf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h2>留言问题</h2>
+<p>1.ngx状态中的活跃数就是当前链接的并发数吗？活跃数是否可以作为一个监控指标</p>
+<p> 作者回复
+是的，可以的</p>
+<p>2.我在location下配置了该句：return 200 &quot;location ~ /Test1/$&quot;;
+提示该行有错，把$用反斜杠转移无效，请问怎么正确转移$？</p>
+<p> 作者回复
+return指令不支持参数中含有$却没有表示变量。如果阅读源码可以参见ngx_http_compile_complex_value方法。</p>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2018/08/07/17-nginx/" data-id="cjvdqa4kc000o78r3gvog1qps" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2018/08/07/17-nginx/" data-id="cjvdqd6v4000oo4r3px7ug9qx" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li></ul>
@@ -488,9 +743,9 @@
 
 
   
-    <article id="post-19-nginx" class="article article-type-post" itemscope="" itemprop="blogPost">
+    <article id="post-18-nginx" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2018/08/07/19-nginx/" class="article-date">
+    <a href="/2018/08/07/18-nginx/" class="article-date">
   <time datetime="2018-08-07T08:24:25.000Z" itemprop="datePublished">2018-08-07</time>
 </a>
     
@@ -506,7 +761,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/08/07/19-nginx/">(19)access 阶段：ip限制、auth_basic 模块、auth_request模块、satisfy指令</a>
+      <a class="article-title" href="/2018/08/07/18-nginx/">(18)preaccess阶段：连接限制limit_conn模块、请求限制limit_req模块</a>
     </h1>
   
 
@@ -514,16 +769,82 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="57-access阶段：对ip做限制的access模块"><a href="#57-access阶段：对ip做限制的access模块" class="headerlink" title="57 | access阶段：对ip做限制的access模块"></a>57 | access阶段：对ip做限制的access模块</h1>
-        
-          <p class="article-more-link">
-            <a href="/2018/08/07/19-nginx/#more">Read More</a>
-          </p>
-        
+        <h1>55 | preaccess阶段：对连接做限制的limit_conn模块</h1>
+<p>&lt;!--more--&gt;
+在preaccess阶段限制用户并发连接数的limit_conn模块。上一节讲到匹配location，匹配到之后，接下来的模块往往它们的指令都可以出现在location 中。preaccess阶段中有两个模块limit_req、limit_conn。一个是用来限制每秒处理请求数，一个是限制并发连接数。</p>
+<h2>问题：如何限制每个客户端的并发链接数</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-e0502a846131b37d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>使用了共享内存。接下来会看到它用到了一个zone指令。所有的nginx的 zone指令都是在分配共享内存。</p>
+<p>限制有效性取决于关键字的设计。比如我们限制客户端的并发连接数。而我们的nginx之前有SLB，通过realip模块取到用户真实ip。根据这个ip再来做并发连接数限制。</p>
+<h2>limit_conn指令</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-d430847045e7d9d7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>limit_conn指令的 number是可以允许并发连接数。这些并发连接数是根据key（往往取自于用户IP，remote_addr）来定的。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-ba55a59faf80908d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h2>例子</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-2c737c289399ee89.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>当nginx作为资源服务器为用户提供使用时，限制用户发起的并发连接数是比较常用的功能。limit_conn模块设计好它的key是个关键。</p>
+<h2>留言问题</h2>
+<p>1.rate这个指标设置多大合适呢，有没有什么参考值，另外burst这个桶设置多大合适呢</p>
+<p> 作者回复
+rate需要匹配产品设计策略，或者结合运营收入和运维带宽成本来分析。burst设置多大合适，只与产品设计和场景有关，没有统一参考值的。</p>
+<p>2.在limit_conn_zone $binary_remote_addr zone=perip:10m;配置中，如果共享区域内存耗尽，Nginx文档上说回对所有请求都返回错误，那么，如何监测此类情况呢</p>
+<p> 作者回复
+可以使用第38课介绍过的slab_stat，监控fails指标以及共享内存slab已用量</p>
+<p>3.多台nginx 的时候，如何限制并发连接数？</p>
+<p> 作者回复
+跨主机通讯？nginx模块并不支持，你可以考虑openresty+redis的方案，其中redis集群作中心存储，key是客户端标识，value是当前并发连接数。</p>
+<p>4.请问在您的例子里，严格的来讲，是第一个请求还未结束，第二个請求又发起的时候，并发连接数为2对吗？</p>
+<p> 作者回复
+对的</p>
+<blockquote>
+<p>56 | preaccess阶段：对请求做限制的limit_req模块</p>
+</blockquote>
+<h2>问题：如何限制每个客户端的每秒处理请求数？</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-06e13906df16dc30.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h2>Leaky Bucket</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-df472b5bfb1d389f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>突发性的流量，右上角那副图。横轴是以秒为单位，纵轴是每秒传输的流量。前两秒中都是12Mbps，2-7秒钟没有流量，7-10每秒2Mbps。这种突发流量使用了Leaky Bucket以后就变成了右下角的那副图了，每秒3Mbps。累加起来的值跟右上图是一致的。左图形象的说明了这个操作。</p>
+<p>当盆满了还在滴水就立刻给用户返回503。但没有满的时候，下面的流速达到最大化，水滴就存在盆里。用户的请求就在变慢，而不是被拒绝。</p>
+<h2>limit_req指令</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-4d03975438c5b173.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>burst=number 盆里可以容纳多少个请求。nodelay意义，当设置了nodelay，burst里面的请求就会立即返回错误。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-0b4c1ffa6fecaf62.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h2>例子</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-b34231e36437ddce.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-0731aa6ac2c51015.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>rate=2r/m。每分钟处理两个请求。之所以加这样的限制是为了更快的看到效果。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-b5fef1044550cbf5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-acfe160b5ca8f4e1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-64a7c6ec73e7a488.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>limit_conn跟limit_req 都打开之后看下，返回的是500还是503？limit_req 是在limit_conn之前。所以，limit_req 已经拒绝用了limit_conn就得不到执行。</p>
+<h2>留言问题</h2>
+<ol>
+<li>我对生效范围是全部work进程还不是很理解。
+这样问您：比如总共有10个模块被编译进了二进制文件，nginx启动时，先启动master进程，master进程然后启动多个work进程。
+这多个work进程的工作任务是同样的吗？或者他们分别负责不同的工作，比如第一个work负责前五个模块的工作，第二个work负责后五个的工作？</li>
+</ol>
+<p> 作者回复
+每个worker进程是等效的，功能完全相同。多worker进程的意义在于使用多CPU，第5部分内容会详细介绍。由内核调度worker进程，决定把哪些连接交给哪个worker进程处理。</p>
+<p>2.请问怎么获取post请求中的参数值呢，我想通过post请求参数进行限流。:-)</p>
+<p> 作者回复
+根据请求中的body么？ 这样不行，你没办法利用preaccess阶段的模块了，因为这些模块工作时，只能确保接收到完整的url参数和http header，是否接收到完整的body中的form完全无法保证</p>
+<p>3.在视频5分钟作用的时候，您的配置文件是2r/m，然后用curl limit.taohui.tech连续发了2条请求，然后第二条请求返回503，为啥不是第三条返回503，第二条就503了呢？我的理解里面发第2条请求的时候是满足2r/m的</p>
+<p> 作者回复
+可能是视频剪辑时剪辑掉啦，你的理解是对的：-）</p>
+<p>3.老师你好 WAF这种过滤规则在哪个阶段</p>
+<p> 作者回复
+多数lua waf都是在access阶段工作的</p>
+<p>4.限制请求和连接的ip是指tcp层的请求的ip吧，如果ngnix前面加了WAF和负载均衡，对这个有没有影响呢？</p>
+<p> 作者回复
+不是哦，你可以再看一下第50课里的realip模块，这个ip可以不是tcp层中的remote ip，而是http request header中的xforwarded-for或者x-realip头部的内容</p>
+<p>5.limit_**指令中的key究竟是什么意思呢？它和限制的数量有什么关系？比如说key是用户ip，limit_conn是2，就表示每个不同的用户只能同时有两个连接到服务器吗？</p>
+<p> 作者回复
+是的</p>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2018/08/07/19-nginx/" data-id="cjvdqa4kf000r78r3bdnq7s90" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2018/08/07/18-nginx/" data-id="cjvdqd6v7000ro4r3cl8rg9k3" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li></ul>

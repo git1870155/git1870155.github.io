@@ -65,6 +65,164 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-1-nginx" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/08/07/1-nginx/" class="article-date">
+  <time datetime="2018-08-07T08:24:25.000Z" itemprop="datePublished">2018-08-07</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/nginx/">nginx</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/08/07/1-nginx/">(1)编译、配置、命令行</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>#一，编译nginx
+&lt;!--more--&gt;</p>
+<ol>
+<li>nginx 安装遇到的问题
+安装完后，安装目录下只有conf、html、logs和sbin四个目录，其他的：client_body_temp、fastcgi_temp、modules、proxy_temp、scgi_temp和uwsgi_temp目录，都没有</li>
+</ol>
+<p>这些目录需要运行nginx后才会由nginx进程自动生成。</p>
+<p>2.sudo nginx -V 可以看到配置的参数</p>
+<ol start="3">
+<li>思考下  image filter 模块</li>
+</ol>
+<p>image filter在配置图片时可以使用参数，所以可以通过浏览器在args或者header中传递参数，让nginx重定义图片大小。</p>
+<p>4.nginx conf 文件语法高亮操作</p>
+<p>cp -r contrib/vim/* ~/.vim/</p>
+<p>例如：服务器，我们可以 sudo /root/.vim 。然后sudo cp 过去。这样 sudo vim 就有高亮操作了。</p>
+<p>5.make 跟 make install 的作用</p>
+<p>make只会在源代码目录时，生成objs目录及目录中的内容。而make install，会把objs目录中的内容，拷贝到--prefix目录中，例如你的/home/geep/nginx。建议你分开执行，执行完一步后观察哪些文件发生了变化。</p>
+<p>6.编译 选项 with-<em>与with-out</em></p>
+<p>with-后面的模块表示默认不安装（使用了with- 就表示这次安装）。with-out-后面的模块表示默认安装（使用了with-out- 就表示这次不安装）</p>
+<ol start="7">
+<li>yum 或者 apt-get安装的问题</li>
+</ol>
+<p>直接安装nginx的binary有个大问题。nginx二进制文件，会把模块编译进去，官方模块并不是每一个都是默认开启。如果你想自己diy模块，就必须编译了。</p>
+<p>8.一个网友问题。nginx 转发https的网站。</p>
+<p>老师你好，有个问题。我用nginx做了一个转发服务器，用于使用域名转发好多个项目。通过子域名转发到不同服务器的对应项目上。但是现在有一个问题，比如使用nginx转发了A、B两台服务器上的各自项目。nginx配置中，只监听了A项目的80端口；监听了B项目的443 和80端口。但是现在如果强制用谷歌浏览器使用https的方式访问A项目，浏览器会提示该链接不是私密链接，如果强制跳转的话就跳转到了B项目里。即https://A就会强制跳转至B项目的内容，这个该怎么解决呢？
+2018-11-19
+ 作者回复
+不只chrome，大部分浏览器都不接受ssl站点页面里，有些url还在使用http协议。我建议你全站都走ssl，即两个子域名都配置ssl。如果访问了80，就返回301/302跳转到ssl。</p>
+<p>9.另一个网友的问题。yum 安装 不可控</p>
+<p>老师，编译的时候生产环境是不是一般得指定一个用户，比如nginx。还是怎么处理呢?目前我们主管用的yum安装的nginx，这样是不是不利于升级。
+谢谢！
+2018-11-22
+ 作者回复
+是的，指定worker进程的运行用户。用yum安装但很难用yum升级，热升级依赖我们对nginx的高度可控。</p>
+<p>二，nginx的配置语法</p>
+<p>1.nginx的日志文件名配置是支持变量的，配置时间变量即可实现日志的自动分隔</p>
+<ol start="2">
+<li>日志汇总</li>
+</ol>
+<p>在多个服务器上部署了多个nginx ，有什么好办法让日志汇总在一起
+2018-12-15
+ 作者回复
+用syslog协议，第5部分会介绍。</p>
+<p>3.日志按天分割</p>
+<p>福星留言说的应该是指不能按天分割access.log日志，日志会膨胀到很大。之前好像是通过logrotate按天分割。
+2018-11-16
+ 作者回复
+是的，视频中介绍的是通过USR1信号，以及移动原日志文件、重新写入日志文件来实现按时间或者其他因素分割的</p>
+<ol start="4">
+<li>流控 limit_req_zone $binary_remote_addr zone:10m rate=1r/s</li>
+</ol>
+<p>$binary_remote_addr 这个变量不是limit_req提供的，而是nginx提供的。</p>
+<p>三，nginx 命令行演示</p>
+<ol>
+<li>一些参数
+-c 指定命令文件</li>
+</ol>
+<p>-g 指定配置指令</p>
+<p>-p 指定运行目录</p>
+<p>-s 发送信号（立刻停止stop、优雅停止quit、重载配置文件reload、重新开始记日志reopen）</p>
+<p>-t -T 检测语法</p>
+<p>-v -V 打印nginx版本，编译信息等</p>
+<p>2.nginx热更新</p>
+<ul>
+<li>
+<p>1.把原来 sbin目录下的nginx 备份一下。</p>
+</li>
+<li>
+<p>2.然后把最新编译的nginx（记得--prefix 跟之前保持一致，不要make install）二进制执行文件复制过去。</p>
+</li>
+<li>
+<p>3.kill -USR2 进程id（老的worker会继续运行，新的worker也起来了，平滑的过度）</p>
+</li>
+<li>
+<p>4.优雅的关闭老的worker kill -WINCH 进程id（老的master进程），</p>
+</li>
+</ul>
+<p>ps ef |grep nginx 发现老的master进程不会自动退出，目的是方便我们回退。</p>
+<ol start="3">
+<li>对视频中讲解reopen 时，用到cp 日志时候。提的问题</li>
+</ol>
+<p>切割日志的时候，先复制再停止ng，会漏掉从复制到停止中间这段时间的日志吧？
+2018-11-06
+ 作者回复
+是的，这个演示为了方便初学linux的同学理解，所以用了复制。
+在生产环境中，应该把cp命令改为mv命令，因为linux文件系统中，改名并不会影响已经打开文件的写入操作，内核inode不变，这样就不会出现丢日志了。
+谢谢你的提醒，视频最后应该提一下这个事的。</p>
+<p>4.热更新之后，老的nginx监听端口问题
+老师，您好，我在做nginx热部署的时候遇到一个问题，您说，在发送USR2信号后，旧的nginx进程不再监听端口，但是我测试的时候，出现如下情况（新旧进程都在监听端口），麻烦您看一下，是哪里出了问题？</p>
+<p>旧nginx进程仍然在LISTEN，只是不会去处理这个socket，因为没有把它加到epoll中。master进程打开监听端口，但不处理，由worker进程处理。另外，旧master是新master的父进程，所以新master才能共享打开的监听端口。</p>
+<p>5.热更新的问题</p>
+<p>看了这节课，有个问题想问问：
+热部署，在执行完kill -USR2 masterPid 后，如何判断老的master进程不在监听80 or 443端口？
+热部署，在执行完kill -WINCH masterPid 后，如果没问题，老的master进程是手动 Kill掉吗？
+热部署，在执行完kill -WINCH masterPid 后，如果有问题，重新执行-s reload重新拉起worker进程，操作流程是先将二进制文件nginx.old还原为nginx， 然后执行nginx -s reload, 那nginx.new的master的进程和worker进程如何关闭呢？
+2018-11-16
+ 作者回复
+先回答第1个问题：用lsof -p 进程号，可以看到进程打开的句柄，也包括监听的端口。用netstat命令也可以看到一些端口被哪些进程打开。或者直接在/proc目录中找进程的相关信息也可以。
+第2个问题：可以用kill -QUIT把老master杀掉。
+第3个问题：直接用kill -USR1来执行reload，不要用-s reload，这样还是老的nginx worker起来</p>
+<ol start="6">
+<li>kill USR2 之后没有变化请看error.log</li>
+</ol>
+<p>kill USR2后是应当有变化的，变化是：生成一个新master进程及相应worker进程。
+没有变化的原因很可能是出现错误了，你看一下error.log日志文件。</p>
+<ol start="7">
+<li>USR1 对应reopen，HUP对应reload</li>
+</ol>
+<p>热部署失败之后到底用kill -USR1呢，还是用kill -HUP呢？有点儿不明白，他们两个的问题把我搞糊涂了，或是老师给说说热部署失败之后如何回退呢？
+2018-11-25
+ 作者回复
+USR1是切割日志的，对应reopen命令。而HUP是对应reload命令，它会在没有worker进程时启动worker进程。所以，回退应该用HUP信号。</p>
+<p>8.日志切割工具cronlog</p>
+<p>9.我看了评论，有人说执行更新后的NGINX 会加载新目录的配置文件。</p>
+<p>首先，作者在第9小节。./confiure —prefix=/home/geek/nginx 配置的目录是旧的NGINX目录。</p>
+<p>其次，作者也说了。make 是编译，make install 会把编译的复制到—prefix中。所以，我们想用新的NGINX找以前的NGINX要找到目录。那么—prefix要保持一致。而且别make install。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="jiweii.com/2018/08/07/1-nginx/" data-id="cjvdqd6tr0000o4r3muajqazc" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-11-nginx" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
     <a href="/2018/08/07/11-nginx/" class="article-date">
@@ -91,16 +249,52 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>#43 | 冲突的配置指令以谁为准？<br>
-        
-          </p><p class="article-more-link">
-            <a href="/2018/08/07/11-nginx/#more">Read More</a>
-          </p>
-        
+        <p>#43 | 冲突的配置指令以谁为准？
+&lt;!--more--&gt;
+http配置指令的一个嵌套结构，很多http模块提供的指令很多时候它可以出现在的context（上下文）。可以在location中、server中、http中，甚至在if这样的配置块中。当一个指令出现在多个配置块中的时候，它们可能值是冲突的。到底以谁为准呢？或者说在有些配置块下，没有这条指令，但是在使用的过程中发现它生效了，这是怎样的机制呢？还有很多第三方模块不是非常的遵循官方模块既定的一些规则。这个时候应该怎样判断配置指令时怎么生效或者说发生冲突以谁为准呢？</p>
+<h2>配置块典型的嵌套</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-65b944191c94d807.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>http、server、location这三个是非常核心的。这是http的框架来定义的。我们处理一个请求的时候，需要先按照请求中的指示的域名，比如host，找到相应的server块，再根据uri找到每一个location，根据location下面具体的指令来处理请求。在这么一个典型的配置块的配置中，我们会发现冲突或者奇怪的指令。</p>
+<h2>指令的Context</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-d65883eb9a06ef54.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>图中的Context就是作用范围。如果把log_format 放到了server中，nginx检查配置文件语法失败，不会让我们启动。</p>
+<h2>指令的合并</h2>
+<p>值指令、动作类指令</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-9ca0f25fa461e9d9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>怎么判断一个指令到底是可以合并还是不可以合并呢？就是很简单，生效阶段。
+server_rewrite与rewrite 阶段，只有http rewrite模块才会提供。content阶段一般是反向代理。这一部分（第三部分）的课程会介绍到5个content模块，这些content模块通常提供了一些方法只能是动作类指令的。当然还可以通过源码判断出来。相对来说动作类指令不是很多。</p>
+<h2>存储值的指令继承规则：向上覆盖</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-e330c6a9d8ca1524.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>listen这个指令只能出现在server这个context中。alias指令可以出现在很多地方server中，http中。上图中只在location中出现了。当一个请求匹配上<code>/dlib</code>时，alias就产生作用了。</p>
+<p>需要我们考虑值合并的场景。比如图中定义了一个root指令,查找静态文件到<code>/home/geek/nginx/html</code>中查找,但是在<code>location /</code>匹配剩余的url时并没有定义root，但是它可以使用server中定义的root指令。这里就是<code>子配置不存在时，直接使用父配置块</code>。</p>
+<p>图中<code>location /test</code>里定义了一个root跟access_log。<code>子配置存在时，直接覆盖父配置块</code>。</p>
+<h2>HTTP模块合并配置的实现</h2>
+<p>所有nginx的官方模块或者openresty的一些nginx模块，它们都遵循上面的两个合并规则。但是有一些第三方模块没有遵循这个规则。如果相应的说明文档不是非常详细的话，就需要我们通过源码来判断。当它们的子指令出现冲突的时候，究竟以哪个为准。怎么通过源码来判断。抓住下面四个点：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-fa5c6c58b48e399c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>大部分指令都是在location中生效的。</p>
+<p>当这个指令在server块生效的时候，会定义一个方法merge_srv_conf。这个指令即出现在http下又出现在server下，从http向server合并的时候会提供一个函数merge_srv_conf。如果是在location下生效那么就是merge_loc_conf。下面以http referer（用来做防盗链）为例。</p>
+<p>在这个模块中（或者任何一个模块）都会有这样的一个结构体ngx_module_t。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-58a0076333398a98.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>这个模块提供的配置的指令全部在ngx_command_t数组中。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-b28c3c2a7360da30.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>这个数组中每一个元素就是一条指令。比如：valid referers，它允许出现在那一块下面呢？<code>NGX_HTTP_SRV_CONF、NGX_HTTP_LOC_CONF</code>，可以携带几个参数呢？一个或多个——<code>NGX_CONF_1MORE</code>。所有的指令解析完以后可能要做合并，比如http、server、location进行合并。合并的时候要看下面的一个结构体。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-9ca9024260fc9658.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>ngx_http_module_t定义了可能出现的8个回调方法。特别是最后两个ngx_http_referer_create_conf、ngx_http_referer_merge_conf。重点看merge_conf。因为以上所说的指令都是在location中生效的，所以需要把http、sever下的向location这些地方合并。在这个合并方法中就可以看到规则（下图）。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-82ced2d3aaeb0b98.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>第二个参数parent就是父指令，child就是子指令 。它们合并的方法都可以看得到的。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-221685568b5f7cf3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<blockquote>
+<p>简单介绍了http模块指令的合并规则，为下面讲解每一个http模块的用法提供了基础的帮助。</p>
+</blockquote>
+<h2>课后留言</h2>
+<p>1.不可以合并的指令发生冲突时是怎么处理的呢？课程中只讲了可以合并的指令行为</p>
+<p> 作者回复
+合并中，父子冲突时，以子配置为准</p>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2018/08/07/11-nginx/" data-id="cjvdqa4jc000178r3rg56wkah" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2018/08/07/11-nginx/" data-id="cjvdqd6u90006o4r3rsffg8fg" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li></ul>
@@ -112,9 +306,9 @@
 
 
   
-    <article id="post-6-nginx" class="article article-type-post" itemscope="" itemprop="blogPost">
+    <article id="post-12-nginx" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2018/08/07/6-nginx/" class="article-date">
+    <a href="/2018/08/07/12-nginx/" class="article-date">
   <time datetime="2018-08-07T08:24:25.000Z" itemprop="datePublished">2018-08-07</time>
 </a>
     
@@ -130,7 +324,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/08/07/6-nginx/">(6)nginx内存池</a>
+      <a class="article-title" href="/2018/08/07/12-nginx/">(12)listen指令、处理HTTP请求头流程</a>
     </h1>
   
 
@@ -138,63 +332,48 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="内存池对性能的影响"><a href="#内存池对性能的影响" class="headerlink" title="内存池对性能的影响"></a>内存池对性能的影响</h2>
-        
-          <p class="article-more-link">
-            <a href="/2018/08/07/6-nginx/#more">Read More</a>
-          </p>
-        
+        <h1>44 | Listen指令的用法</h1>
+<p>&lt;!--more--&gt;
+一个请求在进来之前，我们需要监听端口，以使得nginx跟客户端建立起一个TCP连接，建立端口的指令时listen，是放在server配置块下。通过监听的端口或者地址，可以决定有哪些匹配上TCP四元组的监听的地址的连接对应的server块它的相关指令取处理相应的请求。</p>
+<p>Listen指令</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-07bcb924b3c8dcbc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>listen 127.0.0.1 这样会默认使用80端口。</p>
+<p>listen :8000 跟listen *:8000 效果是一样的。什么情况下<code>*:8000</code>会不同呢？比如：对指定的地址给做一个全部匹配。</p>
+<p>listen localhost:8000 bind 这是在老的linux系统上对*8000做绑定。其他端口需要显示做绑定。最新的linux系统不会有这样的问题了。</p>
+<h1>45 | 处理HTTP请求头部的流程</h1>
+<h2>处理流程</h2>
+<p>在http模块开始处理用户请求之前，首先需要nginx的框架先对nginx建立好连接，接收用户发来的http的line，比如：方法、url等。然后在接收到所有的header，根据header信息决定选用哪些配置块，才能决定让http配置块处理哪些请求。先看下nginx的框架是怎样建立连接以及接受http请求的。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-210cd24339e63ae9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>操作系统内核：三次握手建立连接。很多worker进程，每一个worker进程可能都监听了80跟443端口。操作系统根据它的负载均衡算法选中一个worker进程。</p>
+<p>事件模块：epoll_wait 方法 返回到刚建立好的句柄。发来的ack产生一个读事件，根据读事件找到了原理是监听的80或者443端口，然后调用accept方法，分配连接内存池（内存池分为连接内存池跟请求内存池）。connect_pool_size是连接内存池的分配大小。也就是nginx为这个连接分配了512字节的内存池。这个内存池如何使用呢？</p>
+<p>http模块：分配完内存建立好连接之后。所有的<code>http模块</code>开始从<code>事件模块</code>手中，接入请求的处理过程。http模块在启动时候就定义了一个回调方法ngx_http_init_connection。当accept一个新连接到时候这个方法就会被回调执行。新建立的读事件添加到epoll中（通过epoll_ctl函数），添加超时定时器，如果60秒中没有收到请求就超时了，也就是我们经常会看到的<code>client_header_timeout:60s</code>。</p>
+<p>上面三个流程走完，nginx的事件模块可能切到http模块处理了。</p>
+<p>当用户把一个get或post请求发来的时候，发来DATA，TCP层（操作系统内核层）回一个ACK。同时时间模块的epoll_wait又拿到这个请求了。这个请求的回调方法ngx_http_wait_request_handler（它是在上面ngx_init_connection那步设置的）。收到请求后把内核中的DATA读到用户的内核态中 。要读到内核态中要分配内存。这段内存要分配多大呢？从哪里分配的呢？是从连接内存池分配的，连接内存池初始分配了512字节，这个时候从内存中再分配1k（client_header_buffer_size），因为内存是可以扩展的。这个1k可以修改，也不是越大越好，因为只要用户有一个字节发来，nginxwoker进程也会分配1k。这么一看分配很大并不合适。但如果发来的url或者header非常大，超过了1k呢？接下来看看超过1k有什么变化。</p>
+<h2>接收请求HTTP模块</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-c605fa296985d44f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h3>接收URI</h3>
+<p>分配完1k之后，我们收到了小于等于1k的请求内容。处理请求跟处理连接是不一样的。处理连接只要把它收到nginx内存中。但处理请求时，需要做大量的上下文分析，分析协议，分析每一个header。这个时候需要分配一个<code>请求内存池</code>。请求内存池默认分配4k（request_pool_size）。是connect_pool_size的8倍大小。为什么是8倍，因为请求的上下文涉及到业务。通常4k是一个比较合适的数值。如果分配的很小的话。需要请求内存池不断在的扩充。当分配内存的次数变多时，性能会下降。request_pool_size要不要改，要根据业务状况来。理解了后备这个内存池如何去用到就可以根据业务情况去决定是否修改它。</p>
+<p>分配完内存池之后。会用一个<code>状态机解析请求行</code>，也就是<code>\r\n</code>之前的，方法名、url、协议。解析过程中可能发现有些url特别大，已经超过了刚刚所分配的1k的内存。这个时候分配更大的内存，这个更大的内存就是用来解决有些url太长了。分配的大内存有多大呢？最大是<code>large_client_header_buffers</code>（也是一个经常遇到的一个配置）。<code>4 8k</code>是什么意思呢？不是一下子分配32k，而是先分配一个8k，然后把刚刚那1k的内容拷贝到8k，剩下的7k再去接收url，然后发现url是否解完了通过状态机做这样的部分。如果8k都没有接收完，再分配第二个8k（即分配到了16k，最多一共分配32k）。</p>
+<p>当完整的解析完请求行，然后就可以<code>标识URI</code>。什么是标识URI？后面会介绍nginx有很多变量，这些变量并不是真的复制一份，它只是有一个C指针指向接收到的解析行。所以nginx性能才能如此强大。</p>
+<h3>接收header</h3>
+<p>http请求的header可能非常长，它含有cookie、host等这些字段。<code>状态机解析header</code>。header很有可能超过1k，所以还是要分配大内存<code>large_client_header_buffers</code>。接收URI跟接收header的这两个大内存是共用的。如果接收URI用掉了2个8k，那么在接收header这里顶多在用掉2个8k，这个<code>4 8k</code>是针对所有的，所以叫做client_header。</p>
+<p>接受完完整的header，就开始<code>标识header</code>。标识header的过程中还会涉及到一些操作。比如：确定哪些server块开始处理这个请求。</p>
+<p>当收到host 这样一个header时候，当我收到全部的header以后，标识完header以后。就可以<code>移除超时定时器</code>了。所以，大家可以确定你需要什么时候修改这个60秒。也就是说我们收完header到底最长两次接收之间需要多大的时间。</p>
+<p>接下来开始核心的过程——<code>开始11个阶段的http请求处理</code>。</p>
+<h3>总结</h3>
+<p>以上的处理流程都是nginx框架完成的。nginx的http模块是多样化的。我们必须有一个流程按照一个主线串起来。方便我们理解与记忆。</p>
+<h2>留言问题</h2>
+<p>1.请教一下课件中的接收URI的部分为什么会涉及到请求行呢？我理解URI仅仅是一个字符串而已，请求行处理是右边接收header的逻辑</p>
+<p> 作者回复
+一个标准的HTTP请求是这样的：GET /uri HTTP/1.1\r\nHost: xxx\r\n，这里第一个\r\n就是请求行。</p>
+<p>2.视频中好像没有很具体的讲出连接内存池的作用，只是讲到从连接内存池中分配出了请求内存池，除此之外，还有其他的作用吗？</p>
+<p> 作者回复
+所有与请求无关的内存都要在连接内存池里分配.例如第一次接收http请求行，此时既没有Host也没有URL，只能用连接内存池里分配默认1K的内存</p>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2018/08/07/6-nginx/" data-id="cjvdqa4lw002r78r3nfgra350" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-10-nginx" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/08/07/10-nginx/" class="article-date">
-  <time datetime="2018-08-07T08:24:25.000Z" itemprop="datePublished">2018-08-07</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/nginx/">nginx</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/08/07/10-nginx/">(10)使用动态模块来提升运维效率</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="41-使用动态模块来提升运维效率"><a href="#41-使用动态模块来提升运维效率" class="headerlink" title="41 | 使用动态模块来提升运维效率"></a>41 | 使用动态模块来提升运维效率</h2>
-        
-          <p class="article-more-link">
-            <a href="/2018/08/07/10-nginx/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="jiweii.com/2018/08/07/10-nginx/" data-id="cjvdqa4jq000778r32gc7mame" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2018/08/07/12-nginx/" data-id="cjvdqd6ue0008o4r3hxqmqiut" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li></ul>
@@ -232,16 +411,59 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="php-fpm-配置"><a href="#php-fpm-配置" class="headerlink" title="php-fpm 配置"></a>php-fpm 配置</h2>
-        
-          <p class="article-more-link">
-            <a href="/2018/08/07/公司php-fpm配置文件/#more">Read More</a>
-          </p>
-        
+        <h2>php-fpm 配置</h2>
+<p>&lt;!--more--&gt;
+下面配置项的注释，是或摘或借鉴，有的没找到的。我翻译文档了（安装默认的一个www.conf.defaulf。每一项上面都会有对应的英文说明。）。</p>
+<p>这些配置对应的struct 在<code>./sapi/fpm/fpm/fpm_conf.h</code>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[sock0]</span><br><span class="line">listen = /dev/shm/php-fpm-7.0.sock ;指定sock通讯的文件地址 or  listen = 0.0.0.0:9000</span><br><span class="line">listen.allowed_clients = 127.0.0.1 ;允许访问FastCGI进程的IP址</span><br><span class="line">listen.backlog = 51200 ;跟tcp有关。参考[《TCP SOCKET中backlog参数的用途是什么？》](https://www.cnxct.com/something-about-phpfpm-s-backlog/)</span><br><span class="line">listen.owner = nobody ;启动进程的用户</span><br><span class="line">listen.group = nobody ;启动进程的组</span><br><span class="line">listen.mode = 0660 ;用socket连接方式时，指定拥有unix socket权限的用户，默认和运行的用户一样；用tcp连接可以注释掉</span><br><span class="line">user = nobody</span><br><span class="line">group = nobody</span><br><span class="line">pm = dynamic ;fpm 进程管理的三种模式 ，选项有static、dynamic、ondemand（按需模式）</span><br><span class="line">pm.max_children = 256 ;子进程最大数</span><br><span class="line">pm.start_servers = 10 ;启动时进程最大数</span><br><span class="line">pm.min_spare_servers = 5 ;保证空闲进程数最小值，如果空闲进程小于此值，则创建新的子进程</span><br><span class="line">pm.max_spare_servers = 10 ;保证空闲进程数最小值，如果空闲进程小于此值，则创建新的子进程</span><br><span class="line">pm.max_requests = 51200 ;设置每个子进程重生之前服务的请求数. 对于可能存在内存泄漏的第三方模块来说是非常有用的. 如果设置为 &apos;0′ 则一直接受请求. 等同于 PHP_FCGI_MAX_REQUESTS 环境变量. 默认值: 0.</span><br><span class="line">pm.status_path = /php-fpm-7-status ;FPM状态页面的网址. 如果没有设置, 则无法访问状态页面. 默认值: none.</span><br><span class="line">ping.path = /heart ;FPM监控页面的ping网址. 如果没有设置, 则无法访问ping页面. 该页面用于外部检测FPM是否存活并且可以响应请求. 请注意必须以斜线开头 (/)。</span><br><span class="line">ping.response = check_ok ;用于定义ping请求的返回相应. 返回为 HTTP 200 的 text/plain 格式文本. 默认值: pong.</span><br><span class="line">request_terminate_timeout = 10 ;设置单个请求的超时中止时间. 该选项可能会对php.ini设置中的&apos;max_execution_time&apos;因为某些特殊原因没有中止运行的脚本有用. 设置为 &apos;0′ 表示 ‘Off&apos;.</span><br><span class="line">当经常出现502错误时可以尝试更改此选项。</span><br><span class="line">request_slowlog_timeout = 5  ;当一个请求该设置的超时时间后，就会将对应的PHP调用堆栈信息完整写入到慢日志中. 设置为 &apos;0′ 表示 ‘Off&apos;</span><br><span class="line">slowlog = /home/nobody/logs/php-fpm-7/www-slow.log ;慢请求的记录日志,配合request_slowlog_timeout使用</span><br><span class="line">php_admin_value[error_log] = /app/webserver/logs/php-fpm-7/www-error.log ;可以覆盖php.ini的配置。你可以在一个php脚本里 输出phpinfo()然后看下配置的值。就明白了。另外文档中也说了这个配置不会被ini_set 覆盖。</span><br><span class="line">php_admin_flag[log_errors] = on</span><br><span class="line">rlimit_files = 102400 ;设置文件打开描述符的rlimit限制. 默认值: 系统定义值</span><br><span class="line">系统默认可打开句柄是1024，可使用 ulimit -n查看，ulimit -n 2048修改。</span><br></pre></td></tr></table></figure></p>
+<p>上面<code>pm = dynamic</code>是配置进程的管理方式。有三种：</p>
+<ul>
+<li>
+<p>静态模式（static）：启动时master根据pm.max_children 配置fork出相应数量的worker进程，也就是worker进程数是固定不变是</p>
+</li>
+<li>
+<p>动态模式（dynamic）：这种模式比较常用，fpm启动根据pm.start_servers 配置初始化一定数量的worker。运行期间master发现空闲worker数低于pm.min_spare_servers配置数（表示请求比较多，worker处理不过来）会fork worker进程，但总的worker数补鞥呢超过pm.max_children；如果master发现空闲worker数超过了pm.max_spare_servers（表示闲着的worker太多了）会杀掉一些worker，避免占用过多资源，master通过这4个值动态控制worker的数量。</p>
+</li>
+<li>
+<p>按需模式（ondemand）：这种模式很像传统的cgi，在启动时不分配worker进程，等到有请求了后再通知master进程fork worker进程，来了请求后再fork子进程进行处理，总的worker数不超过pm.max_children，处理完后worker进程不会立即退出，当空闲时间超过pm.process_idle_timeout后再退出。</p>
+</li>
+</ul>
+<h2>monitor php-fpm</h2>
+<p>可以方便zabbix 监控</p>
+<p>我根据这篇<a href="https://easyengine.io/tutorials/php/fpm-status-page" target="_blank" rel="noopener">《Nginx – Enable PHP-FPM Status Page》</a>配置。curl yan.com/status 为空白。根据这篇<a href="https://www.tecmint.com/enable-monitor-php-fpm-status-in-nginx/" target="_blank" rel="noopener">《How to Enable and Monitor PHP-FPM Status in Nginx》</a> 对照了下少了一行<code>fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;</code></p>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@bogon php-fpm.d]# curl yan.com/status</span><br><span class="line">pool:                 www</span><br><span class="line">process manager:      dynamic</span><br><span class="line">start time:           01/Apr/2019:23:19:44 +0800</span><br><span class="line">start since:          5</span><br><span class="line">accepted conn:        1</span><br><span class="line">listen queue:         0</span><br><span class="line">max listen queue:     0</span><br><span class="line">listen queue len:     128</span><br><span class="line">idle processes:       9</span><br><span class="line">active processes:     1</span><br><span class="line">total processes:      10</span><br><span class="line">max active processes: 1</span><br><span class="line">max children reached: 0</span><br><span class="line">slow requests:        0</span><br></pre></td></tr></table></figure></p>
+<p>参考资料：</p>
+<ul>
+<li>
+<p>《Nginx – Enable PHP-FPM Status Page》https://easyengine.io/tutorials/php/fpm-status-page</p>
+</li>
+<li>
+<p>《php-fpm.conf 全局配置段》https://www.php.net/manual/zh/install.fpm.configuration.php</p>
+</li>
+<li>
+<p>《How to Enable and Monitor PHP-FPM Status in Nginx》https://www.tecmint.com/enable-monitor-php-fpm-status-in-nginx/</p>
+</li>
+<li>
+<p>《基于php-fpm的配置详解》https://www.jb51.net/article/37749.htm</p>
+</li>
+<li>
+<p>《启用php-fpm状态详解》http://www.ttlsa.com/php/use-php-fpm-status-page-detail/</p>
+</li>
+<li>
+<p>《TCP SOCKET中backlog参数的用途是什么？》https://www.cnxct.com/something-about-phpfpm-s-backlog/</p>
+</li>
+<li>
+<p>《php7内核剖析》秦朋</p>
+</li>
+<li>
+<p>《php-fpm.conf配置文件中文说明详解及重要参数说明》http://www.360doc.com/content/18/1023/17/13328254_795049788.shtml</p>
+</li>
+</ul>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2018/08/07/公司php-fpm配置文件/" data-id="cjvdqa4lp002g78r3nrh3r1mo" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2018/08/07/公司php-fpm配置文件/" data-id="cjvdqd6wm002io4r3hey34xxf" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/">linux</a></li></ul>
@@ -253,9 +475,9 @@
 
 
   
-    <article id="post-12-nginx" class="article article-type-post" itemscope="" itemprop="blogPost">
+    <article id="post-8-nginx" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2018/08/07/12-nginx/" class="article-date">
+    <a href="/2018/08/07/8-nginx/" class="article-date">
   <time datetime="2018-08-07T08:24:25.000Z" itemprop="datePublished">2018-08-07</time>
 </a>
     
@@ -271,7 +493,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/08/07/12-nginx/">(12)listen指令、处理HTTP请求头流程</a>
+      <a class="article-title" href="/2018/08/07/8-nginx/">(8)nginx Slab管理器</a>
     </h1>
   
 
@@ -279,16 +501,48 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="44-Listen指令的用法"><a href="#44-Listen指令的用法" class="headerlink" title="44 | Listen指令的用法"></a>44 | Listen指令的用法</h1>
-        
-          <p class="article-more-link">
-            <a href="/2018/08/07/12-nginx/#more">Read More</a>
-          </p>
-        
+        <h1>slab管理器</h1>
+<p>&lt;!--more--&gt;
+nginx 不同的worker之间需要共享信息的时候，只能通过共享内存。共享内存会使用链表，红黑树这样的数据结构。但是每个红黑树上有很多节点，每个节点上都需要分配内存去存放。怎样把一整块共享内存切割成一小块给红黑树上面的每一个节点使用呢？</p>
+<p>slab内存管理</p>
+<p>{F8970}</p>
+<p>{F8972}</p>
+<p>首先，会把共享内存分为很多页面，每个页面4k，会切成很多slot。比如32字节是一种slot，64字节是一种slot，128字节也是一种slot。这些slot是以乘2的方式向上增长的。如果现在有一个51字节需要分配的内存会放到哪里呢？会放在小于它最大的slot的环节比如64字节。这样的数据结构有个缺点，就是内存浪费。比如：51字节用64字节存放，其他13字节浪费了。最多有多少内存消耗呢？两倍。这种使用的方式叫做Bestfit，这种分配方式的好处是适合小对象。如果我们分配的内存非常小，比如小于一个页面的大小就非常合适，很少有碎片。 每分配一块内存就是沿着还没使用的空白内存继续使用。当一个页面使用满以后，再拿一个空闲页面给slab slot大小的内存继续使用。</p>
+<p>有时候分配在一段内存上的数据结构是固定的，需要初始化，用Bestfit这种方式原先的数据结构都还在。当重复使用的时候，避免了初始化。</p>
+<p>slab内存，应用在Openresty的 lua_shared_dict 以及limit request 、limit connection。</p>
+<p>ngx_slab_stat:统计Slab 使用状态</p>
+<p>数据监控，数据统计。</p>
+<p>{F8974}</p>
+<p>可以看不同的slot，分配了多少，使用了多少，有多少请求在访问，失败了多少次。</p>
+<p>Openresty如何使用ngx_slab_stat模块</p>
+<p>下载<a href="http://tengine.taobao.org/download.html" target="_blank" rel="noopener">tengine</a>，该模块路径<code>tengine-2.2.3/modules/ngx_slab_stat</code>。这是一个标准的nginx第三模块，每个第三方模块会通过C文件定义好nginx_module_t这样的结构体、以及处理哪些配置项、提供哪些变量、并有一个config来帮助它编译到目标nginx中。</p>
+<p>Openresty编译的把ngx_slab_stat模块编译进去。然后使用lua_shared_dict 分配内存，再用slab_stat去查看共享内存的使用情况。</p>
+<p>{F8976}</p>
+<p>add_module 这个命令可以把一个目录下具备config这样配置项的目录添加到nginx目录中。让模块的源码让./configure 识别到。</p>
+<p>slab_stat 如何使用</p>
+<p>{F8978}</p>
+<p>location slab_stat中的slab_stat是一个slab_stat提供的配置项，会返回slab_stat统计状况。</p>
+<p>代码走起</p>
+<p>{F8980}</p>
+<p>{F8982}</p>
+<p>{F8984}</p>
+<p>slab 内存分配了Bestfit思想，也是linux操作系统经常使用的内存分配方式。通常我们使用共享内存时都需要使用slab 分配给相应的内存给对象，再使用上层的数据结构维护这个对象。</p>
+<h2>留言问题</h2>
+<ol>
+<li>我编译之后将代码写进conf文件，提示nginx: [emerg] unknown directive &quot;slab_stat&quot;，是不是还缺少什么东西。nginx -V 是否可以查看到slab是否已经编译进去，我发现nginx -V 没有显示slab模块。
+2018-12-20
+ 作者回复
+你是不是没有把编译生成的新版本nginx，替换到安装sbin目录下？</li>
+</ol>
+<p>2.我在使用 --add-module 新增slab模块的时，是不是要设置 --prefix 指定我之前安装的目录，然后再替换make编译后的 nginx二进制文件，才能使用新增模块呢？如果要替换nginx二进制文件，是不是都得全部重新编译一遍呢？</p>
+<p> 作者回复
+prefix不建议变化，这样简单点。
+要替换nginx文件，需要确保编译出的新nginx含有你需要的全部模块。</p>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2018/08/07/12-nginx/" data-id="cjvdqa4jt000978r338ujddqo" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2018/08/07/8-nginx/" data-id="cjvdqd6vv001io4r347rmp4di" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li></ul>
@@ -326,16 +580,35 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>Yaf框架分为全局类、本地类的自动加载
-        
-          </p><p class="article-more-link">
-            <a href="/2017/09/08/Yaf框架自动加载/#more">Read More</a>
-          </p>
-        
+        <p>Yaf框架分为全局类、本地类的自动加载&lt;!--more--&gt;
+全局类是所谓的公司或部门级别的现有类库，该类可以在多个项目中共同使用，而不只在当前的项目中可用。这些类的路径一般是通过在yaf.liabrary在php的配置文件php.ini中指定。
+本地类指的是只应用于本项目的类，这些类所在的路径也可以通过在Yaf的配置文件中通过ap.liabrary指定。在Yaf中可以通过Yaf_Loader::registerLocalNamespace()申明那些本地类的前缀，那么带有该前缀的类，需要在本地的类库中加载。
+无论是全局类还是本地类，Yaf中使用PSR0规则进行加载的时候，类名中的&quot;_&quot;都会被转换成目录分隔符“/”。
+根据所看过的博客，全局类和本地类的加载规则可总结如下：</p>
+<ul>
+<li>如果指定yaf.library和产品的application.ini中指定ap.library，那么无论是否在application.ini中指定了ap.library.namespace或者通过Yaf_Loader::registerLocalNamespace()注册本地的命名空间前缀，那么在程序中遇到未定义的类的时候，会自动到ap.directory.library中寻找对应的类。（ap.directory.library是Yaf必不可少的配置，该配置指定了项目的绝对路径地址）</li>
+<li>如果在产品的application.ini文件中指定了本地的ap.library，但是却没有通过ap.library.namespace或者Yaf_Loader::registerLocalNamespace()指定本地的命名空间，那么无论是都指定了yaf.library，都会去yaf.library中加载类；</li>
+<li>只有在指定了本地类的ap.library，指定了本地的命名空间且类名中包含有命名空间的前缀的时候，才回去本地的类库中加载对应的类；否则到yaf.library中指定的文件中加载对应的类。.....</li>
+</ul>
+<p>指定命名空间的方式为：
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$loader = Yaf_Loader::getIgnstance();</span><br><span class="line">$loader-&gt;registerLocalNamespace(array(&quot;local&quot;));</span><br></pre></td></tr></table></figure></p>
+<p>或者在项目中的conf/application.ini中指定ap.library.namespace为local确定本地的命名空间。</p>
+<h3>下面以类名local_sublocal_test.php说明上面三种情况分别对应的加载规则。</h3>
+<p>这种情况下，ap.directory一般在application.ini指定为APP_PATH（APP_PATH在入口文件index.php中定义），此时的加载路径为APP_PATH/library/local/sublocal/test.php;
+这种情况下加载路径一般是yaf.library+'/local/sublocal/test.php';
+这种情况下加载路径为ap.library+'/local/sublocal/test.php';</p>
+<p>&lt;br&gt;</p>
+<h2>与MVC框架相关的类的自动加载</h2>
+<p>与MVC框架相关的类的的自动加载是通过使用特定的前缀或者后缀名确定类的加载路径的，通过类与其所在的文件的特定映射完成类的自动加载：类名=文件名+后缀。</p>
+<p>对于控制器 Controller 默认模块下为{项目路径}/controllers/, 否则为{项目路径}/modules/{模块名}/controllers。例如，IndexController，该类自动加载文件 {项目目录}/Controllers/Index.php。</p>
+<p>对于Model 加载路径为{项目目录}/models/， 类似比如UserModel则自动加载{项目目录}/models/User.php。</p>
+<p>对于和V相关的视图文件不属于本文的讨论范围。</p>
+<p>以上是对Yaf中类的自动加载规则的总结，由目前使用到的最多的就是和MVC相关的类的加载和在conf/application.ini中指定加载路径的类。</p>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2017/09/08/Yaf框架自动加载/" data-id="cjvdqa4l8001t78r36srltpt4" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2017/09/08/Yaf框架自动加载/" data-id="cjvdqd6w3001ro4r3wxunrve6" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/php/">php</a></li></ul>
@@ -376,16 +649,34 @@
         <p>php的<a href="http://www.laruence.com/manual/index.html" target="_blank" rel="noopener">Yaf</a>框架相对其他框架来说有很多优点：</p>
 <ul>
 <li>C语言开发，最大限度减少性能损耗</li>
-<li>所有的框架类, 不需要编译, 在PHP启动的时候加载
-        
-          <p class="article-more-link">
-            <a href="/2017/09/08/Yaf框架/#more">Read More</a>
-          </p>
-        
+<li>所有的框架类, 不需要编译, 在PHP启动的时候加载&lt;!--more--&gt;</li>
+<li>自动加载. 支持全局和自身两种加载规则, 方便类库共享[[1]](http://jiweii.com/2017/09/08/Yaf%E6%A1%86%E6%9E%B6%E8%87%AA%E5%8A%A8%E5%8A%A0%E8%BD%BD/)</li>
+<li>更快的执行速度, 更少的内存占用</li>
+</ul>
+<p>当然这只是其中一部分优点，再当然Yaf也是有一些缺点的，比如它的场景非常明确，就是牺牲开发舒适度，追求PHP极限性能的场景，而如今提升性能的方法又多不胜数，php的性能提升或许只占web优化的一部分或一小部分，在访问量主键变大的过程中，db端的优化变的尤为重要，而web端可以水平扩展，nginx负载均衡；</p>
+<p>所以结论就是这是一个既有有点也有缺点的框架；</p>
+<p>安装yaf扩展：网址<a href="http://pecl.php.net/package/yaf" target="_blank" rel="noopener">http://pecl.php.net/package/yaf</a>
+windows下载对应版本的php_yaf.dll,linux下载源码编译
+若成功安装，phpinfo中可以看到yaf扩展。</p>
+<h2>项目结构</h2>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">─application      　　　　应用目录</span><br><span class="line">│  ├─controllers　　　　　　控制器目录</span><br><span class="line">│  │    ├  Error.php</span><br><span class="line">│  │    └  Index.php</span><br><span class="line">│  ├─library　　　　　　　　库目录</span><br><span class="line">│  ├─models　　　　　　　　 模型目录</span><br><span class="line">│  │    └ Sample.php</span><br><span class="line">│  ├─plugins　　　　　　　　插件目录</span><br><span class="line">│  │    └ Sample.php</span><br><span class="line">│  ├─views　　　　　　　　　视图目录</span><br><span class="line">│  │    ├─error</span><br><span class="line">│  │    └─index</span><br><span class="line">│  └──  Bootstrap.php</span><br><span class="line">├─conf　　　　　　　　　　　 配置文件目录</span><br><span class="line">│     └─ application.ini  配置文件  </span><br><span class="line">├─public  　　　　　　　　　静态文件目录</span><br><span class="line">└──   index.php　　　　   入口文件</span><br></pre></td></tr></table></figure></p>
+<h2>入口文件</h2>
+<p>public/index.php
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">define(&quot;APP_PATH&quot;,  dirname(__FILE__));</span><br><span class="line"></span><br><span class="line">/*</span><br><span class="line">$config = array(</span><br><span class="line">   &quot;application&quot; =&gt; array(</span><br><span class="line">       &quot;directory&quot; =&gt; APP_PATH . &quot;/application&quot;,</span><br><span class="line">    ),</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line">$app  = new yaf_application($config);</span><br><span class="line">*/</span><br><span class="line"></span><br><span class="line">//加载配置文件</span><br><span class="line">$app  = new Yaf_Application(APP_PATH . &quot;/conf/application.ini&quot;);</span><br><span class="line"></span><br><span class="line">$app-&gt;bootstrap() //call bootstrap methods defined in Bootstrap.php</span><br><span class="line">    -&gt;run();</span><br></pre></td></tr></table></figure></p>
+<h2>配置文件</h2>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[common]</span><br><span class="line">; 支持直接写PHP中的已定义常量</span><br><span class="line">application.directory = APP_PATH  &quot;/application&quot;</span><br><span class="line">application.dispatcher.catchException = TRUE</span><br><span class="line">application.view.ext = html</span><br><span class="line"></span><br><span class="line">; 数据库配置</span><br><span class="line">resources.database.params.driver = &quot;pdo_mysql&quot;</span><br><span class="line">resources.database.params.hostname = &quot;127.0.0.1&quot;</span><br><span class="line">resources.database.params.port = 3306</span><br><span class="line">resources.database.params.database = &quot;database&quot;</span><br><span class="line">resources.database.params.username = &quot;username&quot;</span><br><span class="line">resources.database.params.password = &quot;password&quot;</span><br><span class="line">resources.database.params.charset = &quot;UTF8&quot;</span><br><span class="line">resources.database.params.driver_options.1002 = &quot;SET NAMES utf8&quot;</span><br><span class="line"> </span><br><span class="line">[product : common]</span><br><span class="line">; 生产环境配置</span><br><span class="line"> </span><br><span class="line">[test : common]</span><br><span class="line">; 测试环境配置</span><br><span class="line"> </span><br><span class="line">[develop : common]</span><br><span class="line">; 开发环境配置</span><br><span class="line"> </span><br><span class="line">resources.database.params.hostname = &quot;127.0.0.1&quot;</span><br><span class="line">resources.database.params.database = &quot;database&quot;</span><br><span class="line">resources.database.params.username = &quot;username&quot;</span><br><span class="line">resources.database.params.password = &quot;password&quot;</span><br></pre></td></tr></table></figure></p>
+<h2>控制器</h2>
+<p>application/controllers
+在Yaf中, 默认的模块/控制器/动作, 都是以Index命名的, 当然,这是可通过配置文件修改的。
+对于默认模块, 控制器的目录是在application目录下的controllers目录下</p>
+<h2>视图文件</h2>
+<p>application/views
+Yaf支持简单的视图引擎, 并且支持用户自定义自己的视图引擎, 比如Smarty。对于默认模块, 视图文件的路径是在application目录下的views目录中以小写的action名的目录中.</p>
+
       
-    </li></ul></div>
+    </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2017/09/08/Yaf框架/" data-id="cjvdqa4l0001i78r37l8n5d4a" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2017/09/08/Yaf框架/" data-id="cjvdqd6w0001oo4r30dsthgdj" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/php/">php</a></li></ul>
@@ -423,16 +714,13 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>总结一个简单好用的抽奖算法：
-        
-          </p><p class="article-more-link">
-            <a href="/2017/06/01/一个简单好用的抽奖算法/#more">Read More</a>
-          </p>
-        
+        <p>总结一个简单好用的抽奖算法：&lt;!--more--&gt;
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getResult</span><span class="params">()</span></span>&#123;</span><br><span class="line">    $prize_arr = <span class="keyword">array</span>(</span><br><span class="line">        <span class="string">'0'</span> =&gt; <span class="keyword">array</span>(<span class="string">'id'</span>=&gt;<span class="number">1</span>,<span class="string">'prize'</span>=&gt;<span class="string">'平板电脑'</span>,<span class="string">'v'</span>=&gt;<span class="number">0.1</span>),</span><br><span class="line">        <span class="string">'1'</span> =&gt; <span class="keyword">array</span>(<span class="string">'id'</span>=&gt;<span class="number">2</span>,<span class="string">'prize'</span>=&gt;<span class="string">'数码相机'</span>,<span class="string">'v'</span>=&gt;<span class="number">5</span>),</span><br><span class="line">        <span class="string">'2'</span> =&gt; <span class="keyword">array</span>(<span class="string">'id'</span>=&gt;<span class="number">3</span>,<span class="string">'prize'</span>=&gt;<span class="string">'音箱设备'</span>,<span class="string">'v'</span>=&gt;<span class="number">10</span>),</span><br><span class="line">        <span class="string">'3'</span> =&gt; <span class="keyword">array</span>(<span class="string">'id'</span>=&gt;<span class="number">4</span>,<span class="string">'prize'</span>=&gt;<span class="string">'4G优盘'</span>,<span class="string">'v'</span>=&gt;<span class="number">12</span>),</span><br><span class="line">        <span class="string">'4'</span> =&gt; <span class="keyword">array</span>(<span class="string">'id'</span>=&gt;<span class="number">5</span>,<span class="string">'prize'</span>=&gt;<span class="string">'10Q币'</span>,<span class="string">'v'</span>=&gt;<span class="number">22</span>),</span><br><span class="line">        <span class="string">'5'</span> =&gt; <span class="keyword">array</span>(<span class="string">'id'</span>=&gt;<span class="number">6</span>,<span class="string">'prize'</span>=&gt;<span class="string">'下次没准就能中哦'</span>,<span class="string">'v'</span>=&gt;<span class="number">50</span>),</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">foreach</span> ($prize_arr <span class="keyword">as</span> $key =&gt; $val) &#123;</span><br><span class="line">        $arr[$val[<span class="string">'id'</span>]] = $val[<span class="string">'v'</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    $rid = <span class="keyword">$this</span>-&gt;get_rand($arr); <span class="comment">//根据概率获取奖项id</span></span><br><span class="line">    $res[<span class="string">'yes'</span>] = $prize_arr[$rid<span class="number">-1</span>][<span class="string">'prize'</span>]; <span class="comment">//中奖项</span></span><br><span class="line">    <span class="keyword">unset</span>($prize_arr[$rid<span class="number">-1</span>]); <span class="comment">//将中奖项从数组中剔除，剩下未中奖项</span></span><br><span class="line">    shuffle($prize_arr); <span class="comment">//打乱数组顺序</span></span><br><span class="line">    <span class="keyword">for</span>($i=<span class="number">0</span>;$i&lt;count($prize_arr);$i++)&#123;</span><br><span class="line">        $pr[] = $prize_arr[$i][<span class="string">'prize'</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    $res[<span class="string">'no'</span>] = $pr;</span><br><span class="line">    <span class="keyword">return</span> $res;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">get_rand</span><span class="params">($proArr)</span> </span>&#123;</span><br><span class="line">    $result = <span class="string">''</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//概率数组的总概率精度</span></span><br><span class="line">    $proSum = array_sum($proArr);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//概率数组循环</span></span><br><span class="line">    <span class="keyword">foreach</span> ($proArr <span class="keyword">as</span> $key =&gt; $proCur) &#123;</span><br><span class="line">        $randNum = mt_rand(<span class="number">1</span>, $proSum);</span><br><span class="line">        <span class="keyword">if</span> ($randNum &lt;= $proCur) &#123;</span><br><span class="line">            $result = $key;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            $proSum -= $proCur;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">unset</span> ($proArr);</span><br><span class="line">    <span class="keyword">return</span> $result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2017/06/01/一个简单好用的抽奖算法/" data-id="cjvdqa4li002778r3ub0idyn2" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2017/06/01/一个简单好用的抽奖算法/" data-id="cjvdqd6wk002fo4r3tae1jm3c" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/php/">php</a></li></ul>
@@ -470,16 +758,30 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>php是单继承的语言，trait出现之前，php的类无法同时从两个基类继承属性或方法。php的trait和Go语言的组合功能类似，通过在类中使用use关键字声明要组合的trait名称，而具体某个trait的声明使用trait关键词，trait不能直接实例化。
-        
-          </p><p class="article-more-link">
-            <a href="/2017/03/20/trait详解/#more">Read More</a>
-          </p>
-        
+        <p>php是单继承的语言，trait出现之前，php的类无法同时从两个基类继承属性或方法。php的trait和Go语言的组合功能类似，通过在类中使用use关键字声明要组合的trait名称，而具体某个trait的声明使用trait关键词，trait不能直接实例化。&lt;!--more--&gt;
+具体用法如下：
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">trait</span> Drive &#123;</span><br><span class="line">    <span class="keyword">public</span> $carName = <span class="string">'trait'</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">driving</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"driving &#123;$this-&gt;carName&#125;\n"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">eat</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"eat\n"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span> <span class="keyword">extends</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="keyword">use</span> <span class="title">Drive</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">study</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"study\n"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">$student = <span class="keyword">new</span> Student();</span><br><span class="line">$student-&gt;study();</span><br><span class="line">$student-&gt;eat();</span><br><span class="line">$student-&gt;driving();</span><br></pre></td></tr></table></figure></p>
+<p>输出结果为：
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">study</span><br><span class="line">eat</span><br><span class="line">driving trait</span><br></pre></td></tr></table></figure></p>
+<p>上面的例子中，Student类通过继承Person，有了eat方法，通过组合Drive，有了driving方法和属性carName。</p>
+<p>如果Trait、基类和本类中都存在某个同名的属性或者方法，如下：
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> </span><br><span class="line"><span class="keyword">trait</span> Drive &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">hello</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"hello drive\n"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">driving</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"driving from drive\n"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">hello</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"hello person\n"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">driving</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"driving from person\n"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span> <span class="keyword">extends</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="keyword">use</span> <span class="title">Drive</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">hello</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"hello student\n"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">$student = <span class="keyword">new</span> Student();</span><br><span class="line">$student-&gt;hello();</span><br><span class="line">$student-&gt;driving();</span><br></pre></td></tr></table></figure></p>
+<p>输出结果为：
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hello student</span><br><span class="line">driving from drive</span><br></pre></td></tr></table></figure></p>
+<p>由此可见，当方法或属性同名时，当前类中的方法会覆盖 trait的 方法，而 trait 的方法又覆盖了基类中的方法。</p>
+<p>如果要组合多个Trait，通过逗号分隔 Trait名称：
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">use trait1,trait2;</span><br></pre></td></tr></table></figure></p>
+<p>当组合的多个Trait包含同名属性或者方法时，需要明确声明解决冲突，否则会产生一个致命错误。
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">trait</span> Trait1 &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">hello</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"Trait1::hello\n"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">hi</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"Trait1::hi\n"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">trait</span> Trait2 &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">hello</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"Trait2::hello\n"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">hi</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"Trait2::hi\n"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Class1</span> </span>&#123;</span><br><span class="line">    <span class="keyword">use</span> <span class="title">Trait1</span>, <span class="title">Trait2</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>输出如些结果：
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">PHP Fatal error:  Trait method hello has not been applied, because there are collisions with other trait methods on Class1 in ~/php54/trait_3.php on line 20</span><br></pre></td></tr></table></figure></p>
+<p>需要使用insteadof和as操作符来解决冲突，insteadof是使用某个方法替代另一个，而as是给方法取一个别名：
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">trait Trait1 &#123;</span><br><span class="line">    public function hello() &#123;</span><br><span class="line">        echo &quot;Trait1::hello\n&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">    public function hi() &#123;</span><br><span class="line">        echo &quot;Trait1::hi\n&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">trait Trait2 &#123;</span><br><span class="line">    public function hello() &#123;</span><br><span class="line">        echo &quot;Trait2::hello\n&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">    public function hi() &#123;</span><br><span class="line">        echo &quot;Trait2::hi\n&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">class Class1 &#123;</span><br><span class="line">    use Trait1, Trait2 &#123;</span><br><span class="line">        Trait2::hello insteadof Trait1;</span><br><span class="line">        Trait1::hi insteadof Trait2;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">class Class2 &#123;</span><br><span class="line">    use Trait1, Trait2 &#123;</span><br><span class="line">        Trait2::hello insteadof Trait1;</span><br><span class="line">        Trait1::hi insteadof Trait2;</span><br><span class="line">        Trait2::hi as hei;</span><br><span class="line">        Trait1::hello as hehe;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">$Obj1 = new Class1();</span><br><span class="line">$Obj1-&gt;hello();</span><br><span class="line">$Obj1-&gt;hi();</span><br><span class="line">echo &quot;\n&quot;;</span><br><span class="line">$Obj2 = new Class2();</span><br><span class="line">$Obj2-&gt;hello();</span><br><span class="line">$Obj2-&gt;hi();</span><br><span class="line">$Obj2-&gt;hei();</span><br><span class="line">$Obj2-&gt;hehe();</span><br></pre></td></tr></table></figure></p>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2017/03/20/trait详解/" data-id="cjvdqa4lk002a78r3cs4ylszk" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2017/03/20/trait详解/" data-id="cjvdqd6wh002ao4r3qm8garct" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/php/">php</a></li></ul>
@@ -517,16 +819,18 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>PHP可以用 $object = new StdClass(); 创建一个没有成员方法和属性的空对象。<br>很多时候会将一些参数配置项之类的信息放在数组中使用，但是数组操作起来并不是很方便，很多时候使用对象操作符-&gt;xxx比数组操作符[‘xxx’]要方便不少。<br>数组在程序的使用中应该是最方便的，然而数组的每次被引用（$a = $b），其实都是创建了一个副本，
-        
-          </p><p class="article-more-link">
-            <a href="/2017/03/20/stdClass空对象的使用/#more">Read More</a>
-          </p>
-        
+        <p>PHP可以用 $object = new StdClass(); 创建一个没有成员方法和属性的空对象。
+很多时候会将一些参数配置项之类的信息放在数组中使用，但是数组操作起来并不是很方便，很多时候使用对象操作符-&gt;xxx比数组操作符['xxx']要方便不少。
+数组在程序的使用中应该是最方便的，然而数组的每次被引用（$a = $b），其实都是创建了一个副本，&lt;!--more--&gt;
+而且，数组被unset后，还是占用了内存(听说)，对象在任何地方被调用，都是引用地址型的，所以相对消耗的资源会少一点。
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">$user = <span class="keyword">new</span> stdClass();</span><br><span class="line">$user-&gt;name = <span class="string">'gouki'</span>;</span><br><span class="line">$myUser = $user;</span><br><span class="line">$myUser-&gt;name = <span class="string">'flypig'</span>;</span><br></pre></td></tr></table></figure></p>
+<p>PHP中没有Javascript里面 var object = {}; 这样的语法。
+StdClass类没有任何成员方法，也没有任何成员属性，实例化以后就是一个空对象。</p>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2017/03/20/stdClass空对象的使用/" data-id="cjvdqa4lg002478r3mp1vlbt5" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2017/03/20/stdClass空对象的使用/" data-id="cjvdqd6wf0027o4r32qan022c" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/php/">php</a></li></ul>

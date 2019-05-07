@@ -7,20 +7,20 @@
   
   <title>(14)HTTP请求的11个阶段 | A type of habit</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="48 | 详解HTTP请求的11个阶段">
+  <meta name="description" content="48 | 详解HTTP请求的11个阶段 &amp;lt;!--more--&amp;gt; 出http过滤模块和只提供变量的nginx模块之外，所有的http模块从nginx定义好的11个阶段进行请求的处理。所以每一个http模块何时生效，有没有机会生效。要看一个请求究竟处理到哪个阶段。nginx究竟如何定义这11个阶段的？ HTTP请求处理时的11个阶段  先看左边的示意图： Read Request Head">
 <meta name="keywords" content="nginx">
 <meta property="og:type" content="article">
 <meta property="og:title" content="(14)HTTP请求的11个阶段">
 <meta property="og:url" content="jiweii.com/2018/08/07/14-nginx/index.html">
 <meta property="og:site_name" content="A type of habit">
-<meta property="og:description" content="48 | 详解HTTP请求的11个阶段">
+<meta property="og:description" content="48 | 详解HTTP请求的11个阶段 &amp;lt;!--more--&amp;gt; 出http过滤模块和只提供变量的nginx模块之外，所有的http模块从nginx定义好的11个阶段进行请求的处理。所以每一个http模块何时生效，有没有机会生效。要看一个请求究竟处理到哪个阶段。nginx究竟如何定义这11个阶段的？ HTTP请求处理时的11个阶段  先看左边的示意图： Read Request Head">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/550939-63bfe11aa9c3c908.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/550939-1bf3f8764cb3dbdd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:updated_time" content="2019-04-04T08:31:08.995Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="(14)HTTP请求的11个阶段">
-<meta name="twitter:description" content="48 | 详解HTTP请求的11个阶段">
+<meta name="twitter:description" content="48 | 详解HTTP请求的11个阶段 &amp;lt;!--more--&amp;gt; 出http过滤模块和只提供变量的nginx模块之外，所有的http模块从nginx定义好的11个阶段进行请求的处理。所以每一个http模块何时生效，有没有机会生效。要看一个请求究竟处理到哪个阶段。nginx究竟如何定义这11个阶段的？ HTTP请求处理时的11个阶段  先看左边的示意图： Read Request Head">
 <meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/550939-63bfe11aa9c3c908.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
   
     <link rel="alternate" href="/atom.xml" title="A type of habit" type="application/atom+xml">
@@ -94,10 +94,13 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="48-详解HTTP请求的11个阶段"><a href="#48-详解HTTP请求的11个阶段" class="headerlink" title="48 | 详解HTTP请求的11个阶段"></a>48 | 详解HTTP请求的11个阶段</h1><a id="more"></a>
-<p>出http过滤模块和只提供变量的nginx模块之外，所有的http模块从nginx定义好的11个阶段进行请求的处理。所以每一个http模块何时生效，有没有机会生效。要看一个请求究竟处理到哪个阶段。nginx究竟如何定义这11个阶段的？</p>
-<h2 id="HTTP请求处理时的11个阶段"><a href="#HTTP请求处理时的11个阶段" class="headerlink" title="HTTP请求处理时的11个阶段"></a>HTTP请求处理时的11个阶段</h2><p><img src="https://upload-images.jianshu.io/upload_images/550939-63bfe11aa9c3c908.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<h3 id="先看左边的示意图："><a href="#先看左边的示意图：" class="headerlink" title="先看左边的示意图："></a>先看左边的示意图：</h3><p>Read Request Header： 当一个请求进入到黄色框（nginx之中的时候），首先，Read Request Header，读取到请求的头部，并且决定使用哪个server块上面配置指令处理请求。前面几节讲的流程全部在Read Request Header中。所以，这个时候我们已经知道所有指令的值如何被使用（当然location中还没有决定）。从下面开始进入到11个处理阶段中了。</p>
+        <h1>48 | 详解HTTP请求的11个阶段</h1>
+<p>&lt;!--more--&gt;
+出http过滤模块和只提供变量的nginx模块之外，所有的http模块从nginx定义好的11个阶段进行请求的处理。所以每一个http模块何时生效，有没有机会生效。要看一个请求究竟处理到哪个阶段。nginx究竟如何定义这11个阶段的？</p>
+<h2>HTTP请求处理时的11个阶段</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-63bfe11aa9c3c908.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h3>先看左边的示意图：</h3>
+<p>Read Request Header： 当一个请求进入到黄色框（nginx之中的时候），首先，Read Request Header，读取到请求的头部，并且决定使用哪个server块上面配置指令处理请求。前面几节讲的流程全部在Read Request Header中。所以，这个时候我们已经知道所有指令的值如何被使用（当然location中还没有决定）。从下面开始进入到11个处理阶段中了。</p>
 <p>Configuration Block：寻找哪个location生效了。</p>
 <p>Apply Rate Limits：然后是否决定要对它限速。</p>
 <p>Perform Authentication：然后做些验证。根据referer等等字段判断，这是否是一种盗链的请求，或者用auth basic 协议验证下用户的请求权限。</p>
@@ -106,32 +109,38 @@
 <p>Internal redirects and subrequests：<code>Configuration Block</code>、<code>Apply Rate Limits</code>、<code>Perform Authentication</code>、<code>Generate Content</code>，这四步过程中可能会发生重定向或字请求。这时候又会走这样的一个过程。</p>
 <p>Response Filters：在向用户返回响应的时候，要经过过滤模块。比如：使用gzip做下压缩。</p>
 <p>Log：在返回给用户时候，记录下日志。</p>
-<h3 id="实际流程看右边的图"><a href="#实际流程看右边的图" class="headerlink" title="实际流程看右边的图"></a>实际流程看右边的图</h3><p>实际的流程跟示意图不同，但大致相似。</p>
+<h3>实际流程看右边的图</h3>
+<p>实际的流程跟示意图不同，但大致相似。</p>
 <p>POST_READ：read到header所有请求头部之后。当读完http头部，没有做任何再加工之前，获取到一些原始值。</p>
 <p>SERVER_REWRITE跟REWRITE：都只有一个模块。一般没有第三方模块处理这个阶段的。</p>
 <p>FIND_CONFIG：只有nginx的框架会做。这个阶段没有任何http模块在这个阶段中。这个阶段在做location的匹配。</p>
 <p>POST_REWRITE：在刚刚rewrite 之后要做的一些事情。</p>
-<h4 id="access相关的三个模块，确认访问权限，为什么定义三个模块"><a href="#access相关的三个模块，确认访问权限，为什么定义三个模块" class="headerlink" title="access相关的三个模块，确认访问权限，为什么定义三个模块"></a>access相关的三个模块，确认访问权限，为什么定义三个模块</h4><p>PREACCESS：在access之前要不要做些工作。比如限速。</p>
+<h4>access相关的三个模块，确认访问权限，为什么定义三个模块</h4>
+<p>PREACCESS：在access之前要不要做些工作。比如限速。</p>
 <p>ACCESS：核心解决的是能不能访问。auth_basic根据用户的账号密码，access能是根据用户的访问IP，auth_request根据第三方服务返回是否可以访问。</p>
 <p>POSTACCESS：在access之后要不要做些事情。</p>
 <p>PRECONTENT：在处理content之前，比如mirrors。比如怎么样往一个请求产生多个子请求，mirrors就是干这些事情的。</p>
 <p>CONTENT：干的比较多。</p>
 <p>LOG: 记录日志。</p>
-<h1 id="49-11个阶段的顺序处理"><a href="#49-11个阶段的顺序处理" class="headerlink" title="49 | 11个阶段的顺序处理"></a>49 | 11个阶段的顺序处理</h1><p>当一个http请求进入这11个阶段时，由于每个阶段有零个或多个http模块。如果某一个模块不在把一个请求向下传递，后面的模块是得不到执行的。同一个阶段多个模块并不一定每个模块都有机会执行到。可能会有前面的模块把请求传递给下一个阶段中的模块去处理。</p>
-<h2 id="11个阶段顺序处理"><a href="#11个阶段顺序处理" class="headerlink" title="11个阶段顺序处理"></a>11个阶段顺序处理</h2><p><img src="https://upload-images.jianshu.io/upload_images/550939-1bf3f8764cb3dbdd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h1>49 | 11个阶段的顺序处理</h1>
+<p>当一个http请求进入这11个阶段时，由于每个阶段有零个或多个http模块。如果某一个模块不在把一个请求向下传递，后面的模块是得不到执行的。同一个阶段多个模块并不一定每个模块都有机会执行到。可能会有前面的模块把请求传递给下一个阶段中的模块去处理。</p>
+<h2>11个阶段顺序处理</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/550939-1bf3f8764cb3dbdd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>这里每一个模块都属于某一个阶段，每一个阶段之间，这些模块都是有序的。这个顺序如何能得到呢？我们去看<code>nginx_module.c</code>。编译后这些添加的模块都会在ngx_module_names数组中出现。它们出现的位置顺序非常关键。</p>
 <p>我们看到数组中比如limit_conn_module在limit_req_module上面（它两同属于preaccess阶段），但是实际处理是与这个配置相反的。也就是先被limit_req处理后被limit_conn处理。当它们两个同时生效取阻止一个请求的时候，假设它们的返回值不同，limit_connect是没有机会得到执行的，因为limit_req先于limit_connect把请求的结果返回给用户了。  其他所有的模块都一样。在之前课程中有个同学遇到一个问题。说auto_index没有展示响应的目录结构而是显示了index.html的内容。这里的原因就是index先于auto_index生效，所以先返回了index.html内容。</p>
 <p>像灰色那三个是nginx框架执行的，其他第三方nginx模块没有机会在这里得到执行。</p>
 <p>在有的阶段，也有可能不按照这样的顺序。比如说在access阶段中，有一个指令叫做satisfy指令，它可以指示当某一个满足，比如access满足直接跳到try_files而不会去执行auth_basic、auth_request。当content阶段中，比如：index模块执行了，它会直接跳到log阶段，而不会执行auto_index跟static。</p>
-<h2 id="留言问题"><a href="#留言问题" class="headerlink" title="留言问题"></a>留言问题</h2><ol>
+<h2>留言问题</h2>
+<ol>
 <li>是按照 nginx_modules.c 文件的倒序执行模块的 对吧</li>
 </ol>
-<p> 作者回复<br>不准确，阶段间是固定的，同一阶段内的各模块是倒序的。</p>
+<p> 作者回复
+不准确，阶段间是固定的，同一阶段内的各模块是倒序的。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2018/08/07/14-nginx/" data-id="cjvdqa4k2000e78r3hhgrn440" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2018/08/07/14-nginx/" data-id="cjvdqd6ur000eo4r3xudvgqsl" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li></ul>

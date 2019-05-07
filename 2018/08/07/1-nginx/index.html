@@ -7,18 +7,18 @@
   
   <title>(1)编译、配置、命令行 | A type of habit</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="#一，编译nginx">
+  <meta name="description" content="#一，编译nginx &amp;lt;!--more--&amp;gt;  nginx 安装遇到的问题 安装完后，安装目录下只有conf、html、logs和sbin四个目录，其他的：client_body_temp、fastcgi_temp、modules、proxy_temp、scgi_temp和uwsgi_temp目录，都没有  这些目录需要运行nginx后才会由nginx进程自动生成。 2.sudo ng">
 <meta name="keywords" content="nginx">
 <meta property="og:type" content="article">
 <meta property="og:title" content="(1)编译、配置、命令行">
 <meta property="og:url" content="jiweii.com/2018/08/07/1-nginx/index.html">
 <meta property="og:site_name" content="A type of habit">
-<meta property="og:description" content="#一，编译nginx">
+<meta property="og:description" content="#一，编译nginx &amp;lt;!--more--&amp;gt;  nginx 安装遇到的问题 安装完后，安装目录下只有conf、html、logs和sbin四个目录，其他的：client_body_temp、fastcgi_temp、modules、proxy_temp、scgi_temp和uwsgi_temp目录，都没有  这些目录需要运行nginx后才会由nginx进程自动生成。 2.sudo ng">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:updated_time" content="2019-04-04T08:28:49.693Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="(1)编译、配置、命令行">
-<meta name="twitter:description" content="#一，编译nginx">
+<meta name="twitter:description" content="#一，编译nginx &amp;lt;!--more--&amp;gt;  nginx 安装遇到的问题 安装完后，安装目录下只有conf、html、logs和sbin四个目录，其他的：client_body_temp、fastcgi_temp、modules、proxy_temp、scgi_temp和uwsgi_temp目录，都没有  这些目录需要运行nginx后才会由nginx进程自动生成。 2.sudo ng">
   
     <link rel="alternate" href="/atom.xml" title="A type of habit" type="application/atom+xml">
   
@@ -91,46 +91,62 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>#一，编译nginx<br><a id="more"></a></p>
+        <p>#一，编译nginx
+&lt;!--more--&gt;</p>
 <ol>
-<li>nginx 安装遇到的问题<br>安装完后，安装目录下只有conf、html、logs和sbin四个目录，其他的：client_body_temp、fastcgi_temp、modules、proxy_temp、scgi_temp和uwsgi_temp目录，都没有</li>
+<li>nginx 安装遇到的问题
+安装完后，安装目录下只有conf、html、logs和sbin四个目录，其他的：client_body_temp、fastcgi_temp、modules、proxy_temp、scgi_temp和uwsgi_temp目录，都没有</li>
 </ol>
 <p>这些目录需要运行nginx后才会由nginx进程自动生成。</p>
 <p>2.sudo nginx -V 可以看到配置的参数</p>
-<ol>
-<li>思考下  image filter 模块 </li>
+<ol start="3">
+<li>思考下  image filter 模块</li>
 </ol>
 <p>image filter在配置图片时可以使用参数，所以可以通过浏览器在args或者header中传递参数，让nginx重定义图片大小。</p>
 <p>4.nginx conf 文件语法高亮操作</p>
 <p>cp -r contrib/vim/* ~/.vim/</p>
 <p>例如：服务器，我们可以 sudo /root/.vim 。然后sudo cp 过去。这样 sudo vim 就有高亮操作了。</p>
 <p>5.make 跟 make install 的作用</p>
-<p>make只会在源代码目录时，生成objs目录及目录中的内容。而make install，会把objs目录中的内容，拷贝到–prefix目录中，例如你的/home/geep/nginx。建议你分开执行，执行完一步后观察哪些文件发生了变化。</p>
+<p>make只会在源代码目录时，生成objs目录及目录中的内容。而make install，会把objs目录中的内容，拷贝到--prefix目录中，例如你的/home/geep/nginx。建议你分开执行，执行完一步后观察哪些文件发生了变化。</p>
 <p>6.编译 选项 with-<em>与with-out</em></p>
 <p>with-后面的模块表示默认不安装（使用了with- 就表示这次安装）。with-out-后面的模块表示默认安装（使用了with-out- 就表示这次不安装）</p>
-<ol>
+<ol start="7">
 <li>yum 或者 apt-get安装的问题</li>
 </ol>
 <p>直接安装nginx的binary有个大问题。nginx二进制文件，会把模块编译进去，官方模块并不是每一个都是默认开启。如果你想自己diy模块，就必须编译了。</p>
 <p>8.一个网友问题。nginx 转发https的网站。</p>
-<p>老师你好，有个问题。我用nginx做了一个转发服务器，用于使用域名转发好多个项目。通过子域名转发到不同服务器的对应项目上。但是现在有一个问题，比如使用nginx转发了A、B两台服务器上的各自项目。nginx配置中，只监听了A项目的80端口；监听了B项目的443 和80端口。但是现在如果强制用谷歌浏览器使用https的方式访问A项目，浏览器会提示该链接不是私密链接，如果强制跳转的话就跳转到了B项目里。即<a href="https://A就会强制跳转至B项目的内容，这个该怎么解决呢？" target="_blank" rel="noopener">https://A就会强制跳转至B项目的内容，这个该怎么解决呢？</a><br>2018-11-19<br> 作者回复<br>不只chrome，大部分浏览器都不接受ssl站点页面里，有些url还在使用http协议。我建议你全站都走ssl，即两个子域名都配置ssl。如果访问了80，就返回301/302跳转到ssl。</p>
+<p>老师你好，有个问题。我用nginx做了一个转发服务器，用于使用域名转发好多个项目。通过子域名转发到不同服务器的对应项目上。但是现在有一个问题，比如使用nginx转发了A、B两台服务器上的各自项目。nginx配置中，只监听了A项目的80端口；监听了B项目的443 和80端口。但是现在如果强制用谷歌浏览器使用https的方式访问A项目，浏览器会提示该链接不是私密链接，如果强制跳转的话就跳转到了B项目里。即https://A就会强制跳转至B项目的内容，这个该怎么解决呢？
+2018-11-19
+ 作者回复
+不只chrome，大部分浏览器都不接受ssl站点页面里，有些url还在使用http协议。我建议你全站都走ssl，即两个子域名都配置ssl。如果访问了80，就返回301/302跳转到ssl。</p>
 <p>9.另一个网友的问题。yum 安装 不可控</p>
-<p>老师，编译的时候生产环境是不是一般得指定一个用户，比如nginx。还是怎么处理呢?目前我们主管用的yum安装的nginx，这样是不是不利于升级。<br>谢谢！<br>2018-11-22<br> 作者回复<br>是的，指定worker进程的运行用户。用yum安装但很难用yum升级，热升级依赖我们对nginx的高度可控。</p>
+<p>老师，编译的时候生产环境是不是一般得指定一个用户，比如nginx。还是怎么处理呢?目前我们主管用的yum安装的nginx，这样是不是不利于升级。
+谢谢！
+2018-11-22
+ 作者回复
+是的，指定worker进程的运行用户。用yum安装但很难用yum升级，热升级依赖我们对nginx的高度可控。</p>
 <p>二，nginx的配置语法</p>
 <p>1.nginx的日志文件名配置是支持变量的，配置时间变量即可实现日志的自动分隔</p>
-<ol>
+<ol start="2">
 <li>日志汇总</li>
 </ol>
-<p>在多个服务器上部署了多个nginx ，有什么好办法让日志汇总在一起<br>2018-12-15<br> 作者回复<br>用syslog协议，第5部分会介绍。</p>
+<p>在多个服务器上部署了多个nginx ，有什么好办法让日志汇总在一起
+2018-12-15
+ 作者回复
+用syslog协议，第5部分会介绍。</p>
 <p>3.日志按天分割</p>
-<p>福星留言说的应该是指不能按天分割access.log日志，日志会膨胀到很大。之前好像是通过logrotate按天分割。<br>2018-11-16<br> 作者回复<br>是的，视频中介绍的是通过USR1信号，以及移动原日志文件、重新写入日志文件来实现按时间或者其他因素分割的</p>
-<ol>
+<p>福星留言说的应该是指不能按天分割access.log日志，日志会膨胀到很大。之前好像是通过logrotate按天分割。
+2018-11-16
+ 作者回复
+是的，视频中介绍的是通过USR1信号，以及移动原日志文件、重新写入日志文件来实现按时间或者其他因素分割的</p>
+<ol start="4">
 <li>流控 limit_req_zone $binary_remote_addr zone:10m rate=1r/s</li>
 </ol>
 <p>$binary_remote_addr 这个变量不是limit_req提供的，而是nginx提供的。</p>
 <p>三，nginx 命令行演示</p>
 <ol>
-<li>一些参数<br>-c 指定命令文件</li>
+<li>一些参数
+-c 指定命令文件</li>
 </ol>
 <p>-g 指定配置指令</p>
 <p>-p 指定运行目录</p>
@@ -139,32 +155,54 @@
 <p>-v -V 打印nginx版本，编译信息等</p>
 <p>2.nginx热更新</p>
 <ul>
-<li><p>1.把原来 sbin目录下的nginx 备份一下。</p>
+<li>
+<p>1.把原来 sbin目录下的nginx 备份一下。</p>
 </li>
-<li><p>2.然后把最新编译的nginx（记得–prefix 跟之前保持一致，不要make install）二进制执行文件复制过去。</p>
+<li>
+<p>2.然后把最新编译的nginx（记得--prefix 跟之前保持一致，不要make install）二进制执行文件复制过去。</p>
 </li>
-<li><p>3.kill -USR2 进程id（老的worker会继续运行，新的worker也起来了，平滑的过度）</p>
+<li>
+<p>3.kill -USR2 进程id（老的worker会继续运行，新的worker也起来了，平滑的过度）</p>
 </li>
-<li><p>4.优雅的关闭老的worker kill -WINCH 进程id（老的master进程），</p>
+<li>
+<p>4.优雅的关闭老的worker kill -WINCH 进程id（老的master进程），</p>
 </li>
 </ul>
 <p>ps ef |grep nginx 发现老的master进程不会自动退出，目的是方便我们回退。</p>
-<ol>
+<ol start="3">
 <li>对视频中讲解reopen 时，用到cp 日志时候。提的问题</li>
 </ol>
-<p>切割日志的时候，先复制再停止ng，会漏掉从复制到停止中间这段时间的日志吧？<br>2018-11-06<br> 作者回复<br>是的，这个演示为了方便初学linux的同学理解，所以用了复制。<br>在生产环境中，应该把cp命令改为mv命令，因为linux文件系统中，改名并不会影响已经打开文件的写入操作，内核inode不变，这样就不会出现丢日志了。<br>谢谢你的提醒，视频最后应该提一下这个事的。</p>
-<p>4.热更新之后，老的nginx监听端口问题<br>老师，您好，我在做nginx热部署的时候遇到一个问题，您说，在发送USR2信号后，旧的nginx进程不再监听端口，但是我测试的时候，出现如下情况（新旧进程都在监听端口），麻烦您看一下，是哪里出了问题？</p>
+<p>切割日志的时候，先复制再停止ng，会漏掉从复制到停止中间这段时间的日志吧？
+2018-11-06
+ 作者回复
+是的，这个演示为了方便初学linux的同学理解，所以用了复制。
+在生产环境中，应该把cp命令改为mv命令，因为linux文件系统中，改名并不会影响已经打开文件的写入操作，内核inode不变，这样就不会出现丢日志了。
+谢谢你的提醒，视频最后应该提一下这个事的。</p>
+<p>4.热更新之后，老的nginx监听端口问题
+老师，您好，我在做nginx热部署的时候遇到一个问题，您说，在发送USR2信号后，旧的nginx进程不再监听端口，但是我测试的时候，出现如下情况（新旧进程都在监听端口），麻烦您看一下，是哪里出了问题？</p>
 <p>旧nginx进程仍然在LISTEN，只是不会去处理这个socket，因为没有把它加到epoll中。master进程打开监听端口，但不处理，由worker进程处理。另外，旧master是新master的父进程，所以新master才能共享打开的监听端口。</p>
 <p>5.热更新的问题</p>
-<p>看了这节课，有个问题想问问：<br>热部署，在执行完kill -USR2 masterPid 后，如何判断老的master进程不在监听80 or 443端口？<br>热部署，在执行完kill -WINCH masterPid 后，如果没问题，老的master进程是手动 Kill掉吗？<br>热部署，在执行完kill -WINCH masterPid 后，如果有问题，重新执行-s reload重新拉起worker进程，操作流程是先将二进制文件nginx.old还原为nginx， 然后执行nginx -s reload, 那nginx.new的master的进程和worker进程如何关闭呢？<br>2018-11-16<br> 作者回复<br>先回答第1个问题：用lsof -p 进程号，可以看到进程打开的句柄，也包括监听的端口。用netstat命令也可以看到一些端口被哪些进程打开。或者直接在/proc目录中找进程的相关信息也可以。<br>第2个问题：可以用kill -QUIT把老master杀掉。<br>第3个问题：直接用kill -USR1来执行reload，不要用-s reload，这样还是老的nginx worker起来</p>
-<ol>
+<p>看了这节课，有个问题想问问：
+热部署，在执行完kill -USR2 masterPid 后，如何判断老的master进程不在监听80 or 443端口？
+热部署，在执行完kill -WINCH masterPid 后，如果没问题，老的master进程是手动 Kill掉吗？
+热部署，在执行完kill -WINCH masterPid 后，如果有问题，重新执行-s reload重新拉起worker进程，操作流程是先将二进制文件nginx.old还原为nginx， 然后执行nginx -s reload, 那nginx.new的master的进程和worker进程如何关闭呢？
+2018-11-16
+ 作者回复
+先回答第1个问题：用lsof -p 进程号，可以看到进程打开的句柄，也包括监听的端口。用netstat命令也可以看到一些端口被哪些进程打开。或者直接在/proc目录中找进程的相关信息也可以。
+第2个问题：可以用kill -QUIT把老master杀掉。
+第3个问题：直接用kill -USR1来执行reload，不要用-s reload，这样还是老的nginx worker起来</p>
+<ol start="6">
 <li>kill USR2 之后没有变化请看error.log</li>
 </ol>
-<p>kill USR2后是应当有变化的，变化是：生成一个新master进程及相应worker进程。<br>没有变化的原因很可能是出现错误了，你看一下error.log日志文件。</p>
-<ol>
+<p>kill USR2后是应当有变化的，变化是：生成一个新master进程及相应worker进程。
+没有变化的原因很可能是出现错误了，你看一下error.log日志文件。</p>
+<ol start="7">
 <li>USR1 对应reopen，HUP对应reload</li>
 </ol>
-<p>热部署失败之后到底用kill -USR1呢，还是用kill -HUP呢？有点儿不明白，他们两个的问题把我搞糊涂了，或是老师给说说热部署失败之后如何回退呢？<br>2018-11-25<br> 作者回复<br>USR1是切割日志的，对应reopen命令。而HUP是对应reload命令，它会在没有worker进程时启动worker进程。所以，回退应该用HUP信号。</p>
+<p>热部署失败之后到底用kill -USR1呢，还是用kill -HUP呢？有点儿不明白，他们两个的问题把我搞糊涂了，或是老师给说说热部署失败之后如何回退呢？
+2018-11-25
+ 作者回复
+USR1是切割日志的，对应reopen命令。而HUP是对应reload命令，它会在没有worker进程时启动worker进程。所以，回退应该用HUP信号。</p>
 <p>8.日志切割工具cronlog</p>
 <p>9.我看了评论，有人说执行更新后的NGINX 会加载新目录的配置文件。</p>
 <p>首先，作者在第9小节。./confiure —prefix=/home/geek/nginx 配置的目录是旧的NGINX目录。</p>
@@ -173,7 +211,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2018/08/07/1-nginx/" data-id="cjvdqa4jj000378r3hq9jj8sb" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2018/08/07/1-nginx/" data-id="cjvdqd6tr0000o4r3muajqazc" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li></ul>
@@ -194,9 +232,9 @@
     </a>
   
   
-    <a href="/2018/08/07/3-nginx/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2018/08/07/11-nginx/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">(3)信号、nginx事件、同步&amp;异步、阻塞&amp;非阻塞</div>
+      <div class="article-nav-title">(11)冲突的配置指令以谁为准</div>
     </a>
   
 </nav>

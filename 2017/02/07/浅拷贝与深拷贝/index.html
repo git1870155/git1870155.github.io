@@ -7,18 +7,18 @@
   
   <title>浅拷贝与深拷贝 | A type of habit</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="对象的赋值分为浅拷贝与深拷贝，区别在于浅拷贝为新对象与原来的指向同一个地址，如果新对象属性改变，原有对象也会跟着改变，深拷贝为整体复制一份对象，与地址无关">
+  <meta name="description" content="对象的赋值分为浅拷贝与深拷贝， 区别在于浅拷贝为新对象与原来的指向同一个地址，如果新对象属性改变，原有对象也会跟着改变， 深拷贝为整体复制一份对象，与地址无关&amp;lt;!--more--&amp;gt; 浅拷贝 class A &amp;#123;	public $age = 0;	public $name = &apos;&apos;;	public $obj = null;&amp;#125;$a = new A();$b = $a;$b">
 <meta name="keywords" content="php">
 <meta property="og:type" content="article">
 <meta property="og:title" content="浅拷贝与深拷贝">
 <meta property="og:url" content="jiweii.com/2017/02/07/浅拷贝与深拷贝/index.html">
 <meta property="og:site_name" content="A type of habit">
-<meta property="og:description" content="对象的赋值分为浅拷贝与深拷贝，区别在于浅拷贝为新对象与原来的指向同一个地址，如果新对象属性改变，原有对象也会跟着改变，深拷贝为整体复制一份对象，与地址无关">
+<meta property="og:description" content="对象的赋值分为浅拷贝与深拷贝， 区别在于浅拷贝为新对象与原来的指向同一个地址，如果新对象属性改变，原有对象也会跟着改变， 深拷贝为整体复制一份对象，与地址无关&amp;lt;!--more--&amp;gt; 浅拷贝 class A &amp;#123;	public $age = 0;	public $name = &apos;&apos;;	public $obj = null;&amp;#125;$a = new A();$b = $a;$b">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:updated_time" content="2018-04-16T02:19:02.560Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="浅拷贝与深拷贝">
-<meta name="twitter:description" content="对象的赋值分为浅拷贝与深拷贝，区别在于浅拷贝为新对象与原来的指向同一个地址，如果新对象属性改变，原有对象也会跟着改变，深拷贝为整体复制一份对象，与地址无关">
+<meta name="twitter:description" content="对象的赋值分为浅拷贝与深拷贝， 区别在于浅拷贝为新对象与原来的指向同一个地址，如果新对象属性改变，原有对象也会跟着改变， 深拷贝为整体复制一份对象，与地址无关&amp;lt;!--more--&amp;gt; 浅拷贝 class A &amp;#123;	public $age = 0;	public $name = &apos;&apos;;	public $obj = null;&amp;#125;$a = new A();$b = $a;$b">
   
     <link rel="alternate" href="/atom.xml" title="A type of habit" type="application/atom+xml">
   
@@ -91,15 +91,19 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>对象的赋值分为浅拷贝与深拷贝，<br>区别在于浅拷贝为新对象与原来的指向同一个地址，如果新对象属性改变，原有对象也会跟着改变，<br>深拷贝为整体复制一份对象，与地址无关<a id="more"></a></p>
-<h2 id="浅拷贝"><a href="#浅拷贝" class="headerlink" title="浅拷贝"></a>浅拷贝</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</span><br><span class="line">	<span class="keyword">public</span> $age = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">public</span> $name = <span class="string">''</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> $obj = <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$a = <span class="keyword">new</span> A();</span><br><span class="line"></span><br><span class="line">$b = $a;</span><br><span class="line"></span><br><span class="line">$b-&gt;age = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">var_dump($a-&gt;age);<span class="keyword">exit</span>;</span><br></pre></td></tr></table></figure>
-<p><br></p>
-<h2 id="深拷贝"><a href="#深拷贝" class="headerlink" title="深拷贝"></a>深拷贝</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</span><br><span class="line">	<span class="keyword">public</span> $age = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">public</span> $name = <span class="string">''</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> $obj = <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$a = <span class="keyword">new</span> A();</span><br><span class="line"></span><br><span class="line">$b = <span class="keyword">clone</span> $a;</span><br><span class="line"></span><br><span class="line">$b-&gt;age = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">var_dump($a-&gt;age);<span class="keyword">exit</span>;</span><br></pre></td></tr></table></figure>
+        <p>对象的赋值分为浅拷贝与深拷贝，
+区别在于浅拷贝为新对象与原来的指向同一个地址，如果新对象属性改变，原有对象也会跟着改变，
+深拷贝为整体复制一份对象，与地址无关&lt;!--more--&gt;</p>
+<h2>浅拷贝</h2>
+<p><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</span><br><span class="line">	<span class="keyword">public</span> $age = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">public</span> $name = <span class="string">''</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> $obj = <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$a = <span class="keyword">new</span> A();</span><br><span class="line"></span><br><span class="line">$b = $a;</span><br><span class="line"></span><br><span class="line">$b-&gt;age = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">var_dump($a-&gt;age);<span class="keyword">exit</span>;</span><br></pre></td></tr></table></figure></p>
+<p>&lt;br&gt;</p>
+<h2>深拷贝</h2>
+<p><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</span><br><span class="line">	<span class="keyword">public</span> $age = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">public</span> $name = <span class="string">''</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> $obj = <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$a = <span class="keyword">new</span> A();</span><br><span class="line"></span><br><span class="line">$b = <span class="keyword">clone</span> $a;</span><br><span class="line"></span><br><span class="line">$b-&gt;age = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">var_dump($a-&gt;age);<span class="keyword">exit</span>;</span><br></pre></td></tr></table></figure></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2017/02/07/浅拷贝与深拷贝/" data-id="cjvdqa4ly002v78r3dc1erzmz" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2017/02/07/浅拷贝与深拷贝/" data-id="cjvdqd6wy002wo4r3o11iagjn" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/php/">php</a></li></ul>
