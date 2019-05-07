@@ -7,18 +7,18 @@
   
   <title>php设计模式浅析(二) | A type of habit</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="php设计模式浅析下半段，因博客太长，所以分为两个博客 之前写的设计模式包括单例，工厂，注册数，适配器等都是平时常用或常见的，接下来的几个会是代码设计时很独特的设计模式确不怎么常用&amp;lt;!--more--&amp;gt; &amp;lt;center&amp;gt;直达快车   &amp;lt;a href=&amp;quot;#策略模式&amp;quot;&amp;gt;策略模式&amp;lt;/a&amp;gt;  |  &amp;lt;a href=&amp;quot;#观察">
+  <meta name="description" content="php设计模式浅析下半段，因博客太长，所以分为两个博客之前写的设计模式包括单例，工厂，注册数，适配器等都是平时常用或常见的，接下来的几个会是代码设计时很独特的设计模式确不怎么常用">
 <meta name="keywords" content="php">
 <meta property="og:type" content="article">
 <meta property="og:title" content="php设计模式浅析(二)">
 <meta property="og:url" content="jiweii.com/2017/01/08/php设计模式浅析-二/index.html">
 <meta property="og:site_name" content="A type of habit">
-<meta property="og:description" content="php设计模式浅析下半段，因博客太长，所以分为两个博客 之前写的设计模式包括单例，工厂，注册数，适配器等都是平时常用或常见的，接下来的几个会是代码设计时很独特的设计模式确不怎么常用&amp;lt;!--more--&amp;gt; &amp;lt;center&amp;gt;直达快车   &amp;lt;a href=&amp;quot;#策略模式&amp;quot;&amp;gt;策略模式&amp;lt;/a&amp;gt;  |  &amp;lt;a href=&amp;quot;#观察">
+<meta property="og:description" content="php设计模式浅析下半段，因博客太长，所以分为两个博客之前写的设计模式包括单例，工厂，注册数，适配器等都是平时常用或常见的，接下来的几个会是代码设计时很独特的设计模式确不怎么常用">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:updated_time" content="2018-03-21T05:06:54.527Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="php设计模式浅析(二)">
-<meta name="twitter:description" content="php设计模式浅析下半段，因博客太长，所以分为两个博客 之前写的设计模式包括单例，工厂，注册数，适配器等都是平时常用或常见的，接下来的几个会是代码设计时很独特的设计模式确不怎么常用&amp;lt;!--more--&amp;gt; &amp;lt;center&amp;gt;直达快车   &amp;lt;a href=&amp;quot;#策略模式&amp;quot;&amp;gt;策略模式&amp;lt;/a&amp;gt;  |  &amp;lt;a href=&amp;quot;#观察">
+<meta name="twitter:description" content="php设计模式浅析下半段，因博客太长，所以分为两个博客之前写的设计模式包括单例，工厂，注册数，适配器等都是平时常用或常见的，接下来的几个会是代码设计时很独特的设计模式确不怎么常用">
   
     <link rel="alternate" href="/atom.xml" title="A type of habit" type="application/atom+xml">
   
@@ -91,31 +91,19 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>php设计模式浅析下半段，因博客太长，所以分为两个博客
-之前写的设计模式包括单例，工厂，注册数，适配器等都是平时常用或常见的，接下来的几个会是代码设计时很独特的设计模式确不怎么常用&lt;!--more--&gt;
-&lt;center&gt;直达快车   &lt;a href=&quot;#策略模式&quot;&gt;策略模式&lt;/a&gt;  |  &lt;a href=&quot;#观察者模式&quot;&gt;观察者模式&lt;/a&gt;&lt;/center&gt;</p>
-<p>&lt;br&gt;</p>
-<h3>&lt;font name=&quot;策略模式&quot;&gt;策略模式&lt;/font&gt;</h3>
-<p>将一组特定的程序或算法封装成类，以适应某些特定的上下文环境;
-一个情景过程：</p>
-<h6>1.Joe做了一套相当成功的模拟鸭子的游戏。设计了一个超类Duck,然后让各种鸭子继承这个类。</h6>
-<h6>2.后来客户提出要让鸭子有飞的能力。所以Joe就在超类中加了个fly()方法，这样下面的子类都有飞行的行为。</h6>
-<h6>问题来了：1&gt;原来Duck的子类中竟然有橡皮鸭，橡皮鸭是不会飞的。——Joe用重载的方式，把橡皮鸭的fly()方法设置为空.</h6>
-<h6>2&gt;覆盖fly()，我们看到了橡皮鸭的fly()里，没有任何代码，如果以后我们再添加别的不会飞的鸭子，那我么还要这么处理吗?——那么代码重复了!</h6>
-<h6>3.上面2的方式我们知道是有问题的，所以Joe想到把Duck做成接口，这样每个子类必须实现Duck里的方法。这样就保证每个鸭子都能根据自己的需要添加行为。</h6>
-<h6>问题来了：产品经常处于更新中，规格也在不断的变化。导致每当有新鸭子的时候，Joe就要被迫检查一遍子类是否覆盖了fly()方法。——当你修改某个行为的时候，你必须得往下追踪并在每一个定义此行为的类中修改它。</h6>
-<h6>4.综合以上问题，Joe想到了把那些变化的部分从不变化的位置中抽出来。比如，我们对fly()行为，做了单独的接口FlyBehavior。如果鸭子想要飞行功能的时候，我们就让鸭子实现FlyBehavior.</h6>
-<h6>5.深造:我们想让鸭子有不同的飞行功能，让它在运行时候做不同的飞行动作。让鸭子类实现接口，只能让鸭子有一种行为。</h6>
-<p>所以Joe，想到用组合的防止，当鸭子需要其他飞行功能要求的时候，我们可以用setBehavior()方式，指定性的飞行方式。</p>
-<h4>一下为代码：</h4>
-<p><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">FlyBehavior</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">fly</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FlyWithWings</span> <span class="keyword">implements</span> <span class="title">FlyBehavior</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">fly</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"Fly With Wings \n"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FlyWithNo</span> <span class="keyword">implements</span> <span class="title">FlyBehavior</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">fly</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"Fly With No Wings \n"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Duck</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> $_flyBehavior;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">performFly</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;_flyBehavior-&gt;fly();</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">setFlyBehavior</span><span class="params">(FlyBehavior $behavior)</span></span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;_flyBehavior = $behavior;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RubberDuck</span> <span class="keyword">extends</span> <span class="title">Duck</span></span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// Test Case</span></span><br><span class="line">$duck = <span class="keyword">new</span> RubberDuck();</span><br><span class="line"> </span><br><span class="line"><span class="comment">/*  想让鸭子用翅膀飞行 */</span></span><br><span class="line">$duck-&gt;setFlyBehavior(<span class="keyword">new</span> FlyWithWings());</span><br><span class="line">$duck-&gt;performFly();            </span><br><span class="line"> </span><br><span class="line"><span class="comment">/*  想让鸭子不用翅膀飞行 */</span></span><br><span class="line">$duck-&gt;setFlyBehavior(<span class="keyword">new</span> FlyWithNo());</span><br><span class="line">$duck-&gt;performFly();</span><br></pre></td></tr></table></figure></p>
-<p>&lt;br&gt;</p>
-<h3>&lt;font name=&quot;观察者模式&quot;&gt;观察者模式&lt;/font&gt;</h3>
+        <p>php设计模式浅析下半段，因博客太长，所以分为两个博客<br>之前写的设计模式包括单例，工厂，注册数，适配器等都是平时常用或常见的，接下来的几个会是代码设计时很独特的设计模式确不怎么常用<a id="more"></a></p>
+<center>直达快车&nbsp;&nbsp; <a href="#策略模式">策略模式</a> &nbsp;|&nbsp; <a href="#观察者模式">观察者模式</a></center>
 
+<p><br></p>
+<h3 id="策略模式"><a href="#策略模式" class="headerlink" title="策略模式"></a><font name="策略模式">策略模式</font></h3><p>将一组特定的程序或算法封装成类，以适应某些特定的上下文环境;<br>一个情景过程：</p>
+<h6 id="1-Joe做了一套相当成功的模拟鸭子的游戏。设计了一个超类Duck-然后让各种鸭子继承这个类。"><a href="#1-Joe做了一套相当成功的模拟鸭子的游戏。设计了一个超类Duck-然后让各种鸭子继承这个类。" class="headerlink" title="1.Joe做了一套相当成功的模拟鸭子的游戏。设计了一个超类Duck,然后让各种鸭子继承这个类。"></a>1.Joe做了一套相当成功的模拟鸭子的游戏。设计了一个超类Duck,然后让各种鸭子继承这个类。</h6><h6 id="2-后来客户提出要让鸭子有飞的能力。所以Joe就在超类中加了个fly-方法，这样下面的子类都有飞行的行为。"><a href="#2-后来客户提出要让鸭子有飞的能力。所以Joe就在超类中加了个fly-方法，这样下面的子类都有飞行的行为。" class="headerlink" title="2.后来客户提出要让鸭子有飞的能力。所以Joe就在超类中加了个fly()方法，这样下面的子类都有飞行的行为。"></a>2.后来客户提出要让鸭子有飞的能力。所以Joe就在超类中加了个fly()方法，这样下面的子类都有飞行的行为。</h6><h6 id="问题来了：1-gt-原来Duck的子类中竟然有橡皮鸭，橡皮鸭是不会飞的。——Joe用重载的方式，把橡皮鸭的fly-方法设置为空"><a href="#问题来了：1-gt-原来Duck的子类中竟然有橡皮鸭，橡皮鸭是不会飞的。——Joe用重载的方式，把橡皮鸭的fly-方法设置为空" class="headerlink" title="问题来了：1&gt;原来Duck的子类中竟然有橡皮鸭，橡皮鸭是不会飞的。——Joe用重载的方式，把橡皮鸭的fly()方法设置为空."></a>问题来了：1&gt;原来Duck的子类中竟然有橡皮鸭，橡皮鸭是不会飞的。——Joe用重载的方式，把橡皮鸭的fly()方法设置为空.</h6><h6 id="2-gt-覆盖fly-，我们看到了橡皮鸭的fly-里，没有任何代码，如果以后我们再添加别的不会飞的鸭子，那我么还要这么处理吗-——那么代码重复了"><a href="#2-gt-覆盖fly-，我们看到了橡皮鸭的fly-里，没有任何代码，如果以后我们再添加别的不会飞的鸭子，那我么还要这么处理吗-——那么代码重复了" class="headerlink" title="2&gt;覆盖fly()，我们看到了橡皮鸭的fly()里，没有任何代码，如果以后我们再添加别的不会飞的鸭子，那我么还要这么处理吗?——那么代码重复了!"></a>2&gt;覆盖fly()，我们看到了橡皮鸭的fly()里，没有任何代码，如果以后我们再添加别的不会飞的鸭子，那我么还要这么处理吗?——那么代码重复了!</h6><h6 id="3-上面2的方式我们知道是有问题的，所以Joe想到把Duck做成接口，这样每个子类必须实现Duck里的方法。这样就保证每个鸭子都能根据自己的需要添加行为。"><a href="#3-上面2的方式我们知道是有问题的，所以Joe想到把Duck做成接口，这样每个子类必须实现Duck里的方法。这样就保证每个鸭子都能根据自己的需要添加行为。" class="headerlink" title="3.上面2的方式我们知道是有问题的，所以Joe想到把Duck做成接口，这样每个子类必须实现Duck里的方法。这样就保证每个鸭子都能根据自己的需要添加行为。"></a>3.上面2的方式我们知道是有问题的，所以Joe想到把Duck做成接口，这样每个子类必须实现Duck里的方法。这样就保证每个鸭子都能根据自己的需要添加行为。</h6><h6 id="问题来了：产品经常处于更新中，规格也在不断的变化。导致每当有新鸭子的时候，Joe就要被迫检查一遍子类是否覆盖了fly-方法。——当你修改某个行为的时候，你必须得往下追踪并在每一个定义此行为的类中修改它。"><a href="#问题来了：产品经常处于更新中，规格也在不断的变化。导致每当有新鸭子的时候，Joe就要被迫检查一遍子类是否覆盖了fly-方法。——当你修改某个行为的时候，你必须得往下追踪并在每一个定义此行为的类中修改它。" class="headerlink" title="问题来了：产品经常处于更新中，规格也在不断的变化。导致每当有新鸭子的时候，Joe就要被迫检查一遍子类是否覆盖了fly()方法。——当你修改某个行为的时候，你必须得往下追踪并在每一个定义此行为的类中修改它。"></a>问题来了：产品经常处于更新中，规格也在不断的变化。导致每当有新鸭子的时候，Joe就要被迫检查一遍子类是否覆盖了fly()方法。——当你修改某个行为的时候，你必须得往下追踪并在每一个定义此行为的类中修改它。</h6><h6 id="4-综合以上问题，Joe想到了把那些变化的部分从不变化的位置中抽出来。比如，我们对fly-行为，做了单独的接口FlyBehavior。如果鸭子想要飞行功能的时候，我们就让鸭子实现FlyBehavior"><a href="#4-综合以上问题，Joe想到了把那些变化的部分从不变化的位置中抽出来。比如，我们对fly-行为，做了单独的接口FlyBehavior。如果鸭子想要飞行功能的时候，我们就让鸭子实现FlyBehavior" class="headerlink" title="4.综合以上问题，Joe想到了把那些变化的部分从不变化的位置中抽出来。比如，我们对fly()行为，做了单独的接口FlyBehavior。如果鸭子想要飞行功能的时候，我们就让鸭子实现FlyBehavior."></a>4.综合以上问题，Joe想到了把那些变化的部分从不变化的位置中抽出来。比如，我们对fly()行为，做了单独的接口FlyBehavior。如果鸭子想要飞行功能的时候，我们就让鸭子实现FlyBehavior.</h6><h6 id="5-深造-我们想让鸭子有不同的飞行功能，让它在运行时候做不同的飞行动作。让鸭子类实现接口，只能让鸭子有一种行为。"><a href="#5-深造-我们想让鸭子有不同的飞行功能，让它在运行时候做不同的飞行动作。让鸭子类实现接口，只能让鸭子有一种行为。" class="headerlink" title="5.深造:我们想让鸭子有不同的飞行功能，让它在运行时候做不同的飞行动作。让鸭子类实现接口，只能让鸭子有一种行为。"></a>5.深造:我们想让鸭子有不同的飞行功能，让它在运行时候做不同的飞行动作。让鸭子类实现接口，只能让鸭子有一种行为。</h6><p>所以Joe，想到用组合的防止，当鸭子需要其他飞行功能要求的时候，我们可以用setBehavior()方式，指定性的飞行方式。</p>
+<h4 id="一下为代码："><a href="#一下为代码：" class="headerlink" title="一下为代码："></a>一下为代码：</h4><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">FlyBehavior</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">fly</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FlyWithWings</span> <span class="keyword">implements</span> <span class="title">FlyBehavior</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">fly</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"Fly With Wings \n"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FlyWithNo</span> <span class="keyword">implements</span> <span class="title">FlyBehavior</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">fly</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"Fly With No Wings \n"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Duck</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> $_flyBehavior;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">performFly</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;_flyBehavior-&gt;fly();</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">setFlyBehavior</span><span class="params">(FlyBehavior $behavior)</span></span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;_flyBehavior = $behavior;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RubberDuck</span> <span class="keyword">extends</span> <span class="title">Duck</span></span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// Test Case</span></span><br><span class="line">$duck = <span class="keyword">new</span> RubberDuck();</span><br><span class="line"> </span><br><span class="line"><span class="comment">/*  想让鸭子用翅膀飞行 */</span></span><br><span class="line">$duck-&gt;setFlyBehavior(<span class="keyword">new</span> FlyWithWings());</span><br><span class="line">$duck-&gt;performFly();            </span><br><span class="line"> </span><br><span class="line"><span class="comment">/*  想让鸭子不用翅膀飞行 */</span></span><br><span class="line">$duck-&gt;setFlyBehavior(<span class="keyword">new</span> FlyWithNo());</span><br><span class="line">$duck-&gt;performFly();</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<h3 id="观察者模式"><a href="#观察者模式" class="headerlink" title="观察者模式"></a><font name="观察者模式">观察者模式</font></h3>
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2017/01/08/php设计模式浅析-二/" data-id="cjvdqd6w9001zo4r3rme8oi7m" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2017/01/08/php设计模式浅析-二/" data-id="cjvdscuxi000fk4r3u4hgxg9f" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/php/">php</a></li></ul>
@@ -174,7 +162,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/nginx/" style="font-size: 20px;">nginx</a> <a href="/tags/php/" style="font-size: 16.67px;">php</a> <a href="/tags/privately/" style="font-size: 13.33px;">privately</a> <a href="/tags/数据库/" style="font-size: 13.33px;">数据库</a>
+      <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/nginx/" style="font-size: 16.67px;">nginx</a> <a href="/tags/php/" style="font-size: 20px;">php</a> <a href="/tags/privately/" style="font-size: 13.33px;">privately</a> <a href="/tags/数据库/" style="font-size: 13.33px;">数据库</a>
     </div>
   </div>
 
@@ -212,7 +200,7 @@
           </li>
         
           <li>
-            <a href="/2018/08/07/13-nginx/">(13)正则、如何找server指令块</a>
+            <a href="/2018/08/07/1-nginx/">(1)编译、配置、命令行</a>
           </li>
         
       </ul>

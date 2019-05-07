@@ -65,14 +65,14 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-2-nginx" class="article article-type-post" itemscope="" itemprop="blogPost">
+    <article id="post-一个简单好用的抽奖算法" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2018/08/07/2-nginx/" class="article-date">
-  <time datetime="2018-08-07T08:24:25.000Z" itemprop="datePublished">2018-08-07</time>
+    <a href="/2017/06/01/一个简单好用的抽奖算法/" class="article-date">
+  <time datetime="2017-06-01T14:22:55.000Z" itemprop="datePublished">2017-06-01</time>
 </a>
     
   <div class="article-category">
-    <a class="article-category-link" href="/categories/nginx/">nginx</a>
+    <a class="article-category-link" href="/categories/php/">php</a>
   </div>
 
   </div>
@@ -83,7 +83,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/08/07/2-nginx/">(2)静态资源服务器、缓存、HTTPS、Openresty+Lua</a>
+      <a class="article-title" href="/2017/06/01/一个简单好用的抽奖算法/">一个简单好用的抽奖算法</a>
     </h1>
   
 
@@ -91,158 +91,19 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1>一，静态资源服务器搭建</h1>
-<p>&lt;!--more--&gt;
-1.alias 与 root</p>
-<p>访问固定目录的做法</p>
-<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Location / &#123;</span><br><span class="line">	alias dlib/;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>root 的问题：会把url 的路径带到文件目录中来，所以通常使用alias</p>
-<p>2.gzip</p>
-<p>gzip_min_length 1;表示小于1字节的就不再压缩了。因为有的文件小，一个TCP报文就发出去了。这时候如果还做gzip压缩，消耗CPU。意义不大了。</p>
-<p>3.auto_index</p>
-<p>应用场景：假定我们把dlib文件下的某个文件分享给用户，让用户决定用哪些文件。</p>
-<p>当我们访问反斜线结尾的目录的时候。对应到指定目录，显示目录的结构。</p>
-<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">location / &#123;</span><br><span class="line">	alias dlib/;</span><br><span class="line">	auto_index on:</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>共享静态资源的一种手段。</p>
-<p>4.限制访问速度
-比如访问大文件的时候，我们限制流出速度。</p>
-<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">location / &#123;</span><br><span class="line">	alias dlib/;</span><br><span class="line">	auto_index on:</span><br><span class="line">	set $limit_rate 1k; #限制向浏览器发送的速度。每秒1k字节。</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>$limit_rate 内置变量，限制访问速度。</p>
-<p>5.记录access日志</p>
-<p>log_format 命名的场景</p>
-<p>我们可能会对不同的域名下，做不同的日志记录。
-或者做不同用处时（比如：对一些大文件进行反向代理。），我们记录不同的日志。</p>
-<p>内置的变量都可以记录到 access_log日志中</p>
-<p>6.生产环境不建议使用root</p>
-<p>在静态网站访问的时候，出现了403的错误，在nginx.conf文件中添加了 user root; 也就是和当前启动用户一致，然后重新reload，再次访问正常了。</p>
-<p> 作者回复
-如果是生产环境，不建议使用root用户哦，修改静态资源的权限与user指定的用户权限相匹配更好。</p>
-<p>二，反向代理服务</p>
-<ol>
-<li>server{...listen 127.0.0.1:8000....}</li>
-</ol>
-<p>加上127.0.0.1 只允许本机的进程访问NGINX。</p>
-<ul>
-<li>代理服务器配置 upstream 模块</li>
-</ul>
-<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">upstream 名字 &#123;</span><br><span class="line">    server  服务器地址</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line">Location / &#123;</span><br><span class="line">   proxy_pass http://你的upstream名</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>3.proxy_set_header 指令</p>
-<p>被代理的服务器无法直接拿到用户发送的header。prox_set_header相当于转发。</p>
-<p>4.proxy_cache</p>
-<p>配置proxy_cache</p>
-<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http &#123;</span><br><span class="line">    ……</span><br><span class="line">    proxy_cache_path /tmp/nginxcache levels=1:2 keys_zone=my_cache:10m max_sie=10g inactive=60m use_temp_path=off;</span><br><span class="line">   ……</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>文件放在哪个目录下 /tmp/nginxcache
-这些文件的命名方式 levels=1:2
-文件的关键字要放入共享内存（比如：起名叫my_cache，10m就是10MB）</p>
-<p>使用proxy_cache</p>
-<p>放在你想要缓存的url下。</p>
-<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">locaction / &#123;</span><br><span class="line">    ……</span><br><span class="line">    proxy_cache my_cace;#my_cace 开辟的10MB的共享内存</span><br><span class="line">    proxy_cache_key $host$uri$is_args$args;#缓存key</span><br><span class="line">    proxy_cache_valid 200 304 302 1d; #哪些响应不返回</span><br><span class="line">   ……</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>测试缓存两种方法</p>
-<ul>
-<li>请求一次，停掉提供服务的机器，再请求看页面是否缓存</li>
-<li>看http的header头</li>
-</ul>
-<p>5.一个解决问题的思路：二分法，逐渐缩小问题范围</p>
-<p>6.选nginx还是openresty</p>
-<p>如果不需要使用openresty 提供的独有功能，尽量使用更稳定更轻量的nginx。</p>
-<p>7.如果想启用gzip压缩，是应该在反向代理上做，还是web服务器上的nginx上配置？</p>
-<p> 作者回复
-我猜测你的环境是nginx-&gt;nginx，前者是负载均衡的作用，后者是静态资源的作用？如果是这样，建议后者。</p>
-<p>8.$host和$http_host区别</p>
-<p>用反向代理一些有跳转的页面的时候会出现CSS样式加载不出来 然后我使用'$http_host就可以加载出来</p>
-<p> 作者回复
-这两个变量的生成方式不同：http_host只会从请求头部中的Host: xxx中取值，而host有三种取值方式：1、先从请求行中取，比如http://xxx/index.htm；2、如果1取不到，再从Host头部取；3、如果2也取不到，从配置里的server_name里取。你应该根据其含义也选择使用</p>
-<p>三、日志处理</p>
-<ol>
-<li>GoAccess 使用</li>
-</ol>
-<p>goaccess /var/log/nginx/access.log -a -o /etc/nginx/log/report.html --log-format=COMBINED</p>
-<p>注意点：对nginx很多变量的输出goaccess是不能解析的</p>
-<p>使用文档：https://goaccess.io/get-started</p>
-<p>2.集中日志到一台服务器，用syslog协议。</p>
-<p>3.openresty的一致性hash，不均匀，你怎么看，有没有办法修改算法或者虚拟节点的多少</p>
-<p> 作者回复
-nginx的第三方模块代码都能修改，而openresty的lua代码改起来成本更小，例如你说的应该是chash.lua这个文件。 问题是，你打算用一套新的算法来改么？原来是openresty的consistent hash算法，与nginx官方的consistent hash算法，都是使用了memcached中的ketama实现思想的，是经过验证的。</p>
-<p>4.如果做了每天的日志切割，再使用GoAccess 是不是就意味着只能看到当天的统计结果？</p>
-<p>不会的，GoAccess会在内存中缓存运行以来的日志分析结果</p>
-<ol start="5">
-<li>在docker swarm 中，跨主机，多节点的nginx日志收集，聚合，展示，怎么用goaccess进行实现？</li>
-</ol>
-<p> 作者回复
-两个比较简单的方案：</p>
-<ul>
-<li>1、用syslog把日志汇聚在一台服务上，再goaccess。</li>
-<li>2、用NFS把多台主机的日志目录映射在一起，用goaccess再分析。</li>
-</ul>
-<p>四，安全套接字层</p>
-<p>1.SSL</p>
-<p>{F8900}</p>
-<p>{F8902}</p>
-<p>2.ssl第一次握手还是明文传输，也不安全，现在提了一个hsts，老师可以讲一下这个吗？</p>
-<p> 作者回复
-ssl第一次握手是明文传输，但它只是传输安全套件以及公钥，之后数据是用新生成的对称密钥加密过的，所以SSL是安全的。hsts主要应用在浏览器端，它是强制浏览器使用https方式，对nginx来说，只需要在返回的http头部上添加Strict-Transport-Security，告诉浏览器这个站点只能通过https访问即可。</p>
-<p>3.CA</p>
-<p>{F8904}</p>
-<p>4.证书类型</p>
-<p>{F8906}</p>
-<p>5.浏览器跟服务器间通讯怎样确认对方是我信赖的人</p>
-<p>归根结底验证给这个站点办法的根证书它的发行者是否是有效的。</p>
-<p>6.CA是不是只提供签名过的证书，也提供秘钥吗？秘钥不是自己生成的吗？如果提供的话是什么的秘钥呢？</p>
-<p> 作者回复
-这要根据你所使用的服务商决定哦。比如你在阿里云上购买的证书，都是由阿里云生成好公私钥对的，你需要下载公私钥证书再部署在自己的nginx上。</p>
-<p>7.为了可用性我们可以通过nginx 查询OCSP获知证书是否有效。也是为了提升可用性（因为CA机构不对网站的可用性负责）。</p>
-<p>{F8908}</p>
-<p>8.打开session cache 可以复用密钥</p>
-<p>9.性能与优化点</p>
-<p>当以小文件为主，主要考验nginx的非对称加密性能。以大文件为主，考验对称加密性能。</p>
-<p>当我们处理小文件比较多时，主要优化椭圆曲线算法的一些密码强度。</p>
-<p>处理大文件多时，aes算法是否可以替换更有效的算法，或者调整密码强度。</p>
-<p>10，非对称加密技术保证：双方生成的新密钥是一致的，这个结论是怎么得出来的呢？ 能验证下吗？</p>
-<p> 作者回复
-你可以看下椭圆曲线加密的数学证明过程，或者看下RSA的原理验证，网上有很多，不过理解前者需要非常好的数学基础，后者比较简单，可以用来入门。</p>
-<p>11.老师的tls流程是最复杂的吧，一般客户端不需要自己的证书密钥，除非银行客户端之类
-一般网站类，浏览器只是拿服务端公钥加密随机数发给服务端这样吧~</p>
-<p> 作者回复
-不是的，我这里的例子是当前最主流的TLS安全套件交互流程，你用firefox、chrome等访问大多数ssl站点，交互流程都是这样的。这些复杂性，其实都被浏览器、nginx悄悄地完成了，所以我们感知不到</p>
-<p>12.SSL耗时主要由握手和对称加密构成。</p>
-<p>13.CA是怎么知道指定的域名是在当前的nginx下呢？或者有没有推荐的资料或者链接可以参考下呢？</p>
-<p>因为域名配置的地址指向nginx所在机器，所以该nginx所在机器拥有域名所有权。中文资料目前《https权威指南》可以参考</p>
-<p>14.免费的跟付费的证书有什么差异？</p>
-<p>付费的https也分DV证书、OV证书和EV证书。从安全传输这个角度来说，这三种证书效果一样。从浏览器对证书的认可上来，DV证书最差。如果你买的是付费的DV证书，跟这里的例子都一样，因为主流的浏览器都认Lets encrypt。</p>
-<p>五，lua 简单服务</p>
-<p>1.openresty/bundles目录</p>
-<p>ngx_前缀是c模块，lua_打头的是lua模块。主要编译是c模块</p>
-<p>2.使用openresty连接 数据库 或 redis ，性能和稳定性怎么样？（身边几乎没有人使用它去连接数据库和缓存，不敢随便使用它！）</p>
-<p> 作者回复
-性能高,稳定性好,值得一试.</p>
-<p>3.请问：你们经常会使用openresty直连redis或mysql？在什么场景下使用呢？</p>
-<p>有些接口流量很大，所以不想对上游的应用开发服务器造成影响，就会直连redis,mysql。</p>
-<p>4.请问：你们会不会经常使用openresty合并http接口请求？</p>
-<p>微服务架构、前后端分离技术的应用，对RESTful接口的依赖越来越多。繁多的接口，流水线式的请求，使耗费的时间越来越长。
-解决这种效率的问题常见的方法：</p>
-<ul>
-<li>1、增加前端的请求数的请求数，这种方法最大的障碍就是浏览器最大并发连接数，如果请求过多会影响整体页面的加载。</li>
-<li>2、后端代码聚合接口，将多个接口的数据聚合到一起返回给前端，这样做最大缺点是代码的耦合很高。
-既要做到对请求的合并又要不影响各子系统的划分，更好的方案：
-使用OpenResty的ngx.location.capture_multi函数来聚合多个请求，ngx.location.capture_multi对多个内部请求是非阻塞的并行执行的，相对于流水线式的请求大大提交了效率。</li>
-</ul>
-<p> 作者回复
-我很少这么做。你可以试试http2协议(第4部分有介绍)，对大量小请求的性能提升很有效果。</p>
-<p>5.openresty做API接口，api网关优势，例如：降低请求/往返次数，请问：为什么会降低请求/往返次数？（网上说是因为：API网关能够确保客户端在单次往返中就从多项服务中检索出数据。）</p>
-<p> 作者回复
-我对这句话的理解是有这么个场景：
-正常的请求是nginx-&gt;应用服务-&gt;mysql，用openresty后，有些简单的业务只需要查询数据库，那么可以变为nginx-&gt;mysql，这样就降低了请求次数及往返次数。</p>
-<p>6.ngx.say</p>
-<p>ngx.say 会生成响应。是在http中的body中的。
-放在body中的文本，可以通过ngx.say添加进去。</p>
-
+        <p>总结一个简单好用的抽奖算法：
+        
+          </p><p class="article-more-link">
+            <a href="/2017/06/01/一个简单好用的抽奖算法/#more">Read More</a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2018/08/07/2-nginx/" data-id="cjvdqd6va000uo4r3lmxzevck" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2017/06/01/一个简单好用的抽奖算法/" data-id="cjvdscuxt000rk4r3cji3eu5f" class="article-share-link">Share</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/php/">php</a></li></ul>
 
     </footer>
   </div>
@@ -251,14 +112,14 @@ ssl第一次握手是明文传输，但它只是传输安全套件以及公钥�
 
 
   
-    <article id="post-19-nginx" class="article article-type-post" itemscope="" itemprop="blogPost">
+    <article id="post-trait详解" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2018/08/07/19-nginx/" class="article-date">
-  <time datetime="2018-08-07T08:24:25.000Z" itemprop="datePublished">2018-08-07</time>
+    <a href="/2017/03/20/trait详解/" class="article-date">
+  <time datetime="2017-03-20T14:28:42.000Z" itemprop="datePublished">2017-03-20</time>
 </a>
     
   <div class="article-category">
-    <a class="article-category-link" href="/categories/nginx/">nginx</a>
+    <a class="article-category-link" href="/categories/php/">php</a>
   </div>
 
   </div>
@@ -269,7 +130,7 @@ ssl第一次握手是明文传输，但它只是传输安全套件以及公钥�
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/08/07/19-nginx/">(19)access 阶段：ip限制、auth_basic 模块、auth_request模块、satisfy指令</a>
+      <a class="article-title" href="/2017/03/20/trait详解/">trait详解</a>
     </h1>
   
 
@@ -277,116 +138,19 @@ ssl第一次握手是明文传输，但它只是传输安全套件以及公钥�
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1>57 | access阶段：对ip做限制的access模块</h1>
-<p>&lt;!--more--&gt;</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/550939-20e71428a4a62d43.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>这个模块可以控制，哪些ip可以控制哪些url或者不可以访问。access阶段就是用来控制请求是否可以继续向下访问。access模块是这一阶段的第一个模块。</p>
-<h2>ngx_http_access_module</h2>
-<h3>介绍</h3>
-<p><img src="https://upload-images.jianshu.io/upload_images/550939-51a2ace4bd06cc46.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>默认是编译到nginx中的。进入access阶段前不生效，虽然deny了某些地址，对某些ip做限制了。limit_conn、limit_req照样生效。</p>
-<h3>语法</h3>
-<p><img src="https://upload-images.jianshu.io/upload_images/550939-19f0faa68b3adee7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>location里面是顺序执行的。当满足了一条之后，剩余的不在执行了。</p>
-<h2>留言问题</h2>
-<p>1.顺带这里想通了一件事，一般封ip用于内部吧，不用于对外。因为Nginx获取到的其实是用户的公网IP，而获取不到更细节那个用户的实际IP，所以一般对外不直接封IP，那样会误伤，因为那个局域网下其他用户也被限制了。</p>
-<p> 作者回复
-实际情况中也要封IP的，比如针对爬虫时。</p>
-<p>2.前两节limi-conn模块和limit-req模块中，他们是用到了共享内存，但这作用范围是全部work进程什么含义呢？</p>
-<p> 作者回复
-含义是：如果你限制一个客户端最多1个连接，但nginx上配了2个worker进程，那么即使该客户端发起2次连接分别落在两台worker进程上，也会被拒绝。</p>
-<p>3.这个内存（zone）设置的意义是什么？是代表本模块所开辟的内存空间吗？就是您举例说的那个碗的大小吗？
-另外，您讲到会作用到所有work进程，这是什么意思呢？</p>
-<p> 作者回复
-1、worker进程通常与cpu数量保持一致，所有worker进程即当前master生成的所有worker子进程。
-2、nginx中常用的配置指令里，以zone结尾表示开辟的共享内存，可以同时被所有worker进程使用。</p>
-<h1>58 | access阶段：对用户名密码做限制的auth_basic模块</h1>
-<p>校验用户名密码是否匹配，来决定是否拒绝请求访问。</p>
-<h2>HTTP Basic Authentication</h2>
-<p><img src="https://upload-images.jianshu.io/upload_images/550939-8f5d06f1f14fbbee.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<h3>模块基本流程</h3>
-<p>比如我们访问一个url（/） ，nginx首先返回一个401，这个401不会在客户端显示，因为我们注明了<code>WWW-Authenticate: Basic</code>，使用了这样的协议。浏览器就会弹出一个框让我们输入用户名密码。然后浏览器就会以明文的方式发送给nginx。这个协议本身不保证安全性。当然我们使用了https加密就没问题了。</p>
-<h3>auth_basic 模块的指令</h3>
-<p><img src="https://upload-images.jianshu.io/upload_images/550939-1e6fbb3305783e7c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>怎么生成刚刚那种file（auth_basic_user_file） 的文件格式呢？</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/550939-1fe3388a3fd12a04.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>可以通过apache里面的工具包httpd-tools（yum安装即可）。大概生成后的文件的格式看左半边图。</p>
-<p>密码文件（做了简单的base64编码）</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/550939-c0a57d48168d7a25.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>示例</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/550939-00fdaf2fa0575e6b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p><img src="https://upload-images.jianshu.io/upload_images/550939-59b3189c26e6c43f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>当我们提供一些非常简单的页面服务时比如说goaccess界面，想对它做一些安全保护，使用auth_basic是非常快捷的办法。</p>
-<h1>59 | access阶段：使用第三方做权限控制的auth_request模块</h1>
-<p>无论我们通过access模块限制ip，或者使用auth_basic模块限制用户名密码，这些都是非常简单的用户验证方式。在我们的生产环境中，我们很有可能有一个动态的web服务器或者相应的一些应用服务器，它们提供更复杂的用户名权限验证。这个时候可通过访问nginx资源时，把这个请求传递给应用服务器，根据应用服务器返回的结果再判断这个请求资源能否继续执行。auth_request模块就可以完成这样的功能。</p>
-<h2>统一的用户权限验证系统</h2>
-<p><img src="https://upload-images.jianshu.io/upload_images/550939-43343aec5620f593.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>这个模块默认不编译进去nginx。</p>
-<p>生成子请求，子请求的内容与请求的内容是相同的。然后通过反向代理把子请求传递给上游服务，根据上游服务返回的响应再决定是否处理当前这个请求。</p>
-<p>auth_request指令，默认是关闭的，如果加上uri，默认会生成一个子请求。这个子请求会访问这个uri。根据这个uri返回的结果决定这个请求是否继续向下执行。</p>
-<p>auth_request_set指令，方便我们进一步处理，执行完之后可以设置新的变量。变量的值value还可以含有一些变量。比如说根据上游返回的upstream相关变量，添加到新的变量中（$variable）。</p>
-<h2>例子</h2>
-<p><img src="https://upload-images.jianshu.io/upload_images/550939-fc5a4f64eac7d8e1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>proxy_pass_request_body off，这里没传递body，因为没有必要传。conten-lenght自然为空（没有请求body）。</p>
-<p>如果请求成功，会访问，html下面的index.html。如果被8090机器拒绝了呢？会返回8090这台机器返回的错误码。</p>
-<p>来看下8090的配置</p>
-<p>200的配置</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/550939-148d78a88b493bb0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>200的情况</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/550939-fad1df1be8dd7ad3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>403的情况</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/550939-c1eca8eabe8936a6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>做这个实验的时候别忘了关闭浏览器缓存。</p>
-<p>这个模块对于我们拥有一个统一的鉴权系统是非常有用的</p>
-<h2>留言问题：</h2>
-<p>1.auth_request 模块是可以传参数的吧 请求后端的登录接口</p>
-<p> 作者回复
-可以</p>
-<h1>60 | access阶段的satisfy指令</h1>
-<p>前面我们提到了access阶段的三个http模块，是不是说任何一个模块拒绝了用户的请求，用户的请求就得不到执行了呢？并不是。是不是这三个模块要严格的按照顺序执行呢？也不是。这是因为nginx的http框架中提供了一个satisfy这样一个指令。这个指令允许我们改变了模块的执行顺序。</p>
-<h2>satisfy指令</h2>
-<p><img src="https://upload-images.jianshu.io/upload_images/550939-318d616d6a47884d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>all或者any是什么意思呢？我们access阶段中有很多模块。satisfy all就是说access、auth_basic、auth_request这三个模块必须放行这个请求。这个请求才能向下执行。任何一个模块拒绝了这个请求，我们都将返回400或500系列的错误给用户。如果是 any呢？虽然我们的执行顺序还是ccess、auth_basic、auth_request，但是只要有任意一个模块它同一这个请求放行了。不管之前的模块拒绝还是之后的模块拒绝，没有关系，我们仍然可以继续执行这个请求。</p>
-<p>看下流程图，执行一个access模块，可能会给我们返回三个结果：允许放行、忽略、请求被拒绝。</p>
-<p>允许放行分支：判断satisfy的开关，如果配置的all，表示必须所有的access模块都同意放行这个请求才可以（所以继续执行下一个模块）。如果是any就不用考虑后面的access模块是否同意了，直接跳到接下来的postaccess阶段执行就可以了。</p>
-<p>忽略分支：我们直接跳到下一个access模块。</p>
-<p>请求被拒绝分支：同样判断satisfy开关，如果配置的是all，直接拒绝请求，不用继续执行了，如果是any，虽然当前这个模块拒绝了，也许下一个模块它就会同意放行，所以继续执行access模块。</p>
-<h2>几个问题</h2>
-<p><img src="https://upload-images.jianshu.io/upload_images/550939-9b1169ef77ec2b21.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>第一个：如果return 指令跟access阶段的指令在一起，那么access阶段还会生效吗？
-根据我们刚刚的介绍肯定不会生效。因为return指令，它的生效指令在server_rewrite和rewrite阶段，它们都领先于access阶段。这种配置return指令非常常见，我们配置了return也许放在access阶段前面，也许放在后面。access阶段的指令放在return指令前面access阶段也没有机会执行。</p>
-<p>第二个：肯定有影响，比如我们配置了satisfy all，虽然auth_basic是允许的，我们也许没有机会输入用户名密码，因为可能access就拒绝了。</p>
-<p>第三个：是可以的。虽然deny all了。但是我们配置的是satisfy any，auth_basic 里面只要输入对了密码，仍然是可以访问的。</p>
-<p>第四个：如果把deny all放到 satisfy any之前，可不可以访问到文件呢？可以的。因为没有顺序要求。模块是有执行顺序的，但是配置有没有顺序无关紧要。</p>
-<p>第五个：没有机会输入，因为我们配置的是satisfy any。也就是任意一个模块通过就彻底放行了。另外，allow all 是access模块的，它先于auth_basic 模块执行。</p>
-<p>satisfy指令，对于我们控制access的行为很有帮助，但也会引起我们很多困惑。熟悉这个指令对我们控制请求的访问权限很有帮助</p>
-<h2>留言问题</h2>
-<p>1.感觉最近这些好少用的。不知道使用场景（见识少-.-!）</p>
-<p> 作者回复
-如果用了多个http模块做access访问控制的话，并且需要做“与”以及“或”这种逻辑操作时，才用得上的：-）</p>
-<p>2.请问如何根据url参数中的key做限流呢?
-例如，对于url http://api.abc.com?key=1234-sdwe-1222-ddw2
-根据参数key限制QPS。
-如果是集群的情况应该怎么做呢？</p>
-<p> 作者回复
-需要结合两节课一起看：
-1、第56节课中，limit_req_zone key中可以把key定义为参数的值。
-2、第73课介绍的arg_key变量，可以取出url参数值，http_key变量，可以取出request中header的值。
-3、如果是集群，需要编程开发，开源版nginx不支持。可以用openresty，并做lua语言的开发，成本较小。
-4.authrequest 是子请求的方式，我的理解是不能满足cas认证的方式，是不是只能通过第三方模块来做了</p>
-<p> 作者回复
-因为生产环境中认证这个流程很复杂，对密码学、数据库、业务特点要求多，特别是当今认证还涉及到各种生物识别技术，让nginx来做是不合适的，所以authrequest的应用场景就是利用了nginx的高效，以及通常是由专业的动态应用服务器做认证的。</p>
-<p>5.相当于 或 且 的权限验证</p>
-<p> 作者回复</p>
-<p>对</p>
-
+        <p>php是单继承的语言，trait出现之前，php的类无法同时从两个基类继承属性或方法。php的trait和Go语言的组合功能类似，通过在类中使用use关键字声明要组合的trait名称，而具体某个trait的声明使用trait关键词，trait不能直接实例化。
+        
+          </p><p class="article-more-link">
+            <a href="/2017/03/20/trait详解/#more">Read More</a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2018/08/07/19-nginx/" data-id="cjvdqd6ve000xo4r3a8rbh3jk" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2017/03/20/trait详解/" data-id="cjvdscuxp000lk4r38ctw5a23" class="article-share-link">Share</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/php/">php</a></li></ul>
 
     </footer>
   </div>
@@ -395,14 +159,14 @@ ssl第一次握手是明文传输，但它只是传输安全套件以及公钥�
 
 
   
-    <article id="post-20-nginx" class="article article-type-post" itemscope="" itemprop="blogPost">
+    <article id="post-stdClass空对象的使用" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2018/08/07/20-nginx/" class="article-date">
-  <time datetime="2018-08-07T08:24:25.000Z" itemprop="datePublished">2018-08-07</time>
+    <a href="/2017/03/20/stdClass空对象的使用/" class="article-date">
+  <time datetime="2017-03-20T11:08:07.000Z" itemprop="datePublished">2017-03-20</time>
 </a>
     
   <div class="article-category">
-    <a class="article-category-link" href="/categories/nginx/">nginx</a>
+    <a class="article-category-link" href="/categories/php/">php</a>
   </div>
 
   </div>
@@ -413,7 +177,7 @@ ssl第一次握手是明文传输，但它只是传输安全套件以及公钥�
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/08/07/20-nginx/">(20)precontent阶段：try_files模块</a>
+      <a class="article-title" href="/2017/03/20/stdClass空对象的使用/">stdClass空对象的使用</a>
     </h1>
   
 
@@ -421,46 +185,19 @@ ssl第一次握手是明文传输，但它只是传输安全套件以及公钥�
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1>61 | precontent阶段：按序访问资源的try_files模块</h1>
-<p>&lt;!--more--&gt;</p>
-<p>这个模块只提供一个try_files指令，这个指令对我们使用反向代理，非常有帮助。</p>
-<h2>try_files 指令</h2>
-<p><img src="https://upload-images.jianshu.io/upload_images/550939-8712f7a68138d505.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>这个try_files 模块是默认编译到nginx模块。try_files 两种用法。</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/550939-5a3c680892fff9b8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>/first 里面配置try_files依次匹配。/second里面如果匹配不到就报404。
-我们经常在搭wordpress的时候，会用到try_files。try_ifles对反向代理场景非常有用。我们可以尝试在nginx上获取磁盘内容，如果没有整个文件，我们再反向代理到上游服务。</p>
-<blockquote>
-<p>62 | 实时拷贝流量：precontent阶段的mirror模块</p>
-</blockquote>
-<p>镜像模块可以帮我们创造一份镜像流量，比如生产环境中，我们处理一些请求，这些请求可能我们需要同步的copy一份到我们测试环境中或开发环境中。做处理。</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/550939-06ad1b2b5e6fae1b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>每次请求到了nginx之后我们可以生成一个子请求，通过反向代理去访问我们的其他环境，子请求的返回值不做处理。因为我们只做镜像。</p>
-<p>只有两个指令 <code>mirror</code> 跟mirror_request_body</p>
-<p>1.mirror，把同步复制的请求，访问到另一个url，通常这个url会指向一个反向代理。</p>
-<ol start="2">
-<li>mirror_request_body 是否把请求中的body转发到上游服务中。</li>
-</ol>
-<p>一个例子</p>
-<p>先创建一个上游服务。处理镜像请求。</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/550939-7c7023ded679de8b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>处理用户请求的服务</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/550939-5b0aa01fc98c72e0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<h2>留言问题</h2>
-<p>1.陶老师您好，mirror模块能否在拷贝前做规则匹配，如判定http头标识再执行拷贝</p>
-<p> 作者回复
-可以，你可以参考我提出的11个阶段的流程：if是在rewrite阶段，而mirror是在precontent阶段。</p>
-<p>2.tcpcopy 也可以做到这个效果 mirror跟tcpcopy区别在哪里</p>
-<p> 作者回复
-区别很大，mirror基于nginx，所以分享nginx的所有功能，也就是这门课介绍的所有模块、指令你都可以配合到mirror里用。tcpcopy是四层的，没有那么多功能。</p>
-
+        <p>PHP可以用 $object = new StdClass(); 创建一个没有成员方法和属性的空对象。<br>很多时候会将一些参数配置项之类的信息放在数组中使用，但是数组操作起来并不是很方便，很多时候使用对象操作符-&gt;xxx比数组操作符[‘xxx’]要方便不少。<br>数组在程序的使用中应该是最方便的，然而数组的每次被引用（$a = $b），其实都是创建了一个副本，
+        
+          </p><p class="article-more-link">
+            <a href="/2017/03/20/stdClass空对象的使用/#more">Read More</a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2018/08/07/20-nginx/" data-id="cjvdqd6vg0010o4r3bpfakrxi" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2017/03/20/stdClass空对象的使用/" data-id="cjvdscuxs000qk4r30k7itwq1" class="article-share-link">Share</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/php/">php</a></li></ul>
 
     </footer>
   </div>
@@ -469,14 +206,14 @@ ssl第一次握手是明文传输，但它只是传输安全套件以及公钥�
 
 
   
-    <article id="post-3-nginx" class="article article-type-post" itemscope="" itemprop="blogPost">
+    <article id="post-浅拷贝与深拷贝" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2018/08/07/3-nginx/" class="article-date">
-  <time datetime="2018-08-07T08:24:25.000Z" itemprop="datePublished">2018-08-07</time>
+    <a href="/2017/02/07/浅拷贝与深拷贝/" class="article-date">
+  <time datetime="2017-02-07T11:34:13.000Z" itemprop="datePublished">2017-02-07</time>
 </a>
     
   <div class="article-category">
-    <a class="article-category-link" href="/categories/nginx/">nginx</a>
+    <a class="article-category-link" href="/categories/php/">php</a>
   </div>
 
   </div>
@@ -487,7 +224,7 @@ ssl第一次握手是明文传输，但它只是传输安全套件以及公钥�
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/08/07/3-nginx/">(3)信号、nginx事件、同步&amp;异步、阻塞&amp;非阻塞</a>
+      <a class="article-title" href="/2017/02/07/浅拷贝与深拷贝/">浅拷贝与深拷贝</a>
     </h1>
   
 
@@ -495,274 +232,19 @@ ssl第一次握手是明文传输，但它只是传输安全套件以及公钥�
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2>nginx 请求处理流程</h2>
-<p>&lt;!--more--&gt;
-1.nginx请求处理流程</p>
-<p>{F8910}</p>
-<p>传输层状态机：处理TCP、UDP
-HTTP状态机：应用层
-MAIL状态机：处理邮件</p>
-<ol start="2">
-<li>为什么用状态机？</li>
-</ol>
-<p>是因为使用了非阻塞的事件驱动处理引擎（epoll）。一旦使用异步处理引擎，通常要使用状态机，正确的识别和处理。</p>
-<ol start="3">
-<li>阻塞磁盘调用线程池的作用</li>
-</ol>
-<p>内存不足以完全缓存文件缓存信息的时候，sendfile或者aio这样的调用就退化成了阻塞的磁盘调用。</p>
-<p>4.可以把请求通过协议机传输到后面的服务器，也可以通过应用层协议（facgi等等）</p>
-<ol start="5">
-<li>Nginx可以像Spring Boot 2一样做reactive么?</li>
-</ol>
-<p> 作者回复
-nginx和spring boot 2目的不同，nginx不是提供框架帮助开发者解决问题的，虽然它也支持二次开发。nginx所用的事件驱动，就是reactive反应堆设计模式，C语言没有那么多名词，但大家原理是相同的。</p>
-<p>6.nginx可以处理Tcp也就是传输层流量？难道不是只能处理HTTP这类应用层流量？</p>
-<p> 作者回复
-可以的,stream模块</p>
-<h2>nginx 进程结构</h2>
-<p>1.单进程结构</p>
-<p>不适用于生产环境，适合开发环境，因为生产环境要保持nginx健壮，利用多喝优势。</p>
-<p>2.多进程结构</p>
-<p>{F8912}</p>
-<p>3.为什么不使用多线程结构</p>
-<p>线程间共享同一个地址空间。假设当某一个三方模块引发了一个地址空间段错误时、在地址越界出现时，会导致整个nginx进程会挂掉。多进程可避免。</p>
-<p>4.master 跟worker</p>
-<p>master 管理worker，监控worker是否在正常工作。需不需要做重新载入配置文件。需不需要做热部署。</p>
-<p>worker 处理进程。缓存在多个worker间共享。缓存不仅被worker使用还要被Cache manager 跟cache loader使用。</p>
-<p>Cache manager 跟cache loader也是nginx在做反向代理时，后端发来的动态请求做缓存使用的。</p>
-<p>进程间通讯采用共享内存的方式。</p>
-<p>5.为什么worker进程多呢？</p>
-<p>nginx采用了事件驱动模型，希望worker 从头到尾占有一个cpu。所以，往往不仅把worker进程的数量配置成跟cpu核数一致， 有的时候还需要每一个worker进程跟某一个cpu核绑定在一起，可以更好的使用某一个cpu核上的缓存，减少缓存失效的命中率。</p>
-<p>6.为什么看NGINX进程的时候能看到cache manager进程，看不到cache loader进程呢？还有在我的环境里ps -ef的时候，甚至cache manager 进程都看不到，这是什么原因呢？</p>
-<p> 作者回复
-看不到cache manager进程是因为没有配置相关指令，打开nginx的cache功能，第4部分介绍反向代理时会介绍缓存功能的指令。而cache loader进程仅在cache打开时才会有，而且存在时间非常短，它是用于将之前nginx产生的cache信息元数据读入内存中的，读取完成后就会退出。</p>
-<p>7.worker进程是通过共享内存来通讯的，比如upstream中的zone，或者limit_req、limit_conn中的zone等。操作系统提供了共享内存机制，可以看下mmap这个函数。</p>
-<ol start="8">
-<li>对于有多少个cpu就启用多少个worker有点疑问。如果二者数量相等的话，那master进程运行在哪个cpu上呢？是否cpu还是要进行进程间的切换？</li>
-</ol>
-<p> 作者回复
-master进程不消耗cpu。进程间切换一直存在，因为操作系统上除nginx外还有很多进程。</p>
-<h2>父子进程</h2>
-<p>1.父子进程通过信号管理</p>
-<p>进程在退出时候会向父进程发送SIGCHILD信号，告诉父进程退出，父进程知道之后再重启一个进程，维持数目不变。</p>
-<p>kill -SIGTERM 子进程id</p>
-<p>2.网上有人说把nginx的cpu核设置为8是最稳定的，这个靠谱吗</p>
-<p> 作者回复
-没有理论依据.第五部分的课程会探讨CPU个数与性能的关系。</p>
-<p>3.kill -HUP 和 -SIGHUP 作用是一样的</p>
-<p>4.共享内存是nginx中的主要数据分享方式，因为它的运行效率最高。我们在第3、4部分中会看到，所有涉及到全局配置、状态信息的数据，都有相应的zone指令在分配、使用共享内存。</p>
-<p>5.nginx进程管理：信号</p>
-<p>{F8914}</p>
-<p>能够发送信号的有master、worker还有命令行。</p>
-<p>子进程终止会向master发送CHLD信号，如果worker进程由于一些模块产生bug以外终止掉master通过发来的信号CHLD可以立刻把woker进程拉起</p>
-<p>master 还会通过接受一些信号管理worker进程。
-|TERM,INT|立刻终止
-|QUIT|优雅停止进程，就是慢慢停，而不是给用户发送立刻结束连接（像TCP连接复位请求这样的报文）
-|HUP|重载配置文件
-|USR1|重新打开日志文件，做日志文件的切割</p>
-<p>以上4个，可以通过nginx命令行直接向master发送信号</p>
-<p>下面这两个，只能通过 KIl命令直接向master进程发送信号。这两个专门做热部署使用。</p>
-<p>|USR2|
-|WINCH|</p>
-<p>通常我们不直接对worker进程发送信号，希望是master 去管理worker进程。</p>
-<p>nginx命令行发送信号，跟kill发送信号都是一样的效果（它们都读取pid文件中的pid）。</p>
-<p>6.USER1 信号，重新打开日志文件的原理是什么呢？</p>
-<p>是不是新建一个和进程相关的日志文件，然后以一定的命名方式命名？旧的日志文件会需要根据日志改名吗？</p>
-<p> 作者回复
-重新打开，就是close再open，这是因为linux内核会统计正在使用的句柄，若有进程未释放句柄，则仍会向该文件写入内容。所以，旧的日志文件改名，再reopen，就会生成新日志文件。</p>
-<p>7.请问老师对于图片资源服务器worker的数量设置多少合适？1倍还是1.5倍？当前这台机器还有项目部署在一起，当执行任务时会生大批量的图片 这样对访问图片有很大的影响吗？</p>
-<p> 作者回复
-主要抢占CPU资源以及IO资源，你可以观察下iostat，比如nginx未服务时，其他项目消耗了多少bps或者iops。然后用fio测试一下你的服务器的最大性能。两个减一下，你就能获取到nginx最大能够获取到的io资源。此时，再来看单个worker最大能使用的资源，再决定worker数。1.5倍应该是没有必要的，看看是不是应小于cpu的数量。worker不应越多越好，如果是IO出现阻塞，我建议你尝试一下thread pool。</p>
-<h2>reload重载配置文件的真相](javascript:;)</h2>
-<p>1.reload 流程</p>
-<p>{F8916}</p>
-<p>{F8918}</p>
-<p>reload 之后为什么 worker会变多呢？因为旧的worker还在，新的也起来了。所谓平滑过渡。老的worker 在处理完请求（keepalive也一样）以后会关闭这个连接。</p>
-<p>老的worker异常情况，比如，一些请求有问题，客户端没有处理，导致请求长时间占用worker进程，这个worker进程就会一直存在，但是也只是影响旧的连接，而不会影响新的。如何解决？新的nginx版本提供了一个配置，worker_shutdown_timeout（启新的worker时候会加个定时器）。</p>
-<p>2.第3步，master进程打开新的监听端口;
-在新的配置文件里，监听了新的端口，master会打开这个监听端口，以便新起的worker进程进行监听和任务处理 吗？
-配置文件关闭了一些端口监听，这个时候master是如何处理的呢？关闭这个监听端口吗？
-master关闭了配置文件不再监听的端口，还在任务处理中的老worker进程是怎么工作的？</p>
-<p> 作者回复
-三个问题：1、是的。2、新master不存在 关闭的概念，它只不再打开老master会打开的端口。3、即使不再监听80端口，已经建立的连接仍然可以继续处理。</p>
-<p>3.多个子进程监听父进程打开的端口，是不是会引起惊群效应，降低服务器性能</p>
-<p> 作者回复
-惊群是操作系统内核实现上引起的问题，最新的内核已经没有太大问题了，如果使用了reuseport那么就不需要考虑worker间负载均衡问题了</p>
-<h2>热升级的完整流程</h2>
-<p>1.流程</p>
-<p>{F8920}</p>
-<p>{F8922}</p>
-<p>新版本的linux中，覆盖一个正在使用的文件时候，cp需要加-f。</p>
-<p>第三步，保存旧的master pid</p>
-<p>2.新老 master 进程同时存在，是不是同时有两个进程同时监听 80 端口吗？</p>
-<p>是的，但是监听不代表会处理。listen以后，还需要通过epoll_ctl加入到epoll中，进程才会处理。而master进程是不会执行这一步的，如果你熟悉源代码，你可以看ngx_event_process_init函数，它只有在worker进程才执行，它负责把监听的fd加入epoll</p>
-<p>不可能同时监听同一端口，老master会把listen的句柄通过epoll_ctl从epoll中移除，不再监听80或者443端口。</p>
-<p>3.老master是父进程关闭后，子进程不是也会被关闭吗？子进程继承父进程打开的端口，老master进程关闭监听端口新master进程为什么还能监听端口？新老master切换监听的端口会有短暂的失效期吗？</p>
-<p> 作者回复
-父进程关闭，不会导致子进程关闭的。所以没有失效期的。</p>
-<p>4.一个linux知识点：一个父进程退出，而它的一个或多个子进程还在运行，那么那些子进程将成为孤儿进程。孤儿进程将被init进程(进程号为1)所收养，并由init进程对它们完成状态收集工作。所以老master退出后，新的master并不会退出。</p>
-<ol start="5">
-<li>kill -USR2 给master 进程 发送信号之后，拉不起新的master 进程，遇到这种问题怎么排查呢？</li>
-</ol>
-<p> 作者回复
-查看error.log定位。</p>
-<h2>优雅地关闭worker进程</h2>
-<ol>
-<li>关闭流程</li>
-</ol>
-<p>{F8924}</p>
-<p>01步，设置完定时器，会加个标志位，表示进入优雅关闭的流程。</p>
-<p>02步，不再处理新的连接。</p>
-<p>03步，nginx 为了资源复用，有空闲连接池。</p>
-<p>04步，nginx不是立刻关闭，而是通过01步加的标志位，在循环中每当发现一个请求处理完毕，就会把这个处理请求的链接关掉。循环中等待时，时间可能超过shutdown_timeout，那么就会被强制关闭。</p>
-<ol start="2">
-<li>不会优雅的情况</li>
-</ol>
-<ul>
-<li>
-<p>1.做web socket 协议的代理，无法优雅socket 的帧nginx是不解析的。所以nginx没办法。</p>
-</li>
-<li>
-<p>2.代理tcp、udp也没有办法识别一个请求经历多少报文算结束</p>
-</li>
-</ul>
-<p>但对http是可以的。</p>
-<p>worker shutdown timeout不设置的情况下，默认的时间是多少来的？</p>
-<p> 作者回复
-默认这个功能不打开的。</p>
-<h2>网络收发与Nginx事件间的对应关系</h2>
-<ol>
-<li>网络传输</li>
-</ol>
-<p>{F8926}</p>
-<p>{F8928}</p>
-<p>发送的http协议会被切割成很多小的报文。</p>
-<p>网络层切割成MTU，每个MTU是1500字节。tcp层会考虑最大的MTU值。这时候每个报文只有几百个字节，报文大小称为MSS。</p>
-<p>2.事件
-nginx是事件驱动的框架，所谓事件主要指的是网络事件。每一个连接对应读事件、写事件。</p>
-<p>{F8930}</p>
-<p>事件收集、分发器</p>
-<p>定义每一类事件处理的消费者。事件是生产者。要对每种事件建立消费者。连接事件建立的消费者是对Accept的调用，http模块建立新的连接。还有很多读消息跟写消息在nginx状态机不同的时间段调用不同的方法（每一个消费者处理）。包括aio（比如异步读写磁盘的事件）、定时器事件（比如：是否超时）都有相应的消费者。</p>
-<p>3.nginx前有反向代理，所以nginx通过remote_addr变量拿到的只是反向代理的IP，不是用户IP。通过X-Forward-For头部可以</p>
-<h2>Nginx网络事件实例演示</h2>
-<ol>
-<li>wireshark 抓包</li>
-</ol>
-<p>tcp层：做进程与进程之间的事情。
-ip层：解决机器与机器之间如何找到</p>
-<p>三次握手看nginx怎样建立起新连接的</p>
-<p>{F8932}</p>
-<p>syn：windows-&gt;linux
-syn、ack：linux-&gt;windows（这时候linux中的nginx是无感知的，这个连接是半打开）
-ack：windows-&gt;linux （linux 通知nginx，收到了一个读事件——建立一个新连接，nginx 调用Accept建立新连接）</p>
-<ol start="2">
-<li>nginx 如何动态更新upstream ？</li>
-</ol>
-<p> 作者回复
-商业版有一个api模块可以很方便的更新。开源版目前没有这样的模块。</p>
-<h2>Nginx的事件驱动模型</h2>
-<ol>
-<li>事件循环</li>
-</ol>
-<p>{F8934}</p>
-<ul>
-<li>wait for events on connections（nginx启动后在这个阶段）</li>
-</ul>
-<p>-- 打开80或443端口这个时候等待新的事件进来（比如：客户端连上nginx跟nginx发起连接），这一步对应epoll wait方法，此时nginx进程sleep状态。</p>
-<p>当操作系统收到了一个建立TCP连接的握手报文，并且处理完握手流程以后，操作系统就会通知我们epoll wait的阻塞方法，可以继续往下值，唤醒worker进程。走完之后问操作系统（kernel）要事件。kernel 把准备好的事件放到队列中（图中的第一行小方块）。</p>
-<ul>
-<li>receive a queue of new events</li>
-</ul>
-<p>-- 从事件队列中获取要处理的事件（比如：建立连接、收到tcp请求报文）</p>
-<ul>
-<li>process the events queue in cycle</li>
-</ul>
-<p>-- 处理取出的事件（看右侧图）。队列不为空，就取出来。</p>
-<p>-- 在处理事件过程中，可能会生成一些新的事件（比如：新的连接建立创建超时时间）（看作图，第二行小方块）。</p>
-<p>-- 处理完在返回 wait阶段。</p>
-<p>知道nginx事件循环的好处：</p>
-<p>-- 再理解使用第三方模块，可能会做大量CPU运算，计算任务可能会导致处理一个事件的时间非常长。会导致队列中的后续的事件长时间得不到处理，从而引发恶性循环。nginx 大量消耗在了处理连接不正常的断开。nginx 不能容忍，第三方模块，长时间消耗大量的cpu进行计算任务，就是这么一个原因。gzip这样的模块一次不会使用大量的CPU，而是分段使用，都与这机制有关系。</p>
-<p>2.新手学习nginx源码，使用哪个版本的源码比较好？</p>
-<p> 作者回复
-最新的,时效性最好.</p>
-<h2>epoll的优劣及原理</h2>
-<ol>
-<li>epoll</li>
-</ol>
-<p>nginx主要使用epoll这样一个网络事件收集器的模型。适合做大并发场景。</p>
-<p>y轴：消耗的时间
-x轴：句柄数（并发连接数）</p>
-<p>事件分发图</p>
-<p>{F8936}</p>
-<p>{F8938}</p>
-<p>比如：nginx要处理1百万个连接，每两次做等待中，时间可能非常短，收到的报文数量是有限的，有限的事件对应的连接也是有限的。每次处理事件时虽然总共有1百万连接，可能是直接受到活跃的几百个连接。只需要处理几百个活跃的请求。而select和poll实现是有问题，因为每次从操作系统取事件，会把百万连接扔给操作系统，依次判断哪些连接有事件进来了，造成linux内核扫描了大量的不活跃的连接，做了无用功。</p>
-<p>epoll 怎么做的呢？每次处理活跃连接数量。维护了一个eventpoll。通过两个数据结构把这两件事情分开了。链表中仅放了活跃的连接。获取句柄就遍历<code>rdlink</code>。从内核态读到用户态。读这么一点东西，效率高。</p>
-<p>下面的树是做啥？通常我们常做的事情，比如：nginx收到建立连接的请求，建立成功之后添加一个读事件（用来读取http消息），放到了红黑树（平衡二叉树）中。插入效率是logn。当我不想处理读事件或者写事件，只需要从平衡二叉树移除一个事件。效率高。</p>
-<p>什么时候树的结点有所增减呢？当我们读一个事件的时候就减了。当操作系统接收到网卡发来的报文的时候就增了。</p>
-<ol start="2">
-<li>讲解一下select、poll、epoll的区别呢？</li>
-</ol>
-<p> 作者回复
-select和poll最大的问题是，每次都需要传递全部并发fd，而实际只有少量fd有数据需要处理，所以效率低下。而epoll通过epoll_ctl和epoll_wait分解了这个问题，效率大幅提高。</p>
-<p>3.nginx作为反向代理服务器的时候，上游服务器为Tomcat,浏览器-&gt;nginx-&gt;tomcat 这样的架构，单台nginx不能建立百万并发吧，毕竟nginx需要向上游服务器Tomcat建立转发的链接，nginx服务器向上游Tomcat最多建立65536个链接？
- 作者回复
-这么理解没问题，上游服务器的总连接数限制了作为反向代理的nginx的并发上限。
-一个TCP连接是四元组,所以nginx对下游虽然只开放一个端口例如80，IP地址也只有1个，但下游服务器每台可以对该nginx最多建立6万多连接，只要15台下游服务器，就能建立百万并发连接了。</p>
-<p>4.Nginx作为反向代理服务器的时，Nginx所在服务器端口数（65536）限制了与后端服务建立连接数，但是请求数不等于连接数，所以限制不了请求数，毕竟连接是可以被复用的。</p>
-<p> 作者回复
-对的，而且65535只是限制了nginx与一个上游服务端口之间的连接数。</p>
-<h2>Nginx的请求切换</h2>
-<p>1.epoll这种驱动框架带来怎样的好处</p>
-<p>请求切换场景</p>
-<p>{F8940}</p>
-<p>在请求切换场景中，epoll带来的好处。</p>
-<p>traditional server（传统服务器）</p>
-<p>比如 apache ，每一个进程同一时间处理一个请求。比如：process 1在处理Request 1的时候。网络事件不满足的情况下。就会切换到process 2，取处理request 2 ，process 2可能很快就不满足了，（比如：想写一个响应的时候，发现缓冲区满了，网络比较拥塞了，滑动窗口不能往前滑动，以至于 掉write方法，没办法写入字节，当write 方法是非阻塞的时候，这个时候阻塞类的写方法又导致了进程发生一次切换。切换到了process 3，执行request 3，可能在执行中，process 3 使用完时间片。然后进程又切换到process 1。如此往复。每做一次切换cpu消耗5微妙，但是并发增多时候，不是线性增长而是指数增长。进程间消耗就变得非常可观了。以至于消耗了绝大部分的计算能力。</p>
-<p>传统web 服务依赖进程调度的方法，实现并发连接，而操作系统的进程调度仅仅适用于很少量的，数百上千（这样的消耗还可以接受，几万，几十万就无法接受了），进程间切换。</p>
-<p>nginx worker</p>
-<p>蓝色的请求事件不满足的情况下，直接切到绿色请求，这样没有进程间切换的成本（因为网络事件不满足。）。除非worker使用的时间片到了。时间片长度一般是5毫秒~800毫秒。在nginx worker的配置上，往往会把它的优先级加到最高。比如：负19（nice值，取值范围是-20到+19，-20优先级最高，+19最低）。这样操作系统分片的时间片比较大。这样nginx才能在用户态比较好完成请求的切换，使得cpu少做无用功。</p>
-<ol start="2">
-<li>什么是边缘触发？</li>
-</ol>
-<p>边缘触发相对水平触发而言，是epoll的两种触发方式。</p>
-<ol start="3">
-<li>介绍一下边缘触发 水平触发。nginx用的哪个。为什么这么用。还有epoll wait返回的句柄没有经历内核态 用户太切换吧。它们不是用的共享内存吗？</li>
-</ol>
-<p> 作者回复
-先回答第1个：边缘触发性能更好，但对代码要求更高，需要处理更多的异常情况。nginx用的是边缘触发，因为这样减少了不必要的socket唤醒。
-第2个：epoll wait是系统调用，所有的系统调用都需要做用户态与内核态间的切换，因为内核态的地址空间与用户态不同，这是为了内核的可靠性与安全性考虑设计的。</p>
-<h2>同步&amp;异步、阻塞&amp;非阻塞</h2>
-<ol>
-<li>理解：阻塞与非阻塞，同步&amp;异步</li>
-</ol>
-<p>阻塞：指底层的C库提供的方法或系统调用，这个调用可能会导致进程进程sleep状态（当前条件不满足，操作系统主动把这个进程切换到另外的进程）。</p>
-<p>非阻塞：调用该方法，永远不会因为我们没有把时间片用完之时切换进程。</p>
-<p>同步&amp;异步则是从 调用方式而言。也就是编码中写业务逻辑的角度</p>
-<ol start="2">
-<li>阻塞调用、非阻塞调用</li>
-</ol>
-<p>{F8942}</p>
-<p>{F8944}</p>
-<p>{F8946}</p>
-<p>左边openresty 同步调用代码中 connect方法是非阻塞方法。如果不是极端场景，都会使用这种同步调用方式，开发效率高。</p>
-<p>3.lua 的那个redis:connect，应该是用协程做的，现在基于协程做异步高并发的方案也很多</p>
-<p> 作者回复
-是的，这个协程其实是用nginx的事件驱动机制实现的</p>
-<p>4.lua connect 如果超时了，还是会等一会儿再执行下面的代码吧？</p>
-<p> 作者回复
-nginx返回connect的结果时，就是执行下面代码的时候。nginx什么时候返回connect结果时呢？1、对端地址压根不存在，立刻返回；2、过了几毫秒对端返回成功或者失败；3、过了几秒到达了connect的超时时间。</p>
-<p>5.如果connect没有返回，虽然底层是非堵塞de，if 后面的代码是不会执行的吧?
-老师不会堵塞nginx代码怎么理解？不是很懂，老师能解答下吗</p>
-<p> 作者回复
-这里的connect不是nginx中调用linux的connect方法，在linux的connect方法中是立刻返回的（非阻塞socket），而通过epoll_ctl会把这个socket加入epoll中，当上游返回连接建立成功或者超时后，nginx会通过lua语言的ffi，去返回client:connect方法，所以，if肯定会执行的。</p>
-
+        <p>对象的赋值分为浅拷贝与深拷贝，<br>区别在于浅拷贝为新对象与原来的指向同一个地址，如果新对象属性改变，原有对象也会跟着改变，<br>深拷贝为整体复制一份对象，与地址无关
+        
+          </p><p class="article-more-link">
+            <a href="/2017/02/07/浅拷贝与深拷贝/#more">Read More</a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2018/08/07/3-nginx/" data-id="cjvdqd6vj0013o4r3wruy48zg" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2017/02/07/浅拷贝与深拷贝/" data-id="cjvdscuy40016k4r3gpao5xxb" class="article-share-link">Share</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/php/">php</a></li></ul>
 
     </footer>
   </div>
@@ -771,14 +253,14 @@ nginx返回connect的结果时，就是执行下面代码的时候。nginx什么
 
 
   
-    <article id="post-4-nginx" class="article article-type-post" itemscope="" itemprop="blogPost">
+    <article id="post-static及延迟绑定" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2018/08/07/4-nginx/" class="article-date">
-  <time datetime="2018-08-07T08:24:25.000Z" itemprop="datePublished">2018-08-07</time>
+    <a href="/2017/02/07/static及延迟绑定/" class="article-date">
+  <time datetime="2017-02-07T08:24:25.000Z" itemprop="datePublished">2017-02-07</time>
 </a>
     
   <div class="article-category">
-    <a class="article-category-link" href="/categories/nginx/">nginx</a>
+    <a class="article-category-link" href="/categories/php/">php</a>
   </div>
 
   </div>
@@ -789,7 +271,7 @@ nginx返回connect的结果时，就是执行下面代码的时候。nginx什么
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/08/07/4-nginx/">(4)nginx模块</a>
+      <a class="article-title" href="/2017/02/07/static及延迟绑定/">static及延迟绑定</a>
     </h1>
   
 
@@ -797,54 +279,19 @@ nginx返回connect的结果时，就是执行下面代码的时候。nginx什么
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2>Nginx的模块究竟是什么？</h2>
-<p>&lt;!--more--&gt;
-1.了解Nginx 模块</p>
-<p>{F8948}</p>
-<p>有的模块编译进去就可以使用。有的模块只有配置了配置项才可以使用。</p>
-<p>看源码的方式，看看每个配置项是怎样被提供的。</p>
-<p>怎么确定模块确实被编译进去了呢？./configure 完成之后去 objs 目录，该目录下会生成一个ngx_modules.c。里面有个数组 <code>ngx_modules</code>包含了所有编译进nginx中的模块。</p>
-<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ngx_module_t *ngx_modules[] = &#123;</span><br><span class="line">    &amp;ngx_core_module,</span><br><span class="line">    &amp;ngx_errlog_module,</span><br><span class="line">    &amp;ngx_conf_module,</span><br><span class="line">    &amp;ngx_regex_module,</span><br><span class="line">    &amp;ngx_events_module,</span><br><span class="line">    ……</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>以gzip为例，我们找下。发现是有的。</p>
-<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># cat ngx_modules.c |grep gzip</span><br><span class="line">extern ngx_module_t  ngx_http_gzip_filter_module;</span><br><span class="line">    &amp;ngx_http_gzip_filter_module,</span><br><span class="line">    &quot;ngx_http_gzip_filter_module&quot;</span><br></pre></td></tr></table></figure></p>
-<p>来看下gzip模块（<code>nginx-1.13.6/src/http/modules</code>）提供了哪些指令。<code>vim ngx_http_gzip_filter_module.c</code>。</p>
-<p>能看到有这样的结构体<code>ngx_command_t</code>。这是每个模块必包含的结构体。这个结构体是一个数组。数组中的每个成员都是它所支持的指令名。比如：<code>gzip</code>（ ngx_string(&quot;gzip&quot;)）、<code>gzip_buffers</code>。这个指令名后面携带的参数，这个参数什么类型（空间类还是时间类）。可不可以加相关的参数。等等。
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">static ngx_command_t  ngx_http_gzip_filter_commands[] = &#123;</span><br><span class="line"></span><br><span class="line">    &#123; ngx_string(&quot;gzip&quot;),</span><br><span class="line">      NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_HTTP_LIF_CONF</span><br><span class="line">                        |NGX_CONF_FLAG,</span><br><span class="line">      ngx_conf_set_flag_slot,</span><br><span class="line">      NGX_HTTP_LOC_CONF_OFFSET,</span><br><span class="line">      offsetof(ngx_http_gzip_conf_t, enable),</span><br><span class="line">      NULL &#125;,</span><br><span class="line"></span><br><span class="line">    &#123; ngx_string(&quot;gzip_buffers&quot;),</span><br><span class="line">      NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE2,</span><br><span class="line">      ngx_conf_set_bufs_slot,</span><br><span class="line">      NGX_HTTP_LOC_CONF_OFFSET,</span><br><span class="line">      offsetof(ngx_http_gzip_conf_t, bufs),</span><br><span class="line">      NULL &#125;,</span><br><span class="line">      ……</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>模块细分的ngx_core_module_t 、ngx_http_module_t、ngx_event_module_t、ngx_mail_conf_ctx_t 都必须遵循与ngx_modue_t同样的规则。</p>
-<p>模块的顺序非常重要。 如果两个模块冲突。先生效的模块会阻碍后生效的模块。</p>
-<p>nginx 模块首先要高内聚（相应独立的功能是在同一个代码中的）。它的抽象做的是非常好的（commands提供了配置）。启停回调方法在ngx_module_t下面的7个方法。）。如果你想做一些定制化的需求（比如：你想在集群刚启动的时候做一些什么样的事情）那就在回调方法中做。</p>
-<p>nginx模块拥有非常好的设计。从第一版本开始没发生过变化。理解nginx模块是理解nginx诸多特性的基础。</p>
-<h2>Nginx模块的分类</h2>
-<p>1.分类</p>
-<p>{F8950}</p>
-<p>ngx_module_t中的type字段，定义了是哪个类型的模块。</p>
-<p>{F8952}</p>
-<p>ngx_conf_module模块专门解析conf文件。</p>
-<p>ngx_core_module 核心模块，会有一类模块<code>events</code>、<code>http</code>、<code>stream</code>。这些模块又定义出新的子类型模块。nginx灵活性比较强，如果新出现一类应用，可以新增一个nginx的core module来定义新的模块。</p>
-<p>所有事件处理的通用方法我们内聚为事件模块，即<code>NGX_EVENT_MODULE</code>，每一类模块中，总会有通用的共性的部分，这类通用的共性部分，会在这个模块中其中第一个模块通常加<code>_core</code>这样的关键字，把通用的逻辑写在里面（比如：event_core、http中的ngx_http_core_module）。</p>
-<p>每个module都有一个index来表示它的顺序。所以每个子类型模块中也有顺序的。每一个core肯定是排第一的，因为它定义了所有子类型模块共同的特性。</p>
-<p>2.了解http模块</p>
-<p>ngx_http_core_module 定义了许多特殊的规则，比如一个http请求进入nginx的时候，需要生成响应。为请求生成响应的模块叫做请求处理模块。把响应发送给浏览器的时候，如果对响应中的文件做特定处理（比如：发css文件，对css文件做zip压缩，如果是图片，我想裁剪或缩放，我可以用image filter）， 响应过滤模块专注于把响应做二次处理。upstream（顾名思义，上游）模块，当nginx做代理（正向或者反向），把请求传递给相关的服务处理的时候，这类模块都会有upstream处理的字样，专注在一个请求的内部访问上游的服务。</p>
-<ol start="3">
-<li>分析一下这些目录怎样对应到子类型模块中的。</li>
-</ol>
-<p>所有子类型的模块都在<code>nginx-1.13.6/src</code>下（有个目录名叫做core，这个只是nginx核心代码，不要理解位core 模块。）。我们拿http模块分析。</p>
-<p>在http文件夹还有一些框架代码，这类代码不算模块，是辅助于核心流程的，不用care。但每一类子模块中，都有一个核心模块，定义了http模块的工作方式（比如：ngx_http.c）。
-ngx_http文件中，NGX_CORE_MODULE定义了所有的http模块。</p>
-<p>所有的框架代码，包括ngx_http_core_module也是放在http目录下，官方提供非框架类（也就是可有可无）放在了modules文件夹下。里面分三类，一类是处理请求生成响应，一类是响应过滤（关键字filter），还有一类是与上游模块发生交互的（带有upstream，都在做负载均衡等等相关的工作），其他模块都是在做生成响应的。</p>
-<p>4.理解模块分类的意义</p>
-<p>以后看到新的第三方模块，首先应该看属于哪一类的模块，这一类模块还有一些共通的特性可以帮助我们理解它。</p>
-<p>5.Nginx是不支持ftp协议的吧？</p>
-<p> 作者回复
-nginx支持tcp协议，从这个角度上说是支持ftp协议的，因为ftp协议也是跑在tcp协议之上的。即，如果你有多台ftp服务，用nginx做反向代理是合适的。但如果你希望用nginx搭建ftp服务，目前我还没有了解到有这样的nginx模块。</p>
-
+        <p>static关键字用来定义静态方法及属性，在类中可用来延迟静态绑定以及在函数中修饰变量。<br>先来谈谈static在函数中的用法；
+        
+          </p><p class="article-more-link">
+            <a href="/2017/02/07/static及延迟绑定/#more">Read More</a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2018/08/07/4-nginx/" data-id="cjvdqd6vl0016o4r3es316mqm" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2017/02/07/static及延迟绑定/" data-id="cjvdscuxn000kk4r3ci7v1qdw" class="article-share-link">Share</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/php/">php</a></li></ul>
 
     </footer>
   </div>
@@ -853,16 +300,12 @@ nginx支持tcp协议，从这个角度上说是支持ftp协议的，因为ftp协
 
 
   
-    <article id="post-5-nginx" class="article article-type-post" itemscope="" itemprop="blogPost">
+    <article id="post-详解EXPLAIN的用法" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2018/08/07/5-nginx/" class="article-date">
-  <time datetime="2018-08-07T08:24:25.000Z" itemprop="datePublished">2018-08-07</time>
+    <a href="/2017/02/03/详解EXPLAIN的用法/" class="article-date">
+  <time datetime="2017-02-03T07:43:05.000Z" itemprop="datePublished">2017-02-03</time>
 </a>
     
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/nginx/">nginx</a>
-  </div>
-
   </div>
   <div class="article-inner">
     
@@ -871,7 +314,7 @@ nginx支持tcp协议，从这个角度上说是支持ftp协议的，因为ftp协
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/08/07/5-nginx/">(5)nginx连接池</a>
+      <a class="article-title" href="/2017/02/03/详解EXPLAIN的用法/">详解EXPLAIN用法</a>
     </h1>
   
 
@@ -879,68 +322,19 @@ nginx支持tcp协议，从这个角度上说是支持ftp协议的，因为ftp协
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2>Nginx如何通过连接池处理网络请求</h2>
-<p>&lt;!--more--&gt;
-1.链接池</p>
-<p>{F8954}</p>
-<ol start="2">
-<li>nginx的链接池究竟是怎么使用的？</li>
-</ol>
-<p>每个worker 独立的进程都有一个ngx_cycle_t这样的一个数据结构。ngx_cycle_t有三个主要的数组数组connections、read_events、write_events。</p>
-<p>connections就是所谓的连接池，它指向了这个数组有多大呢？从官方文档<code>http://nginx.org/en/docs/ngx_core_module.html#worker_connections</code>看到默认是 <code>512</code>。这个值比较小， nginx 动辄几万，几十万的链接，这个值往往需要修改。这个链接不止用于客户端的连接也用于面向上游服务器的。所以我们做反向代理的时候，每一个客户端意味着消耗我们两个connection。</p>
-<p>read_events 这个数组（大小跟connections配置一样），所以，那三个（图中三个深色小方格）怎么对应起来呢？是通过序号。在考虑nginx 能够释放多大性能的时候，首先需要保证worker connections 足够你使用。connections指向的数组同时影响了我们打开的内存。当我们使用了配置了更大的connections，nginx就使用了更大的内存。</p>
-<ol start="3">
-<li>如何计算connections用了多少内存？</li>
-</ol>
-<p>{F8956}</p>
-<p>ngx_connections_s 这样的结构体，在64位操作系统占用的字节数大约是232。不同的nginx版本不同可能有微小的差异。</p>
-<p>4.连接跟事件是如何对应到一起的？</p>
-<p>每一个ngx_connections_s 对应两个事件：读写事件。</p>
-<p>每一个事件对应一个结构体ngx_event_s，这样的一个结构体占用的字节数大约96。</p>
-<p>所以，每一次连接消耗的内存大约是（232+96）*2。connections配置的越大，初始时就会消耗预分配那么多（connection_pool_size）的内存。</p>
-<ol start="5">
-<li>ngx_event_s成员</li>
-</ol>
-<p>handler 是一个回调方法，很多第三方模块会把这个handler设为自己的实现。</p>
-<p>timer，当对http请求做读超时写超时等等设置的时候，其实是在操作读事件跟写事件的timer。这个timer就是nginx实现超时定时器，基于rbtree（红黑树实现的结构体），红黑树中每个成员叫做 rbtree_node（这个timer是就它的node），用来指向读事件是否超时，写事件是否超时。这些定时器也是可配的。比如：client_header_timeout（http://nginx.org/en/docs/http/ngx_http_core_module.html#client_header_timeout） 默认60秒。这个60秒也是在刚刚某个连接上，在准备读取header时，在它的读事件上加了60秒超时。</p>
-<p>ngx_queue_t，当多个事件形成队列的时候可以用它形成队列。</p>
-<p>6.ngx_connections_s 的成员 <code>send</code>，它的类型off_t可以理解为一个无符号的整型。它表示这个连接上发送了多少个字节。也就是我们经常在配置中使用到的bytes_sent 变量。</p>
-<p>7.bytes_sent 的作用。</p>
-<p>http://nginx.org/en/docs/http/ngx_http_core_module.html#client_header_timeout</p>
-<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$bytes_sent</span><br><span class="line">number of bytes sent to a client (1.3.8, 1.2.5) 向客户端发送了多少字节。</span><br></pre></td></tr></table></figure></p>
-<p>在access_log记录nginx处理了哪些请求中，可以记录这个变量。</p>
-<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">log_format  main  &apos;$remote_addr - $remote_user [$time_local] &quot;$request&quot; &apos;</span><br><span class="line">                  &apos;$status $body_bytes_sent &quot;$http_referer&quot; &apos;</span><br><span class="line">                  &apos;&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot;&apos;;</span><br></pre></td></tr></table></figure></p>
-<p>{F8958}</p>
-<p>这个623就是发送了多少个字节。</p>
-<ol start="8">
-<li>最后总结</li>
-</ol>
-<p>当我们需要配置高并发的nginx时，必须把connection的数目配置到足够大， 而每个connection相对应的两个event都会消耗一定的内存，需要我们注意。</p>
-<p>nginx 中像很多结构体中它们的一些成员和我们的内置变量是可以对应起来的。比如说bytes_sent，比如说body_bytes_sent。</p>
-<p>9.如果启用gzip，那byte_sent是指压缩后的字节吗</p>
-<p> 作者回复
-是的</p>
-<p>10.502通常是连接建立失败</p>
-<p>11.一个 连接 232+(96*2) = 424 字节
-如果预分配给 nginx 4G 的内存, 那连接数connection 是不是就是 4G/424B 的数量
-这个值是最大并发连接数么 ?
-老师, 有一些概念只有一点感觉, 一直很模糊, 65535, 这个到底是什么, 什么操作能占用这个数值?
-还有比如 nginx. conf 里的一些数值设置, 比如 buffer_size 数值之类的, 根据系统资源, 怎么应该合理的去设置一些数值?
-!谢谢!</p>
-<p> 作者回复
-不是，这只是描述连接的结构体需要的内存，在第3部分第4节课里会介绍处理http请求还会分配的内存，默认至少有5K会被分配出，你可以等下周课程推出后仔细看下。第2个问题，第5部分课程会详细介绍的。</p>
-<p>12.nginx作为四层反向代理时。
-配置文件的worker_connections如果设置为200000，那么nginx作为客户端向上游服务器发起tcp连接，是否会有端口65535个的限制？那该如何解决？使用虚拟网卡吗？还是有其他办法？</p>
-<p> 作者回复
-会有限制，这是操作系统限制的。使用多网卡是解决办法，虚拟的也可以</p>
-
+        <p>explain显示了数据库处理select语句以及连接表时使用的索引情况，可以帮助选择更好的索引和写出更优化的查询语句。<br>如下一条sql语句，
+        
+          </p><p class="article-more-link">
+            <a href="/2017/02/03/详解EXPLAIN的用法/#more">Read More</a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2018/08/07/5-nginx/" data-id="cjvdqd6vn0019o4r3509wwo54" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2017/02/03/详解EXPLAIN的用法/" data-id="cjvdscuyb001ek4r32c4rdevw" class="article-share-link">Share</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/数据库/">数据库</a></li></ul>
 
     </footer>
   </div>
@@ -949,16 +343,12 @@ nginx支持tcp协议，从这个角度上说是支持ftp协议的，因为ftp协
 
 
   
-    <article id="post-6-nginx" class="article article-type-post" itemscope="" itemprop="blogPost">
+    <article id="post-数据库表拆分" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2018/08/07/6-nginx/" class="article-date">
-  <time datetime="2018-08-07T08:24:25.000Z" itemprop="datePublished">2018-08-07</time>
+    <a href="/2017/01/13/数据库表拆分/" class="article-date">
+  <time datetime="2017-01-13T14:01:55.000Z" itemprop="datePublished">2017-01-13</time>
 </a>
     
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/nginx/">nginx</a>
-  </div>
-
   </div>
   <div class="article-inner">
     
@@ -967,7 +357,7 @@ nginx支持tcp协议，从这个角度上说是支持ftp协议的，因为ftp协
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/08/07/6-nginx/">(6)nginx内存池</a>
+      <a class="article-title" href="/2017/01/13/数据库表拆分/">数据库表拆分</a>
     </h1>
   
 
@@ -975,64 +365,19 @@ nginx支持tcp协议，从这个角度上说是支持ftp协议的，因为ftp协
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2>内存池对性能的影响</h2>
-<p>&lt;!--more--&gt;
-如果你开发过Nginx第三方模块，不需要关心内存的释放。如果你配置一些比较罕见的nginx使用场景，你可能要修改nginx在请求和连接上初始分配的内存池大小。但，nginx官方说明通常不需要修改这些配置。究竟要不要改内存池的大小呢？</p>
-<h3>内存池究竟是怎么运转的？</h3>
-<p>之前有提到ngx_connections_s，每一个连接会使用到这么一个结构体。有个成员ngx_pool_t 对应的连接所使用的内存池。这个内存池可以通过connection_pool_size 去定义。</p>
-<p>{F8960}</p>
-<h3>为什么需要内存池呢？</h3>
-<p>{F8962}</p>
-<p>我们用一些工具可以发现nginx 产生的内存碎片是比较小的。这就是内存池的功劳。</p>
-<p>内存池会把内存会提前分配好一批，而且当我们使用小块内存的时候，会用next指针（看图中浅绿色部分）一个个连接在一起。每次我们使用东西比较少的时候，第二次再分配内存会连接在一起使用。大大减少了内存碎片。</p>
-<h3>分配大块内存的时候还是会走到操作系统的allocate去分配大块的内存。对于nginx有什么好处呢？</h3>
-<p>nginx 主要在处理web请求，特别对于http请求，有两个非常明显的特点。</p>
-<p>1.连接内存池</p>
-<p>每当我们有一个tcp连接的时候，这个tcp连接可能会运行很多http请求（http keepalive请求）连接没有关闭，执行完一条请求之后还负责执行另外一条请求。有一些内存为连接分配一次就够了。比如：读取每一个请求的前1k字节，在连接内存池上分配一次就够了，只要连接不关闭，这1k的内存不需要释放，什么时候释放呢？连接关闭的时候再释放。</p>
-<ol start="2">
-<li>请求内存池</li>
-</ol>
-<p>每一次请求开始分配，不知道分配多少，http请求，特别是http1.1而言，通常会分配4k大小的内存，因为url和header 需要分配那么多。没有内存池就要频繁的去分配。分配内存有代价。一次分配较多的内存就没有这样的问题。请求执行完之后，那么连接还可以复用，也可以把请求内存池。</p>
-<p>这样所有nginx第三方模块开发者不必关注内存什么时候释放。只要关注是从连接内存池，还是请求内存池分配内存。比如，请求结束之后，连接人员想继续使用可以在连接内存池里面分配。</p>
-<h3>内存池配置说明</h3>
-<p>connection_pool_size</p>
-<p>http://nginx.org/en/docs/http/ngx_http_core_module.html#connection_pool_size</p>
-<p><code>Default:	connection_pool_size 256|512</code>，跟操作系统位数有关。内存池配置512并不代表只能分配512。当分配超过预分配大小的时是可以继续分配的。512是预分配的大小，预分配之后可以减少分配内存的次数。</p>
-<p>request_pool_size</p>
-<p>http://nginx.org/en/docs/http/ngx_http_core_module.html#request_pool_size</p>
-<p>每一个请求的内存池大小。<code>Default: request_pool_size 4k;</code>。是connection的八倍。是因为对于连接而言保存的上下文信息比较少。它只需要帮助后面的请求读取一部分字节就可以了。对于请求而言，保存大量的上下文信息，比如：所有读取到的url跟headr一直保存下来。url通常还比较长。所以需要有4k。</p>
-<p>官方文档上说它对性能影响比较小。在极端场景下，比如你的url很大，可以考虑把这个值调大些。相反，可以调小些（这样可以少消耗内存，可以做更大并发量的请求）。</p>
-<h3>内存池的意义</h3>
-<p>内存池对减少内存碎片，对第三方模块的快速开发是有很大意义的。可能会有一些第三方模块不当使用了内存池。本该在请求内存池分配内存，结果在连接内存里分配，可能会导致内存的延期释放，nginx内存无谓的增加。</p>
-<h3>留言问题</h3>
-<ol>
-<li>老师 请问 压测nginx 返回499比较多 是不是php程序与后台交互慢吗？ 还是nginx配置有问题？</li>
-</ol>
-<p> 作者回复
-后端慢的话，可以考虑nginx加缓存来缩短响应时间，或者压测客户端增大读超时时间。499是客户端读超时关连接造成的，加了proxy_ignore_client_abort on; 也不解决问题。推荐从超时时间或者优化响应速度入手。</p>
-<ol start="2">
-<li>我这边一个应用遇到一个问题。nginx反向代理一web服务器，access.log返回200了，但是客户端没收到响应，您建议我这边先抓包，access.log再增加remote_port。这是个流量很大的系统，而且是随机出现的问题。抓包不太现实，能否认为access.log的某个url请求返回状态码是200就认为nginx肯定是把响应出去了呢（或者说发给了我们前面的负载，而是负载到客户浏览器这段网络内数据丢了呢）。</li>
-</ol>
-<p> 作者回复
-nginx打印access.log时，这条请求的response肯定已经发出去了，但只是nginx进程把write请求提交给linux kernal了，至于kernal有没有发到交换机，交换机有没有给到机房的路由器，有没有从广域网发到客户网络，等等，都是不可知的。
-如果抓包不现实，那么就看端口吧，把remote_addr和remote_port打印到access日志中，然后对照浏览器上的src_port看。</p>
-<p>3.内存池 原理跟 数据库连接池类似吧</p>
-<p> 作者回复
-不太一样，nginx内存池与http协议相关度很大，当请求结束时、连接关闭时统一释放。</p>
-<p>4.nginx有没有防DDOS的安全模块? 效果如何?</p>
-<p> 作者回复
-进程防止DDOS攻击效果不行，大规模的攻击下还没到进程就已经崩了。如果只是应对小流量，可以考虑openresty+waf</p>
-<p>5.request_pool_size是为每个请求分配的内存大小，请求内存池是预先分配了一定数量的request_pool_size，用完就丢到池里（类似java的连接池），重复使用，还是一个请求进来就向请求内存池申请分配一次，没有预先创建一定数量的request_pool_size？</p>
-<p> 作者回复
-预先分配一部分，但没有释放，仅在请求结束后全部释放掉该内存池。</p>
-
+        <p>数据库表拆分大体分为垂直拆分与水平拆分，具体如下：
+        
+          </p><p class="article-more-link">
+            <a href="/2017/01/13/数据库表拆分/#more">Read More</a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2018/08/07/6-nginx/" data-id="cjvdqd6vp001co4r3lqx6peey" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2017/01/13/数据库表拆分/" data-id="cjvdscuy8001bk4r34hx62kv4" class="article-share-link">Share</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/数据库/">数据库</a></li></ul>
 
     </footer>
   </div>
@@ -1041,14 +386,14 @@ nginx打印access.log时，这条请求的response肯定已经发出去了，但
 
 
   
-    <article id="post-7-nginx" class="article article-type-post" itemscope="" itemprop="blogPost">
+    <article id="post-php设计模式浅析-二" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2018/08/07/7-nginx/" class="article-date">
-  <time datetime="2018-08-07T08:24:25.000Z" itemprop="datePublished">2018-08-07</time>
+    <a href="/2017/01/08/php设计模式浅析-二/" class="article-date">
+  <time datetime="2017-01-08T08:22:07.000Z" itemprop="datePublished">2017-01-08</time>
 </a>
     
   <div class="article-category">
-    <a class="article-category-link" href="/categories/nginx/">nginx</a>
+    <a class="article-category-link" href="/categories/php/">php</a>
   </div>
 
   </div>
@@ -1059,7 +404,7 @@ nginx打印access.log时，这条请求的response肯定已经发出去了，但
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/08/07/7-nginx/">(7)nginx 共享内存</a>
+      <a class="article-title" href="/2017/01/08/php设计模式浅析-二/">php设计模式浅析(二)</a>
     </h1>
   
 
@@ -1067,46 +412,19 @@ nginx打印access.log时，这条请求的response肯定已经发出去了，但
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2>所有worker进程协同工作的关键：共享内存</h2>
-<p>&lt;!--more--&gt;
-1.nginx 进程间的通讯方式</p>
-<p>{F8964}</p>
-<p>nginx进程间通讯有两种，信号跟共享内存，如果要做数据的同步只能用共享内存。</p>
-<p>共享内存是nginx 跨worker通讯最有效的手段。只要我们需要一段业务逻辑在多个worker中同时生效，比如说做集群的流控上，必须使用共享内存，而不是在每一个worker的内存上操作。</p>
-<p>2.锁</p>
-<p>多个worker之间访问内存就会导致竞争所以我们需要加锁。</p>
-<p>nginx早期还有关于信号量的锁。信号量是linux比较久远的进程同步方式。会导致进程进入休眠状态。现在大多数nginx版本中使用的都是自旋锁。而不会基于信号量。自旋锁，当这个锁的条件没有满足，这块内存被1号worker使用，2号worker进程获取锁的时候，只要1号进程没有释放锁，2号进程会一直在不听的请求这把锁。就好像如果是基于信号量的，早期nginx锁，假设锁住了一扇门，worker 进程1拿上了锁进入物理，worker 2发现里面有人，worker 2就会就地休息 等待woker进程1从门里出来后通知它。自旋锁不一样，woker 2会持续敲门，使用自旋锁就要求nginx模块必须快速的使用共享内存。也就是快速的取得锁，快速的释放锁。一旦出现有第三方模块不遵守这样的规则，就可能导致出现死锁或者性能下降的问题。</p>
-<p>有了共享内存，会引入第二个问题。一个内存往往给许多对象使用的。如果在模块中手动的去编写分配，把这些内存给到不同的对象是非常繁琐的。于是使用slab内存管理器。</p>
-<p>3.哪些官方模块使用了共享内存</p>
-<p>{F8966}</p>
-<ol start="4">
-<li>主要使用这两种数据结构：</li>
-</ol>
-<p>rbtree</p>
-<p>想做限速或者流控场景时，我们不能容忍在内存中做的。比如一个worker对某个用户触发了流控、限速而其他worker 还不知道。所以，只能在共享内存中做。比如：ngx_limit_conn_module 、ngx_stream_limit_req_module。http cache 做反向代理时用的。</p>
-<p>红黑树特点：插入跟删除特别快，当然也可以做遍历。这些模块都有一个特点，需要做快速的插入和删除。比如：发现了一个客户端，需要对它限速，如果限速达到了需要把客户端从限速数据结构容器中移出，都需要非常的快速。</p>
-<p>单链表</p>
-<p>把共享的元素串起来就可以了。</p>
-<p>ngx_http_lua_api 是Openresty的核心模块。Openresty在这个模块中定义了一个sdk，这个sdk叫做 lua_shared_dict。</p>
-<p>{F8968}</p>
-<p>代码中，我们同时使用了红黑树以及链表</p>
-<p>dogs（共享内存的名称，图中大小是10m） 使用红黑树保存每一个key value</p>
-<p>为什么我们需要链表呢？Lua是应用代码，很容易产生限制。当我们达到10M限制的时候呢？lua_shared_dict 采用LRU淘汰。长时间不用的节点优先被淘汰掉。lua_shared_dict 对内存的使用同时满足了红黑树跟链表。</p>
-<h2>留言问题</h2>
-<p>1.共享内存使用的场景？什么时候使用，</p>
-<p> 作者回复
-所有需要多worker进程协同配合的场景。例如upstream负载均衡算法，或者limit_conn、limit_req等。一般指令中有zone关键字都是共享内存。</p>
-<p>2.老师，对于共享变量dogs，我们在配置文件中对dogs进行插入、删除、值更新的话，需要考虑锁的问题吗？</p>
-<p> 作者回复
-不需要，在操作这个变量时，lua模块已经对变量使用了自旋锁</p>
-
+        <p>php设计模式浅析下半段，因博客太长，所以分为两个博客<br>之前写的设计模式包括单例，工厂，注册数，适配器等都是平时常用或常见的，接下来的几个会是代码设计时很独特的设计模式确不怎么常用
+        
+          </p><p class="article-more-link">
+            <a href="/2017/01/08/php设计模式浅析-二/#more">Read More</a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2018/08/07/7-nginx/" data-id="cjvdqd6vs001fo4r3glqqi9jq" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2017/01/08/php设计模式浅析-二/" data-id="cjvdscuxi000fk4r3u4hgxg9f" class="article-share-link">Share</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/php/">php</a></li></ul>
 
     </footer>
   </div>
@@ -1115,14 +433,14 @@ nginx打印access.log时，这条请求的response肯定已经发出去了，但
 
 
   
-    <article id="post-10-nginx" class="article article-type-post" itemscope="" itemprop="blogPost">
+    <article id="post-php设计模式浅析-一" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2018/08/07/10-nginx/" class="article-date">
-  <time datetime="2018-08-07T08:24:25.000Z" itemprop="datePublished">2018-08-07</time>
+    <a href="/2017/01/07/php设计模式浅析-一/" class="article-date">
+  <time datetime="2017-01-07T04:45:16.000Z" itemprop="datePublished">2017-01-07</time>
 </a>
     
   <div class="article-category">
-    <a class="article-category-link" href="/categories/nginx/">nginx</a>
+    <a class="article-category-link" href="/categories/php/">php</a>
   </div>
 
   </div>
@@ -1133,7 +451,7 @@ nginx打印access.log时，这条请求的response肯定已经发出去了，但
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/08/07/10-nginx/">(10)使用动态模块来提升运维效率</a>
+      <a class="article-title" href="/2017/01/07/php设计模式浅析-一/">php设计模式浅析(一)</a>
     </h1>
   
 
@@ -1141,166 +459,19 @@ nginx打印access.log时，这条请求的response肯定已经发出去了，但
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2>41 | 使用动态模块来提升运维效率</h2>
-<p>&lt;!--more--&gt;</p>
-<h2>动态模块可以在nginx升级时，减少编译环节。</h2>
-<p><img src="https://upload-images.jianshu.io/upload_images/550939-46fe440e54c5b988.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<h2>不使用动态模块nginx如何编译</h2>
-<p><img src="https://upload-images.jianshu.io/upload_images/550939-36d37c47cc32c2c1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>我们先下载完Nginx源码，有个configure的脚本，以及auto目录，都是在帮助nginx建立编译系统。nginx源代码中提供了很多官方自带的模块。但可能我们会加入很多第三方模块，比如Openresty就提供了很多第三方模块。不管是官方还是第三方。这些模块源码会和nginx的源码放在一起编译，最后编译出来一个nginx的可执行文件。</p>
-<h2>动态模块编译及使用流程</h2>
-<p><img src="https://upload-images.jianshu.io/upload_images/550939-9e3b2b2fcd542b25.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>我们在编译的手指定了 一些模块使用动态模块的方式编译，最后除了生成一个二进制执行文件，还生成了一个指定模块的动态库。</p>
-<blockquote>
-<p>动态库跟动态库的区别？静态库会直接把源代码编译到最终可执行二进制文件中。动态库在二进制可执行文件里只保留了调用它的位置（或者说地址）。在需要用到用动态库的功能时，由nginx的可执行文件调用这个动态库再去完成这样的功能，这里的好处，当我们仅仅需要修改某一个模块或者升级这个模块功能时，特别是当我们的nginx编译了大量的第三方模块。我们可仅仅编译这个动态库，然后替换掉，而不用牵一发而动全身（或许在你替换nginx文件中漏掉或加了东西呢？）。然后nginx reload下重新使用新的模块功能。</p>
-</blockquote>
-<h3>具体操作</h3>
-<p><img src="https://upload-images.jianshu.io/upload_images/550939-a6a9c2fdbfd715e4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>首先，在源代码中，调用Configure加入动态模块必须指明动态模块。是用动态模块的方式编译到nginx中， 不是所有的nginx模块都可以以动态模块的方式加入到nginx中。</p>
-<p>第二步，编译进binary。</p>
-<p>第三步，启动时初始化模块数组。启动nginx的时候会去读生成的nginx modules那个数组。读到模块数组中呢，我们会发现是用了一个动态模块。</p>
-<p>第四步，读取load_module 配置。nginx config 中需要加入的一个配置项load_module ，指明了动态模块所在的路径。</p>
-<p>第五步，打开动态库并加入模块数组。 在nginx进程中打开这个动态库，把我们的模块加入到nginx中。</p>
-<p>第六步，基于模块数组开始初始化。</p>
-<p>哪些模块支持动态模块？</p>
-<p>带有 dynamic字样</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/550939-f032ae4448618850.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<h2>使用image_filter动态库</h2>
-<p><img src="https://upload-images.jianshu.io/upload_images/550939-25d0be42eb5af618.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>linux中so是动态库（windows是dll），.a是静态库。</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/550939-75a8b28b4382d6e6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png">
-<img src="https://upload-images.jianshu.io/upload_images/550939-2255ee8177587c7c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>图片变成15*10。</p>
-<h2>课后问题</h2>
-<p>1.nginx模块中 有没有防御 网站盗链 网站爬虫的 配置在nginx中 效果如何？</p>
-<p> 作者回复
-有的,第三部分75课的referer和76课中的secure_link，配合50课的realip模块。
-更复杂的防盗链，可以使用openresty中的waf模块。</p>
-<p>2.nginx编译安装动态模块时生成的mudules/目录，必须是在make install才有的么？如果之前安装的nginx能否通过替换编译的nginx二进制文件来安装动态模块？</p>
-<p> 作者回复
-可以，但热升级前，我们需要手动建立modules目录放置动态库，并在nginx.conf在配置好目录。</p>
-<p>3.咨询个nginx监控的问题，在使用stub_status模块的时候，配置文件中每个server内都要添加单独的location /ngx_status{stub_status on;}这样的字段吗？还是说只在一个server段内添加就可以对整个nginx进行监控，例如Active connections这个指标代表的是整个nginx的活动连接数，还是配置的那个server的活动连接数？</p>
-<p> 作者回复
-整个nginx的</p>
-<p>4.老师 动态模块有性能损失吗？ 跟直接编译进去对比</p>
-<p> 作者回复
-没有性能损失。</p>
-<p>5.一个upstream中有多台机器标识了backup会怎么样？主要的机器挂了,是从中随机选择一台吗？若那台backup也不好呢？</p>
-<p> 作者回复
-如果upstream策略定义的主策略失效后，都会退化为带权重的RoundRobin算法。第4部分课程会讲到。</p>
-<p>6.生产环境用了nginx正向https代理，同时也用了反向代理，但是正向代理陆陆续续总有问题，用户量多一点(并发少于100)的时候就会发生连接超时，后边就出现解析地址超时的现象，网上没有找到相关的资料，想问下老师nginx正向代理可以用于生产环境吗？有没有替代方案？</p>
-<p> 作者回复
-nginx用于正向代理一样很稳定。具体看下超时原因吧。</p>
-<p>7.请问一下旧的APP使用http post方法访问nginx服务，现在我们想后台只用https提供服务，但是重定向不支持post方法，请问有办法解决吗？谢谢</p>
-<p> 作者回复
-如果你原来是用302，那么可以考虑307重定向，它不允许改变方法</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="jiweii.com/2018/08/07/10-nginx/" data-id="cjvdqd6u00002o4r3y5e0v17a" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-9-nginx" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/08/07/9-nginx/" class="article-date">
-  <time datetime="2018-08-07T08:24:25.000Z" itemprop="datePublished">2018-08-07</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/nginx/">nginx</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
+        <p>php框架及扩展程序中都拥有肯多设计模式，熟练掌握这些设计模式，可以更好的提升编程技巧，知道在那些场景下用什么样的模式设计程序会更合理、稳定，&nbsp;坚持代码设计的“开·闭”原则，即对扩展开放，对修改关闭，实现程序设计的“高内聚，低耦合”；
         
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/08/07/9-nginx/">(9)nginx 哈希表、红黑树</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1>39 | 哈希表的max_size与bucket_size如何配置</h1>
-<p>&lt;!--more--&gt;
-nginx的容器是很多nginx高级功能的实现基础。即使不需要编写第三方模块、查看nginx源代码。但变更nginx配置文件达到最大化的性能，也需要了解nginx的容器是怎样使用的。</p>
-<p>nginx 六个容器</p>
-<ul>
-<li>数组 （和平常理解的数组是不同的，是多块连续内存，其中每一块连续内存汇中可以存放许多元素）</li>
-<li>链表（ngx_list_t）</li>
-<li>队列（ngx_q_t，很多nginx数据结构中都有相应的这样的数据结构，这些结构体实现的功能是类似的，只是操作方法不同）</li>
-<li>哈希表</li>
-<li>红黑树</li>
-<li>基数树（自平衡排序二叉树的一种，只不过key只能是整型，所以像geo模块在使用基数树，其他使用基数树的场景不多）</li>
-</ul>
-<p>哈希表</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/550939-da9022b00176870b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>nginx的哈希表跟我们正常见到的哈希表有所不同。</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/550939-3095c8111285b138.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>上图的结构跟普通的hash表相同。哪有哪些不同。nginx 哈希表应用场景不同。仅仅应用于静态不变的内容。这个hash表通常不会出现插入和删除。nginx刚启动的时候就能确定这个hash表中一共有多少个元素。使用hash表的这些模块通常会暴露出来一个叫max_size、bucket_size 给我们使用的时候。我们的max_size仅仅控制了最大的hash表bucket的个数而不是实际上bucket的个数。比如：max_size可能配置为100，但是实际上只有十个元素使用了哈希表。与实际上bucket_size不符。它的意义在于可以限制最大化的使用。因为消耗了内存。使用hash表的模块有怎样的特点呢？</p>
-<p>比如在stream/http的核心模块里，对所有的变量（variables）使用了hash表，因为变量在我们模块编译进去的时候就已经定义清楚了。还是有像map（stream/http）、反向代理（反向代理中，我们需要对很多header，在配置文件中定义好的header做hash提升性能，后面的referer也是一样的道理，访问复杂度O(1)）。</p>
-<p>哈希表中有一个bucket size ，在里面有一些默认值，这个默认值在nginx配置文档中说是cpu cache line 会对齐到这样一个值。有什么意义呢？影响了怎样配置bucket size。现在主流的cpu有L1、L2、L3缓存的，它在去主存的数据时，不是按照大家所想象的那样。按照所谓的64位，32位取。现在主流的cpu一次取主存去的字节数就是cpu cache line 。现在是64字节。</p>
-<p>哈希表为什么要向64字节对齐呢？这是因为，假设我们每个哈希表的bucket 是59字节，如果我们是紧密排在一起的，取第一个哈希表元素只需要访问一次，还多取了6个字节。但你去第二个元素的时候需要访问主存两次包括64字节中的最后6个字节，以及第二个单元的58个字节。为了避免这种取两次的问题。nginx在它的代码中自动的向上对齐了。所以在配置bucket_size 的时候需要注意两个问题。第一如果配置的bucket size 不是cpu cache line，而是配置了70字节，就会分配每个元素128字节。第二如果有可能的情况下，我们尽量不要超过64字节。以减少cpu访问每个hash表元素的次数。</p>
-<p>实际上还有很多第三方模块使用了hash表，使用hash表需要注意，它只为静态不变的内容服务。第二，hash表的bucket size 需要考虑cpu cache line的对齐问题。</p>
-<h2>课后问题</h2>
-<ol>
-<li>两个问题</li>
-</ol>
-<ul>
-<li>1、这节课开头的hash表的图用的是书上7-10的图，图上写的是size个ngx_hash_elt_t结构体，我的理解是size个ngx_hash_elt_t结构体指针，然后每个指针指向ngx_hash_elt_t结构体数组，所以这幅图我有点困惑，还希望老师您解惑</li>
-<li>2、这节课最后举了个例子，说cacheline是64Byte，bucket size是59Byte，然后取第一个元素老师您讲的是多取了1个字节，这个地方不是多取了5个字节吗？为什么是1个字节，我有点不太理解</li>
-</ul>
-<p> 作者回复
-<em>1、书中的图，是最终的存储结构，即，每个elt_t指针其实指向的是连续内存中的一个元素，所以，这里的buckets</em>*不是语言上的指向，而是最终真实线性内存的指向。你可以再读读ngx_hash_init这个函数的实现。确实是比较难懂的。</p>
-<ul>
-<li>2、我的口误，呵呵，意思就是第1个比cacheline少的话，总有一个会占有2个cacheline。</li>
-</ul>
-<p>2.在ngx_hash_t中，buckets是一个二重指针，所以我感觉这个关于书上7-10的ngx_hash_t的基本散列表的结构示意图有点疑问，buckets这个为什么不是先指向一个ngx_hash_elt_t<em>的指针数组，之后再由ngx_hash_elt_t</em>指向ngx_hash_elt_t结构，这个图片我个人感觉更类似于http://www.cnblogs.com/0x2D-0x22/p/4139805.html这个blog上画的图</p>
-<p> 作者回复
-buckets就是指向的一个指针数组，数组每个成员就是ngx_hash_elt_t*成员。我看了下你给的页面上的图，两幅图意思完全一致啊。</p>
-<h1>40 | Nginx中最常用的容器：红黑树</h1>
-<p>nginx 多个worker之间做进程通讯时，进程在共享内存上使用红黑树来管理许多对象，实际上在nginx的内存中也大量使用红黑树。</p>
-<p>nginx第二个非常常用的容器</p>
-<p>红黑树</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/550939-8c174d7e9ae8b5cd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>这样的二叉树有可能退化成右边的链表。也是一个二叉查找树，只是没有左子节点，查找某个元素遍历复杂度O(N)。而红黑树，有一个重要的特点，高度不会差太大，不会超过两倍。</p>
-<p>在nginx中描述每个红黑树，有个数据结构——ngx_rbtree_t。ngx_rbtree_t的root结点就指向与树的根节点。红黑树会提供一些方法，在红黑树里很容易的找到最小结点。在红黑树使用定时器的时候经常使用这样的一个特性。红黑树还有如下优点：</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/550939-6886ee3be3b1691d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>有了这些特点，我们就可以判断使用了红黑树的一些模块，使用增删改查时可以预测，效率是很高的。而且如果它提供了遍历这样的方法，我们也完全可以使用。特别是针对许多lua模块。因为lua模块，底层实现我们不太清楚，但是我们知道是基于红黑树实现的。比如：lua_shared_dict。那么就可以放心大胆的使用它的遍历，或者它的遍历或者增删改查等等方法。</p>
-<p>常用的一些模块或数据结构</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/550939-ffd46c73fa9a2600.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>ngx_conf_module、ngx_event_timer_rbtree在本地内存里做了一个红黑树。</p>
-<h2>课后问题</h2>
-<p>1.阿里云cdn到Nginx 访问提示504错误，The gateway did not receive a timely response from the upstream server or application.</p>
-<p>Powered by Tengine，可能原因有哪些？</p>
-<p> 作者回复
-从上面的log来看，就是上游服务没有在超时范围内发回响应，要么网络出问题，要么上游服务出问题了。</p>
-<p>2.nginx的 share_dirt 也是用的红黑树吗</p>
-<p> 作者回复
-你是说openresty吗？是的</p>
-
+          </p><p class="article-more-link">
+            <a href="/2017/01/07/php设计模式浅析-一/#more">Read More</a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2018/08/07/9-nginx/" data-id="cjvdqd6vx001lo4r3v75w0kw9" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2017/01/07/php设计模式浅析-一/" data-id="cjvdscux9000ak4r3o9w1gimz" class="article-share-link">Share</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/php/">php</a></li></ul>
 
     </footer>
   </div>
@@ -1313,7 +484,7 @@ buckets就是指向的一个指针数组，数组每个成员就是ngx_hash_elt_
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/3/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
   </nav>
 
 </section>
@@ -1344,7 +515,7 @@ buckets就是指向的一个指针数组，数组每个成员就是ngx_hash_elt_
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/nginx/" style="font-size: 20px;">nginx</a> <a href="/tags/php/" style="font-size: 16.67px;">php</a> <a href="/tags/privately/" style="font-size: 13.33px;">privately</a> <a href="/tags/数据库/" style="font-size: 13.33px;">数据库</a>
+      <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/nginx/" style="font-size: 16.67px;">nginx</a> <a href="/tags/php/" style="font-size: 20px;">php</a> <a href="/tags/privately/" style="font-size: 13.33px;">privately</a> <a href="/tags/数据库/" style="font-size: 13.33px;">数据库</a>
     </div>
   </div>
 
@@ -1382,7 +553,7 @@ buckets就是指向的一个指针数组，数组每个成员就是ngx_hash_elt_
           </li>
         
           <li>
-            <a href="/2018/08/07/13-nginx/">(13)正则、如何找server指令块</a>
+            <a href="/2018/08/07/1-nginx/">(1)编译、配置、命令行</a>
           </li>
         
       </ul>

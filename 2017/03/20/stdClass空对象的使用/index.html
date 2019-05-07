@@ -7,18 +7,18 @@
   
   <title>stdClass空对象的使用 | A type of habit</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="PHP可以用 $object = new StdClass(); 创建一个没有成员方法和属性的空对象。 很多时候会将一些参数配置项之类的信息放在数组中使用，但是数组操作起来并不是很方便，很多时候使用对象操作符-&amp;gt;xxx比数组操作符[&apos;xxx&apos;]要方便不少。 数组在程序的使用中应该是最方便的，然而数组的每次被引用（$a = $b），其实都是创建了一个副本，&amp;lt;!--more--&amp;gt; 而">
+  <meta name="description" content="PHP可以用 $object = new StdClass(); 创建一个没有成员方法和属性的空对象。很多时候会将一些参数配置项之类的信息放在数组中使用，但是数组操作起来并不是很方便，很多时候使用对象操作符-&amp;gt;xxx比数组操作符[‘xxx’]要方便不少。数组在程序的使用中应该是最方便的，然而数组的每次被引用（$a = $b），其实都是创建了一个副本，">
 <meta name="keywords" content="php">
 <meta property="og:type" content="article">
 <meta property="og:title" content="stdClass空对象的使用">
 <meta property="og:url" content="jiweii.com/2017/03/20/stdClass空对象的使用/index.html">
 <meta property="og:site_name" content="A type of habit">
-<meta property="og:description" content="PHP可以用 $object = new StdClass(); 创建一个没有成员方法和属性的空对象。 很多时候会将一些参数配置项之类的信息放在数组中使用，但是数组操作起来并不是很方便，很多时候使用对象操作符-&amp;gt;xxx比数组操作符[&apos;xxx&apos;]要方便不少。 数组在程序的使用中应该是最方便的，然而数组的每次被引用（$a = $b），其实都是创建了一个副本，&amp;lt;!--more--&amp;gt; 而">
+<meta property="og:description" content="PHP可以用 $object = new StdClass(); 创建一个没有成员方法和属性的空对象。很多时候会将一些参数配置项之类的信息放在数组中使用，但是数组操作起来并不是很方便，很多时候使用对象操作符-&amp;gt;xxx比数组操作符[‘xxx’]要方便不少。数组在程序的使用中应该是最方便的，然而数组的每次被引用（$a = $b），其实都是创建了一个副本，">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:updated_time" content="2018-04-16T02:19:24.615Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="stdClass空对象的使用">
-<meta name="twitter:description" content="PHP可以用 $object = new StdClass(); 创建一个没有成员方法和属性的空对象。 很多时候会将一些参数配置项之类的信息放在数组中使用，但是数组操作起来并不是很方便，很多时候使用对象操作符-&amp;gt;xxx比数组操作符[&apos;xxx&apos;]要方便不少。 数组在程序的使用中应该是最方便的，然而数组的每次被引用（$a = $b），其实都是创建了一个副本，&amp;lt;!--more--&amp;gt; 而">
+<meta name="twitter:description" content="PHP可以用 $object = new StdClass(); 创建一个没有成员方法和属性的空对象。很多时候会将一些参数配置项之类的信息放在数组中使用，但是数组操作起来并不是很方便，很多时候使用对象操作符-&amp;gt;xxx比数组操作符[‘xxx’]要方便不少。数组在程序的使用中应该是最方便的，然而数组的每次被引用（$a = $b），其实都是创建了一个副本，">
   
     <link rel="alternate" href="/atom.xml" title="A type of habit" type="application/atom+xml">
   
@@ -91,18 +91,13 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>PHP可以用 $object = new StdClass(); 创建一个没有成员方法和属性的空对象。
-很多时候会将一些参数配置项之类的信息放在数组中使用，但是数组操作起来并不是很方便，很多时候使用对象操作符-&gt;xxx比数组操作符['xxx']要方便不少。
-数组在程序的使用中应该是最方便的，然而数组的每次被引用（$a = $b），其实都是创建了一个副本，&lt;!--more--&gt;
-而且，数组被unset后，还是占用了内存(听说)，对象在任何地方被调用，都是引用地址型的，所以相对消耗的资源会少一点。
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">$user = <span class="keyword">new</span> stdClass();</span><br><span class="line">$user-&gt;name = <span class="string">'gouki'</span>;</span><br><span class="line">$myUser = $user;</span><br><span class="line">$myUser-&gt;name = <span class="string">'flypig'</span>;</span><br></pre></td></tr></table></figure></p>
-<p>PHP中没有Javascript里面 var object = {}; 这样的语法。
-StdClass类没有任何成员方法，也没有任何成员属性，实例化以后就是一个空对象。</p>
+        <p>PHP可以用 $object = new StdClass(); 创建一个没有成员方法和属性的空对象。<br>很多时候会将一些参数配置项之类的信息放在数组中使用，但是数组操作起来并不是很方便，很多时候使用对象操作符-&gt;xxx比数组操作符[‘xxx’]要方便不少。<br>数组在程序的使用中应该是最方便的，然而数组的每次被引用（$a = $b），其实都是创建了一个副本，<a id="more"></a><br>而且，数组被unset后，还是占用了内存(听说)，对象在任何地方被调用，都是引用地址型的，所以相对消耗的资源会少一点。<br><figure class="highlight php"><table><tr><td class="code"><pre><span class="line">$user = <span class="keyword">new</span> stdClass();</span><br><span class="line">$user-&gt;name = <span class="string">'gouki'</span>;</span><br><span class="line">$myUser = $user;</span><br><span class="line">$myUser-&gt;name = <span class="string">'flypig'</span>;</span><br></pre></td></tr></table></figure></p>
+<p>PHP中没有Javascript里面 var object = {}; 这样的语法。<br>StdClass类没有任何成员方法，也没有任何成员属性，实例化以后就是一个空对象。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2017/03/20/stdClass空对象的使用/" data-id="cjvdqd6wf0027o4r32qan022c" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2017/03/20/stdClass空对象的使用/" data-id="cjvdscuxs000qk4r30k7itwq1" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/php/">php</a></li></ul>
@@ -161,7 +156,7 @@ StdClass类没有任何成员方法，也没有任何成员属性，实例化以
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/nginx/" style="font-size: 20px;">nginx</a> <a href="/tags/php/" style="font-size: 16.67px;">php</a> <a href="/tags/privately/" style="font-size: 13.33px;">privately</a> <a href="/tags/数据库/" style="font-size: 13.33px;">数据库</a>
+      <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/nginx/" style="font-size: 16.67px;">nginx</a> <a href="/tags/php/" style="font-size: 20px;">php</a> <a href="/tags/privately/" style="font-size: 13.33px;">privately</a> <a href="/tags/数据库/" style="font-size: 13.33px;">数据库</a>
     </div>
   </div>
 
@@ -199,7 +194,7 @@ StdClass类没有任何成员方法，也没有任何成员属性，实例化以
           </li>
         
           <li>
-            <a href="/2018/08/07/13-nginx/">(13)正则、如何找server指令块</a>
+            <a href="/2018/08/07/1-nginx/">(1)编译、配置、命令行</a>
           </li>
         
       </ul>
