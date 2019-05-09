@@ -5,20 +5,22 @@
   
 
   
-  <title>面试题 | A type of habit</title>
+  <title>算法题 | A type of habit</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="记录一些值得研究的面试题">
+  <meta name="description" content="记录一些值得研究的算法题">
 <meta name="keywords" content="php">
 <meta property="og:type" content="article">
-<meta property="og:title" content="面试题">
-<meta property="og:url" content="jiweii.com/2019/04/06/面试题/index.html">
+<meta property="og:title" content="算法题">
+<meta property="og:url" content="jiweii.com/2019/04/02/面试题/index.html">
 <meta property="og:site_name" content="A type of habit">
-<meta property="og:description" content="记录一些值得研究的面试题">
+<meta property="og:description" content="记录一些值得研究的算法题">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-05-09T04:05:51.756Z">
+<meta property="og:image" content="/images/yazi1.png">
+<meta property="og:updated_time" content="2019-05-09T08:44:53.110Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="面试题">
-<meta name="twitter:description" content="记录一些值得研究的面试题">
+<meta name="twitter:title" content="算法题">
+<meta name="twitter:description" content="记录一些值得研究的算法题">
+<meta name="twitter:image" content="/images/yazi1.png">
   
     <link rel="alternate" href="/atom.xml" title="A type of habit" type="application/atom+xml">
   
@@ -67,8 +69,8 @@
       <div class="outer">
         <section id="main"><article id="post-面试题" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2019/04/06/面试题/" class="article-date">
-  <time datetime="2019-04-06T11:29:31.000Z" itemprop="datePublished">2019-04-06</time>
+    <a href="/2019/04/02/面试题/" class="article-date">
+  <time datetime="2019-04-02T11:29:31.000Z" itemprop="datePublished">2019-04-02</time>
 </a>
     
   <div class="article-category">
@@ -83,7 +85,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      面试题
+      算法题
     </h1>
   
 
@@ -91,12 +93,12 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>记录一些值得研究的面试题<a id="more"></a></p>
-<p><center><a href="#寻找最长不含有重复字符的子串长度">寻找最长不含有重复字符的子串长度</a> &nbsp;|&nbsp; <a href="#go语言的冒泡算法及算法优化">go语言的冒泡算法及算法优化</a> &nbsp;|&nbsp; <a href="#百度100盏灯面试题">百度100盏灯面试题</a></center><br><br></p>
+        <p>记录一些值得研究的算法题<a id="more"></a><br><img src="/02/面试题/../../../../images/yazi1.png" alt=""></p>
+<p><center><a href="#寻找最长不含有重复字符的子串长度">寻找最长不含有重复字符的子串长度</a> &nbsp;|&nbsp; <a href="#冒泡算法及算法优化">冒泡算法及算法优化</a> &nbsp;|&nbsp; <a href="#百度100盏灯面试题">百度100盏灯面试题</a></center><br><br></p>
 <h1 id="寻找最长不含有重复字符的子串长度"><a href="#寻找最长不含有重复字符的子串长度" class="headerlink" title="寻找最长不含有重复字符的子串长度"></a>寻找最长不含有重复字符的子串长度</h1><p>例：abcabcbdbc，最长不含重复字符的长度为3,abc、bca、cab、dbc等，如果abcabcdcbe，那就是4，abcd、dcbe</p>
 <h2 id="php"><a href="#php" class="headerlink" title="php"></a>php</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line">$a = $str = <span class="string">'abcabcdbdc'</span>;</span><br><span class="line">$str=preg_split(<span class="string">'/(?&lt;!^)(?!$)/u'</span>,$str);<span class="comment">//中文字符识别</span></span><br><span class="line">$length=<span class="number">0</span>;<span class="comment">//长度</span></span><br><span class="line">$start=<span class="number">0</span>;<span class="comment">//分段的起始位置</span></span><br><span class="line">$arr=[];<span class="comment">//更新每个值得键</span></span><br><span class="line">$new_str = <span class="string">''</span>;</span><br><span class="line"><span class="keyword">echo</span> $a . <span class="string">'&lt;br&gt;'</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">'$k-$start+1&lt;br&gt;'</span>;</span><br><span class="line"><span class="keyword">foreach</span> ($str <span class="keyword">as</span> $k=&gt;$v)&#123;</span><br><span class="line">    <span class="keyword">if</span>(@$arr[$v]!==<span class="keyword">null</span>&amp;&amp;$arr[$v]&gt;=$start)&#123;</span><br><span class="line">        $start=$arr[$v]+<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">echo</span> $k . <span class="string">' - '</span> . $start . <span class="string">' + 1 &gt; '</span> . $length;<span class="keyword">echo</span> <span class="string">' ---------&lt;br&gt;'</span>;</span><br><span class="line">    <span class="keyword">if</span>(($k-$start+<span class="number">1</span>)&gt;$length)&#123;</span><br><span class="line">        $length=$k-$start+<span class="number">1</span>;</span><br><span class="line">        $new_str .= $v;</span><br><span class="line">    &#125;</span><br><span class="line">    $arr[$v]=$k;</span><br><span class="line">&#125;</span><br><span class="line">var_dump($new_str);<span class="keyword">exit</span>;</span><br></pre></td></tr></table></figure>
 <h2 id="go"><a href="#go" class="headerlink" title="go"></a>go</h2><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 思路：遍历字符串，记录每一个字符串x最后一次出现的位置lastOccurred[x]，有如下三种情况</span></span><br><span class="line"><span class="comment">// lastOccurred[x]不存在，或者&lt;start位置，则不需要操作</span></span><br><span class="line"><span class="comment">// lastOccurred[x] &gt;= start，更新start位置为lastOccurred[x]+1</span></span><br><span class="line"><span class="comment">// 更新lastOccurred[x], 更新maxLength</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">lengthOfNonRepeatingSubStr</span><span class="params">(s <span class="keyword">string</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	lastOccurred := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">byte</span>]<span class="keyword">int</span>)</span><br><span class="line">	start := <span class="number">0</span></span><br><span class="line">	maxLength := <span class="number">0</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> i, ch := <span class="keyword">range</span> []<span class="keyword">byte</span>(s) &#123;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> lastI, ok := lastOccurred[ch]; ok &amp;&amp; lastI &gt;= start &#123;</span><br><span class="line">			start = lastI + <span class="number">1</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> i-start+<span class="number">1</span> &gt; maxLength &#123;</span><br><span class="line">			maxLength = i - start + <span class="number">1</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		lastOccurred[ch] = i</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> maxLength</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Println(lengthOfNonRepeatingSubStr(<span class="string">"abcabcdefabc"</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1 id="go语言的冒泡算法及算法优化"><a href="#go语言的冒泡算法及算法优化" class="headerlink" title="go语言的冒泡算法及算法优化"></a>go语言的冒泡算法及算法优化</h1><p>正常的冒泡算法<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	arr := []<span class="keyword">int</span>&#123;<span class="number">21</span>, <span class="number">1</span>, <span class="number">7</span>, <span class="number">4</span>, <span class="number">8</span>, <span class="number">3</span>, <span class="number">9</span>&#125;</span><br><span class="line">	arr = maopao(arr)</span><br><span class="line">	fmt.Println(arr)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">maopao</span><span class="params">(arr []<span class="keyword">int</span>)</span> []<span class="title">int</span></span> &#123;</span><br><span class="line">	num := <span class="built_in">len</span>(arr)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; num<span class="number">-1</span>; i++ &#123;</span><br><span class="line">		<span class="keyword">for</span> j := <span class="number">0</span>; j &lt; num-i<span class="number">-1</span>; j++ &#123;</span><br><span class="line">			<span class="keyword">if</span> arr[j] &gt; arr[j+<span class="number">1</span>] &#123;</span><br><span class="line">				arr[j], arr[j+<span class="number">1</span>] = arr[j+<span class="number">1</span>], arr[j]</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> arr</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="冒泡算法及算法优化"><a href="#冒泡算法及算法优化" class="headerlink" title="冒泡算法及算法优化"></a>冒泡算法及算法优化</h1><p>正常的冒泡算法（go）<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	arr := []<span class="keyword">int</span>&#123;<span class="number">21</span>, <span class="number">1</span>, <span class="number">7</span>, <span class="number">4</span>, <span class="number">8</span>, <span class="number">3</span>, <span class="number">9</span>&#125;</span><br><span class="line">	arr = maopao(arr)</span><br><span class="line">	fmt.Println(arr)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">maopao</span><span class="params">(arr []<span class="keyword">int</span>)</span> []<span class="title">int</span></span> &#123;</span><br><span class="line">	num := <span class="built_in">len</span>(arr)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; num<span class="number">-1</span>; i++ &#123;</span><br><span class="line">		<span class="keyword">for</span> j := <span class="number">0</span>; j &lt; num-i<span class="number">-1</span>; j++ &#123;</span><br><span class="line">			<span class="keyword">if</span> arr[j] &gt; arr[j+<span class="number">1</span>] &#123;</span><br><span class="line">				arr[j], arr[j+<span class="number">1</span>] = arr[j+<span class="number">1</span>], arr[j]</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> arr</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>当然冒泡的循环是有很多写法的，都是两层循环遍历，例如：<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> i := <span class="number">0</span>; i &lt; num; i++ &#123;</span><br><span class="line">	<span class="keyword">for</span> j := i + <span class="number">1</span>; j &lt; num; j++ &#123;</span><br><span class="line">		<span class="keyword">if</span> arr[i] &gt; arr[j] &#123;</span><br><span class="line">			arr[i], arr[j] = arr[j], arr[i]</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>假设按照第一种算法(第二种比较奇葩，暂时没有想到优化方法)，我们进行优化</p>
 <h3 id="算法优化一："><a href="#算法优化一：" class="headerlink" title="算法优化一："></a>算法优化一：</h3><p>假设我们现在排序arr := []int{1,2,3,4,5,6,7,8,10,9} 这组数据，按照上面的排序方式，只有第1次起作用；<br>所以可添加标记记录 如果本次循环没有元素互换位置，说明已经排好序了；<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">maopao</span><span class="params">(arr []<span class="keyword">int</span>)</span> []<span class="title">int</span></span> &#123;</span><br><span class="line">	num := <span class="built_in">len</span>(arr)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; num<span class="number">-1</span>; i++ &#123;</span><br><span class="line">		flag := <span class="number">0</span></span><br><span class="line">		<span class="keyword">for</span> j := <span class="number">0</span>; j &lt; num-i<span class="number">-1</span>; j++ &#123;</span><br><span class="line">			<span class="keyword">if</span> arr[j] &gt; arr[j+<span class="number">1</span>] &#123;</span><br><span class="line">				arr[j], arr[j+<span class="number">1</span>] = arr[j+<span class="number">1</span>], arr[j]</span><br><span class="line">				flag = <span class="number">1</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> flag == <span class="number">0</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> arr</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> arr</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
@@ -108,7 +110,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2019/04/06/面试题/" data-id="cjvgam47j001rjcr3ihytl5so" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2019/04/02/面试题/" data-id="cjvgeox06001lxor3dzqlx1ph" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/php/">php</a></li></ul>
@@ -119,10 +121,19 @@
     
 <nav id="article-nav">
   
+    <a href="/2019/04/04/常用书籍、资料、手册/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          常用书籍、资料、手册
+        
+      </div>
+    </a>
   
-    <a href="/2019/04/04/常用书籍、资料、手册/" id="article-nav-older" class="article-nav-link-wrap">
+  
+    <a href="/2018/10/20/常用/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">常用书籍、资料、手册</div>
+      <div class="article-nav-title">常用 [置顶]</div>
     </a>
   
 </nav>
@@ -180,11 +191,11 @@
       <ul>
         
           <li>
-            <a href="/2019/04/06/面试题/">面试题</a>
+            <a href="/2019/04/04/常用书籍、资料、手册/">常用书籍、资料、手册</a>
           </li>
         
           <li>
-            <a href="/2019/04/04/常用书籍、资料、手册/">常用书籍、资料、手册</a>
+            <a href="/2019/04/02/面试题/">算法题</a>
           </li>
         
           <li>
