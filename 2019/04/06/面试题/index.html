@@ -7,18 +7,18 @@
   
   <title>面试题 | A type of habit</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="一些面试题记录">
+  <meta name="description" content="记录一些值得研究的面试题">
 <meta name="keywords" content="php">
 <meta property="og:type" content="article">
 <meta property="og:title" content="面试题">
 <meta property="og:url" content="jiweii.com/2019/04/06/面试题/index.html">
 <meta property="og:site_name" content="A type of habit">
-<meta property="og:description" content="一些面试题记录">
+<meta property="og:description" content="记录一些值得研究的面试题">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-05-08T13:06:06.465Z">
+<meta property="og:updated_time" content="2019-05-09T04:05:51.756Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="面试题">
-<meta name="twitter:description" content="一些面试题记录">
+<meta name="twitter:description" content="记录一些值得研究的面试题">
   
     <link rel="alternate" href="/atom.xml" title="A type of habit" type="application/atom+xml">
   
@@ -91,7 +91,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>一些面试题记录<a id="more"></a></p>
+        <p>记录一些值得研究的面试题<a id="more"></a></p>
 <p><center><a href="#寻找最长不含有重复字符的子串长度">寻找最长不含有重复字符的子串长度</a> &nbsp;|&nbsp; <a href="#go语言的冒泡算法及算法优化">go语言的冒泡算法及算法优化</a> &nbsp;|&nbsp; <a href="#百度100盏灯面试题">百度100盏灯面试题</a></center><br><br></p>
 <h1 id="寻找最长不含有重复字符的子串长度"><a href="#寻找最长不含有重复字符的子串长度" class="headerlink" title="寻找最长不含有重复字符的子串长度"></a>寻找最长不含有重复字符的子串长度</h1><p>例：abcabcbdbc，最长不含重复字符的长度为3,abc、bca、cab、dbc等，如果abcabcdcbe，那就是4，abcd、dcbe</p>
 <h2 id="php"><a href="#php" class="headerlink" title="php"></a>php</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line">$a = $str = <span class="string">'abcabcdbdc'</span>;</span><br><span class="line">$str=preg_split(<span class="string">'/(?&lt;!^)(?!$)/u'</span>,$str);<span class="comment">//中文字符识别</span></span><br><span class="line">$length=<span class="number">0</span>;<span class="comment">//长度</span></span><br><span class="line">$start=<span class="number">0</span>;<span class="comment">//分段的起始位置</span></span><br><span class="line">$arr=[];<span class="comment">//更新每个值得键</span></span><br><span class="line">$new_str = <span class="string">''</span>;</span><br><span class="line"><span class="keyword">echo</span> $a . <span class="string">'&lt;br&gt;'</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">'$k-$start+1&lt;br&gt;'</span>;</span><br><span class="line"><span class="keyword">foreach</span> ($str <span class="keyword">as</span> $k=&gt;$v)&#123;</span><br><span class="line">    <span class="keyword">if</span>(@$arr[$v]!==<span class="keyword">null</span>&amp;&amp;$arr[$v]&gt;=$start)&#123;</span><br><span class="line">        $start=$arr[$v]+<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">echo</span> $k . <span class="string">' - '</span> . $start . <span class="string">' + 1 &gt; '</span> . $length;<span class="keyword">echo</span> <span class="string">' ---------&lt;br&gt;'</span>;</span><br><span class="line">    <span class="keyword">if</span>(($k-$start+<span class="number">1</span>)&gt;$length)&#123;</span><br><span class="line">        $length=$k-$start+<span class="number">1</span>;</span><br><span class="line">        $new_str .= $v;</span><br><span class="line">    &#125;</span><br><span class="line">    $arr[$v]=$k;</span><br><span class="line">&#125;</span><br><span class="line">var_dump($new_str);<span class="keyword">exit</span>;</span><br></pre></td></tr></table></figure>
@@ -108,7 +108,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="jiweii.com/2019/04/06/面试题/" data-id="cjvf8kz0w001q6cr34ipj5lzp" class="article-share-link">Share</a>
+      <a data-url="jiweii.com/2019/04/06/面试题/" data-id="cjvg5k4go001rb0r377mqmh3z" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/php/">php</a></li></ul>
@@ -138,7 +138,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/linux/">linux</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nginx/">nginx</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/">php</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/privately/">privately</a></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/git/">git</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/linux/">linux</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nginx/">nginx</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/">php</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/privately/">privately</a></li></ul>
     </div>
   </div>
 
@@ -148,7 +148,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nginx/">nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php/">php</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/privately/">privately</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nginx/">nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php/">php</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/privately/">privately</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a></li></ul>
     </div>
   </div>
 
@@ -158,7 +158,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/nginx/" style="font-size: 16.67px;">nginx</a> <a href="/tags/php/" style="font-size: 20px;">php</a> <a href="/tags/privately/" style="font-size: 13.33px;">privately</a> <a href="/tags/数据库/" style="font-size: 13.33px;">数据库</a>
+      <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/nginx/" style="font-size: 16.67px;">nginx</a> <a href="/tags/php/" style="font-size: 20px;">php</a> <a href="/tags/privately/" style="font-size: 13.33px;">privately</a> <a href="/tags/数据库/" style="font-size: 13.33px;">数据库</a>
     </div>
   </div>
 
@@ -196,7 +196,7 @@
           </li>
         
           <li>
-            <a href="/2018/08/07/1-nginx/">(1)编译、配置、命令行</a>
+            <a href="/2018/10/17/git常用命令/">git常用命令总结</a>
           </li>
         
       </ul>
