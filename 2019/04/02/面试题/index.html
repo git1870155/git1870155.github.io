@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>算法题 | A type of habit</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="记录一些值得研究的算法题">
+<meta name="keywords" content="php">
+<meta property="og:type" content="article">
+<meta property="og:title" content="算法题">
+<meta property="og:url" content="jiweii.com/2019/04/02/面试题/index.html">
+<meta property="og:site_name" content="A type of habit">
+<meta property="og:description" content="记录一些值得研究的算法题">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="/images/yazi1.png">
+<meta property="og:updated_time" content="2019-05-29T10:03:58.575Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="算法题">
+<meta name="twitter:description" content="记录一些值得研究的算法题">
+<meta name="twitter:image" content="/images/yazi1.png">
+  
+    <link rel="alternate" href="/atom.xml" title="A type of habit" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/images/favicon.ico">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">A type of habit</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="jiweii.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-面试题" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/04/02/面试题/" class="article-date">
+  <time datetime="2019-04-02T11:29:31.000Z" itemprop="datePublished">2019-04-02</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/php/">php</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      算法题
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>记录一些值得研究的算法题<a id="more"></a><br><span id="top"></span><br><img src="/02/面试题/../../../../images/yazi1.png" alt=""></p>
+<p><details><summary><span style="color:red">点击展开</span><center><a href="#有符号数字反转">有符号数字反转</a> &nbsp;|&nbsp;  <a href="#冒泡算法及两步算法优化">冒泡算法及两步算法优化</a>&nbsp;|&nbsp;  <a href="#回文数">回文数</a></center></summary><br>    <center><a href="#寻找最长不含有重复字符的子串长度">寻找最长不含有重复字符的子串长度</a> &nbsp;|&nbsp; <a href="#百度100盏灯面试题">百度100盏灯面试题</a>&nbsp;|&nbsp;  <a href="#原地删除有序数组重复元素">原地删除有序数组重复元素</a>&nbsp;|&nbsp;<br>  <a href="#原地反转数组">原地反转数组</a>&nbsp;|&nbsp;  <a href="#判断异位词">判断异位词</a>&nbsp;|&nbsp;  <a href="#验证回文字符串">验证回文字符串</a>&nbsp;|&nbsp;  </center> </details><br><br></p>
+<h2 id="有符号数字反转"><a href="#有符号数字反转" class="headerlink" title="有符号数字反转"></a>有符号数字反转</h2><p>给出一个32位的有符号整数，你需要将这个整数中每位上的数字进行反转。<br>[示例] 1: 输入: 123 输出: 321<br>[示例] 2: 输入: -123 输出: -321<br>[示例] 3: 输入: 120 输出: 21<br>[注意]:假设环境只能存储下 32 位的有符号整数，则数值范围为 [−231,  231 − 1]。请根据这个假设，如果反转后整数溢出那么就返回 0。</p>
+<h5 id="php一"><a href="#php一" class="headerlink" title="php一"></a>php一</h5><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="comment">//先把int按字符串分割成数组，遍历倒序重新拼接，转成int可去除前面的0，再判断正负</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">reverse</span><span class="params">($x)</span> </span>&#123;</span><br><span class="line">    $max = pow(<span class="number">2</span>,<span class="number">31</span>) - <span class="number">1</span>;</span><br><span class="line">    $min = -pow(<span class="number">2</span>,<span class="number">31</span>);</span><br><span class="line">    $is_unsigned = <span class="keyword">true</span>;</span><br><span class="line">    $l = strlen($x) - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">if</span>(strpos($x, <span class="string">'-'</span>) !== <span class="keyword">false</span>)</span><br><span class="line">        $is_unsigned = <span class="keyword">false</span>;</span><br><span class="line">    $a = str_split($x);</span><br><span class="line">    $new_str = <span class="string">''</span>;</span><br><span class="line">    <span class="keyword">for</span>($i=$l; $i&gt;=<span class="number">0</span>; $i--)&#123;</span><br><span class="line">        <span class="keyword">if</span>($a[$i] !== <span class="string">'-'</span>)</span><br><span class="line">            $new_str .= $a[$i];</span><br><span class="line">    &#125;</span><br><span class="line">    $new_str = (int)$new_str;</span><br><span class="line">    <span class="keyword">if</span>(!$is_unsigned)&#123;</span><br><span class="line">        $new_str = <span class="string">'-'</span> . $new_str;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>($new_str &gt; $max || $new_str &lt; $min) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">return</span> $new_str;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="php二"><a href="#php二" class="headerlink" title="php二"></a>php二</h5><figure class="highlight php"><table><tr><td class="code"><pre><span class="line">把整数转换成字符串，再用strrev进行字符串反转，根据正负数对符号进行调整，超过整数范围返回<span class="number">0</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">reverse</span><span class="params">($x)</span></span>&#123;</span><br><span class="line">    $max = pow(<span class="number">2</span>,<span class="number">31</span>)<span class="number">-1</span>;</span><br><span class="line">    $min = -pow(<span class="number">2</span>,<span class="number">31</span>);</span><br><span class="line">    <span class="keyword">if</span>(is_int($x))&#123;</span><br><span class="line">        <span class="keyword">if</span>($x==<span class="number">0</span>)&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span>($x&gt;<span class="number">0</span>)&#123;</span><br><span class="line">            <span class="keyword">if</span>($x&gt;$max)<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">            $string = (string)$x;</span><br><span class="line">            $res = (int)(strrev($string));</span><br><span class="line">            <span class="keyword">return</span> $res&gt;$max?<span class="number">0</span>:$res;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="keyword">if</span>($x&lt;$min)<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">            $x = <span class="number">0</span>-$x;</span><br><span class="line">            $string = (string)$x;</span><br><span class="line">            $res = -(int)(strrev($string));</span><br><span class="line">            <span class="keyword">return</span> $res&lt;$min?<span class="number">0</span>:$res;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="golang"><a href="#golang" class="headerlink" title="golang"></a>golang</h5><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">reverse</span><span class="params">(x <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> nums <span class="keyword">int</span></span><br><span class="line">	<span class="keyword">for</span> x != <span class="number">0</span> &#123;           <span class="comment">//当不等于0时，到最后一位除以10转为转为int传进来就是0</span></span><br><span class="line">		a := x % <span class="number">10</span>        <span class="comment">//取模 按位取数字</span></span><br><span class="line">		nums = nums*<span class="number">10</span> + a <span class="comment">//把之前取的数字乘以10，往前推进 再加上当前数 形成倒序</span></span><br><span class="line">		x = x / <span class="number">10</span>		   <span class="comment">//进行下层循环</span></span><br><span class="line">		Max := <span class="number">1</span>&lt;&lt;<span class="number">31</span> - <span class="number">1</span>   <span class="comment">//用于判断32最大数，数字1进行位移运算得出2的n次方</span></span><br><span class="line">		Min := <span class="number">-1</span> &lt;&lt; <span class="number">31</span></span><br><span class="line">		<span class="keyword">if</span> nums &gt; Max || nums &lt; Min &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> nums</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a href="#top">回到顶部</a></p>
+<h2 id="回文数"><a href="#回文数" class="headerlink" title="回文数"></a>回文数</h2><p>判断一个整数是否是回文数。回文数是指正序（从左向右）和倒序（从右向左）读都是一样的整数。<br>思路：可采用上面go的字符串翻转 判断原数与翻转数是否相等</p>
+<h5 id="php"><a href="#php" class="headerlink" title="php"></a>php</h5><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">check_huiwen</span><span class="params">($num)</span></span>&#123;</span><br><span class="line">	<span class="keyword">if</span>($num &lt; <span class="number">0</span> || $num - reverse($num) != <span class="number">0</span>) <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">reverse</span><span class="params">($x)</span> </span>&#123;</span><br><span class="line">	$res = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">while</span> ($x &gt;= <span class="number">1</span>)&#123;</span><br><span class="line">		$a = $x % <span class="number">10</span>;</span><br><span class="line">		$x /= <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line">		$res = $res * <span class="number">10</span> + $a;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> $res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="golang一"><a href="#golang一" class="headerlink" title="golang一"></a>golang一</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">func is_huiwen(x int) bool &#123;</span><br><span class="line">	xs := strconv.Itoa(x)</span><br><span class="line">	lenght := strings.Count(xs, &quot;&quot;) - 1</span><br><span class="line">	for i, j := 0, lenght-1; i &lt; j; i, j = i+1, j-1 &#123;</span><br><span class="line">		if xs[i] != xs[j] &#123;</span><br><span class="line">			return false</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	return true</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="golang二"><a href="#golang二" class="headerlink" title="golang二"></a>golang二</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">func is_huiwen(x int) bool &#123;</span><br><span class="line">    if x&lt;0 &#123;</span><br><span class="line">        return false</span><br><span class="line">    &#125;</span><br><span class="line">    t := x</span><br><span class="line">    y := 0</span><br><span class="line">    for t!=0 &#123;</span><br><span class="line">        y = y*10 + t%10</span><br><span class="line">        t /= 10</span><br><span class="line">    &#125;</span><br><span class="line">    if y==x &#123;</span><br><span class="line">        return true</span><br><span class="line">    &#125; else&#123;</span><br><span class="line">        return false</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a href="#top">回到顶部</a></p>
+<h2 id="寻找最长不含有重复字符的子串长度"><a href="#寻找最长不含有重复字符的子串长度" class="headerlink" title="寻找最长不含有重复字符的子串长度"></a>寻找最长不含有重复字符的子串长度</h2><p>例：abcabcbdbc，最长不含重复字符的长度为3,abc、bca、cab、dbc等，如果abcabcdcbe，那就是4，abcd、dcbe</p>
+<h5 id="php-1"><a href="#php-1" class="headerlink" title="php"></a>php</h5><figure class="highlight php"><table><tr><td class="code"><pre><span class="line">$a = $str = <span class="string">'abcabcdbdc'</span>;</span><br><span class="line">$str=preg_split(<span class="string">'/(?&lt;!^)(?!$)/u'</span>,$str);<span class="comment">//中文字符识别</span></span><br><span class="line">$length=<span class="number">0</span>;<span class="comment">//长度</span></span><br><span class="line">$start=<span class="number">0</span>;<span class="comment">//分段的起始位置</span></span><br><span class="line">$arr=[];<span class="comment">//更新每个值得键</span></span><br><span class="line">$new_str = <span class="string">''</span>;</span><br><span class="line"><span class="keyword">echo</span> $a . <span class="string">'&lt;br&gt;'</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">'$k-$start+1&lt;br&gt;'</span>;</span><br><span class="line"><span class="keyword">foreach</span> ($str <span class="keyword">as</span> $k=&gt;$v)&#123;</span><br><span class="line">    <span class="keyword">if</span>(@$arr[$v]!==<span class="keyword">null</span>&amp;&amp;$arr[$v]&gt;=$start)&#123;</span><br><span class="line">        $start=$arr[$v]+<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">echo</span> $k . <span class="string">' - '</span> . $start . <span class="string">' + 1 &gt; '</span> . $length;<span class="keyword">echo</span> <span class="string">' ---------&lt;br&gt;'</span>;</span><br><span class="line">    <span class="keyword">if</span>(($k-$start+<span class="number">1</span>)&gt;$length)&#123;</span><br><span class="line">        $length=$k-$start+<span class="number">1</span>;</span><br><span class="line">        $new_str .= $v;</span><br><span class="line">    &#125;</span><br><span class="line">    $arr[$v]=$k;</span><br><span class="line">&#125;</span><br><span class="line">var_dump($new_str);<span class="keyword">exit</span>;</span><br></pre></td></tr></table></figure>
+<h5 id="golang-1"><a href="#golang-1" class="headerlink" title="golang"></a>golang</h5><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 思路：遍历字符串，记录每一个字符串x最后一次出现的位置lastOccurred[x]，有如下三种情况</span></span><br><span class="line"><span class="comment">// lastOccurred[x]不存在，或者&lt;start位置，则不需要操作</span></span><br><span class="line"><span class="comment">// lastOccurred[x] &gt;= start，更新start位置为lastOccurred[x]+1</span></span><br><span class="line"><span class="comment">// 更新lastOccurred[x], 更新maxLength</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">lengthOfNonRepeatingSubStr</span><span class="params">(s <span class="keyword">string</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	lastOccurred := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">byte</span>]<span class="keyword">int</span>)</span><br><span class="line">	start := <span class="number">0</span></span><br><span class="line">	maxLength := <span class="number">0</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> i, ch := <span class="keyword">range</span> []<span class="keyword">byte</span>(s) &#123;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> lastI, ok := lastOccurred[ch]; ok &amp;&amp; lastI &gt;= start &#123;</span><br><span class="line">			start = lastI + <span class="number">1</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> i-start+<span class="number">1</span> &gt; maxLength &#123;</span><br><span class="line">			maxLength = i - start + <span class="number">1</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		lastOccurred[ch] = i</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> maxLength</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Println(lengthOfNonRepeatingSubStr(<span class="string">"abcabcdefabc"</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a href="#top">回到顶部</a></p>
+<h2 id="冒泡算法及两步算法优化"><a href="#冒泡算法及两步算法优化" class="headerlink" title="冒泡算法及两步算法优化"></a>冒泡算法及两步算法优化</h2><p>正常的冒泡算法（golang）<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	arr := []<span class="keyword">int</span>&#123;<span class="number">21</span>, <span class="number">1</span>, <span class="number">7</span>, <span class="number">4</span>, <span class="number">8</span>, <span class="number">3</span>, <span class="number">9</span>&#125;</span><br><span class="line">	arr = maopao(arr)</span><br><span class="line">	fmt.Println(arr)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">maopao</span><span class="params">(arr []<span class="keyword">int</span>)</span> []<span class="title">int</span></span> &#123;</span><br><span class="line">	num := <span class="built_in">len</span>(arr)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; num<span class="number">-1</span>; i++ &#123;</span><br><span class="line">		<span class="keyword">for</span> j := <span class="number">0</span>; j &lt; num-i<span class="number">-1</span>; j++ &#123;</span><br><span class="line">			<span class="keyword">if</span> arr[j] &gt; arr[j+<span class="number">1</span>] &#123;</span><br><span class="line">				arr[j], arr[j+<span class="number">1</span>] = arr[j+<span class="number">1</span>], arr[j]</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> arr</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>当然冒泡的循环是有很多写法的，都是两层循环遍历，例如：<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> i := <span class="number">0</span>; i &lt; num; i++ &#123;</span><br><span class="line">	<span class="keyword">for</span> j := i + <span class="number">1</span>; j &lt; num; j++ &#123;</span><br><span class="line">		<span class="keyword">if</span> arr[i] &gt; arr[j] &#123;</span><br><span class="line">			arr[i], arr[j] = arr[j], arr[i]</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>假设按照第一种算法(第二种比较奇葩，暂时没有想到优化方法)，我们进行优化</p>
+<h5 id="算法优化一："><a href="#算法优化一：" class="headerlink" title="算法优化一："></a>算法优化一：</h5><p>假设我们现在排序arr := []int{1,2,3,4,5,6,7,8,10,9} 这组数据，按照上面的排序方式，只有第1次起作用；<br>所以可添加标记记录 如果本次循环没有元素互换位置，说明已经排好序了；<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">maopao</span><span class="params">(arr []<span class="keyword">int</span>)</span> []<span class="title">int</span></span> &#123;</span><br><span class="line">	num := <span class="built_in">len</span>(arr)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; num<span class="number">-1</span>; i++ &#123;</span><br><span class="line">		flag := <span class="number">0</span></span><br><span class="line">		<span class="keyword">for</span> j := <span class="number">0</span>; j &lt; num-i<span class="number">-1</span>; j++ &#123;</span><br><span class="line">			<span class="keyword">if</span> arr[j] &gt; arr[j+<span class="number">1</span>] &#123;</span><br><span class="line">				arr[j], arr[j+<span class="number">1</span>] = arr[j+<span class="number">1</span>], arr[j]</span><br><span class="line">				flag = <span class="number">1</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> flag == <span class="number">0</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> arr</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> arr</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h5 id="算法优化二："><a href="#算法优化二：" class="headerlink" title="算法优化二："></a>算法优化二：</h5><p>第一种优化适合连续大部分有序的情况，如果数组为前面大部分无序、后面部分有序，则第一种优化作用不大；<br>进一步优化，考虑加一个标记，记录上一次最后替换的位置，说明该位置以后都为有序的；<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">maopao</span><span class="params">(arr []<span class="keyword">int</span>)</span> []<span class="title">int</span></span> &#123;</span><br><span class="line">	num := <span class="built_in">len</span>(arr)</span><br><span class="line">	position := <span class="number">0</span> <span class="comment">//记录上一次循环最后的调换位置</span></span><br><span class="line">	k := num - <span class="number">1</span> <span class="comment">//中转变量使下次循环只进行到当前位置</span></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; num<span class="number">-1</span>; i++ &#123;</span><br><span class="line">		flag := <span class="number">0</span></span><br><span class="line">		<span class="keyword">for</span> j := <span class="number">0</span>; j &lt; k; j++ &#123;</span><br><span class="line">			<span class="keyword">if</span> arr[j] &gt; arr[j+<span class="number">1</span>] &#123;</span><br><span class="line">				arr[j], arr[j+<span class="number">1</span>] = arr[j+<span class="number">1</span>], arr[j]</span><br><span class="line">				flag = <span class="number">1</span></span><br><span class="line">				position = j</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> flag == <span class="number">0</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> arr</span><br><span class="line">		&#125;</span><br><span class="line">		k = position</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> arr</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><a href="#top">回到顶部</a></p>
+<h2 id="百度100盏灯面试题"><a href="#百度100盏灯面试题" class="headerlink" title="百度100盏灯面试题"></a>百度100盏灯面试题</h2><p>之前一个朋友找工作，碰到这样一个面试题，据说最早是百度的笔试题，题目如下：<br>一共有100盏灯，按一下就亮，再按就灭，初始是都灭着的，<br>第一轮把所有的都按一下，第二轮把2的倍数的灯都按一下，第三轮把3的倍数的灯都按一下，以此类推，<br>问到最后会有多少盏灯是亮着的；<br>下面有两种自己研究的算法：</p>
+<h5 id="暴力类推法"><a href="#暴力类推法" class="headerlink" title="暴力类推法"></a>暴力类推法</h5><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getResult</span><span class="params">()</span></span>&#123;</span><br><span class="line">	$new = range(<span class="number">1</span>,<span class="number">100</span>);</span><br><span class="line">	<span class="keyword">foreach</span>($new <span class="keyword">as</span> $k=&gt;$v)&#123;</span><br><span class="line">		$new[$k] = <span class="number">1</span>;<span class="comment">//初始化出100个值为1的灯，下文自动刨去第一轮按灯</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span>($i=<span class="number">2</span>; $i&lt;=<span class="number">100</span>; $i++)&#123;<span class="comment">//按灯次数循环</span></span><br><span class="line">		<span class="keyword">for</span>($j=<span class="number">1</span>; $j&lt;=<span class="number">100</span>; $j++)&#123;<span class="comment">//循环每盏灯后计算按灯次数</span></span><br><span class="line">			<span class="keyword">if</span>($j%$i == <span class="number">0</span>)&#123;</span><br><span class="line">				$new[$j<span class="number">-1</span>] += <span class="number">1</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">foreach</span>($new <span class="keyword">as</span> $k=&gt;$v)&#123;<span class="comment">//刨去偶数次的灯</span></span><br><span class="line">		<span class="keyword">if</span>($v%<span class="number">2</span> == <span class="number">0</span>)&#123;</span><br><span class="line">			<span class="keyword">unset</span>($new[$k]);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> $new;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="简洁明朗法"><a href="#简洁明朗法" class="headerlink" title="简洁明朗法"></a>简洁明朗法</h5><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getResult</span><span class="params">()</span></span>&#123;</span><br><span class="line">	$count = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">for</span>($i=<span class="number">1</span>;$i&lt;=<span class="number">100</span>;$i++)&#123;<span class="comment">//循环一百盏灯</span></span><br><span class="line">		$num = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">if</span>($i == <span class="number">1</span>)&#123;<span class="comment">//同样刨去第一轮按灯</span></span><br><span class="line">			$count += <span class="number">1</span>;</span><br><span class="line">			<span class="keyword">continue</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">for</span>($j=<span class="number">2</span>;$j&lt;=$i/<span class="number">2</span>;$j++)&#123;<span class="comment">//循环按灯次数</span></span><br><span class="line">			<span class="keyword">if</span>($i%$j==<span class="number">0</span>)&#123;</span><br><span class="line">				$num += <span class="number">1</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span>($num%<span class="number">2</span> != <span class="number">0</span>)&#123;<span class="comment">//计算奇数次按灯</span></span><br><span class="line">			$count += <span class="number">1</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> $count;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a href="#top">回到顶部</a></p>
+<h2 id="原地删除有序数组重复元素"><a href="#原地删除有序数组重复元素" class="headerlink" title="原地删除有序数组重复元素"></a>原地删除有序数组重复元素</h2><p>给定一个排序数组，你需要在原地删除重复出现的元素，使得每个元素只出现一次，返回移除后数组的新长度。<br>不要使用额外的数组空间，你必须在原地修改输入数组并在使用 O(1) 额外空间的条件下完成。<br>[示例] 1: 给定数组 nums = [1,1,2], 函数应该返回新的长度 2, 并且原数组 nums 的前两个元素被修改为 1, 2。 你不需要考虑数组中超出新长度后面的元素。<br>[示例] 2: 给定 nums = [0,0,1,1,1,2,2,3,3,4], 函数应该返回新的长度 5, 并且原数组 nums 的前五个元素被修改为 0, 1, 2, 3, 4。 你不需要考虑数组中超出新长度后面的元素。<br>[说明] :<br>为什么返回数值是整数，但输出的答案是数组呢?<br>请注意，输入数组是以“引用”方式传递的，这意味着在函数里修改输入数组对于调用者是可见的。</p>
+<h5 id="php-2"><a href="#php-2" class="headerlink" title="php"></a>php</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">function removeDuplicates(&amp;$nums) &#123;</span><br><span class="line">    $c = count($nums);</span><br><span class="line">    </span><br><span class="line">    for($i=1,$a=0; $i&lt;$c; $i++)&#123;</span><br><span class="line">        if($nums[$i] != $nums[$a])&#123;</span><br><span class="line">            $a++;</span><br><span class="line">            $nums[$a] = $nums[$i];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return $a + 1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="golang-2"><a href="#golang-2" class="headerlink" title="golang"></a>golang</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">func removeDuplicates(nums []int) int &#123;</span><br><span class="line">    a := 0</span><br><span class="line">    for i,_ := range nums &#123;</span><br><span class="line">    	if i == 0 &#123;</span><br><span class="line">			continue</span><br><span class="line">		&#125;</span><br><span class="line">		if nums[a] != nums[i] &#123;</span><br><span class="line">			a++</span><br><span class="line">			nums[a] = nums[i]</span><br><span class="line">		&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return a + 1</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a href="#top">回到顶部</a></p>
+<h2 id="原地反转数组"><a href="#原地反转数组" class="headerlink" title="原地反转数组"></a>原地反转数组</h2><p>编写一个函数，其作用是将输入的字符串反转过来。输入字符串以字符数组 char[] 的形式给出。<br>不要给另外的数组分配额外的空间，你必须原地修改输入数组、使用 O(1) 的额外空间解决这一问题。<br>你可以假设数组中的所有字符都是 ASCII 码表中的可打印字符。</p>
+<h5 id="php-3"><a href="#php-3" class="headerlink" title="php"></a>php</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">function reverseString(&amp;$s) &#123;</span><br><span class="line">    // $s_arr = split($s);</span><br><span class="line">    $len = count($s) - 1;</span><br><span class="line">    for($i=0; $i&lt;ceil($len / 2); $i++)&#123;</span><br><span class="line">        $temp = $s[$i];</span><br><span class="line">        $s[$i] = $s[$len - $i];</span><br><span class="line">        $s[$len - $i] = $temp;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="golang-3"><a href="#golang-3" class="headerlink" title="golang"></a>golang</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">func reverseString(s []byte)  &#123;</span><br><span class="line">   	l := len(s) - 1</span><br><span class="line">    i := 0</span><br><span class="line">	while  i &lt; l &#123;</span><br><span class="line">		temp := s[i]</span><br><span class="line">		s[i] = s[l]</span><br><span class="line">		s[l] = temp</span><br><span class="line">		i++</span><br><span class="line">		l--</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a href="#top">回到顶部</a></p>
+<h2 id="判断异位词"><a href="#判断异位词" class="headerlink" title="判断异位词"></a>判断异位词</h2><p>给定两个字符串 s 和 t ，编写一个函数来判断 t 是否是 s 的字母异位词。<br>[示例] 1: 输入: s = “anagram”, t = “nagaram”  输出: true<br>[示例] 2: 输入: s = “rat”, t = “car”  输出: false<br>说明: 你可以假设字符串只包含小写字母。</p>
+<h5 id="php-4"><a href="#php-4" class="headerlink" title="php"></a>php</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">//这个方法并未通过，字符串超长是会执行超时，复杂度O(n的n次方)</span><br><span class="line">function isAnagram($s, $t) &#123;</span><br><span class="line">	if(strlen($s) != strlen($t)) return false;</span><br><span class="line">    $sa = str_split($s);</span><br><span class="line">    $ta = str_split($t);</span><br><span class="line">    $tempa = [];</span><br><span class="line">    $tempt = [];</span><br><span class="line">    foreach($sa as $k =&gt; $v)&#123;</span><br><span class="line">    	var_dump($v);echo &apos;----&lt;br&gt;&apos;;</span><br><span class="line">        foreach($ta as $kk =&gt; $vv)&#123;</span><br><span class="line">            if($v == $vv &amp;&amp; !in_array($kk, $tempt) &amp;&amp; !in_array($k, $tempa))&#123;</span><br><span class="line">                array_push($tempt,$kk);</span><br><span class="line">                array_push($tempa,$k);</span><br><span class="line">                continue;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    if(count($tempt) == count($ta))&#123;</span><br><span class="line">        return true;</span><br><span class="line">    &#125;else&#123;</span><br><span class="line">        return false;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="golang-4"><a href="#golang-4" class="headerlink" title="golang"></a>golang</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">//leetcode上还没有go的解法。。。4ms</span><br><span class="line">//解法为将字符转为ASCII码,进行统计，最后判断两个字符串中字符的个数是否相等</span><br><span class="line">func isAnagram( s string, t string) bool &#123;</span><br><span class="line">    if len(s) != len(t) &#123;</span><br><span class="line">        return false</span><br><span class="line">    &#125;</span><br><span class="line">    if s == t &#123;</span><br><span class="line">        return true</span><br><span class="line">    &#125;</span><br><span class="line">	var x [26]int</span><br><span class="line">	var y [26]int</span><br><span class="line">	for i := 0; i&lt;len(s); i++ &#123;</span><br><span class="line">		x[s[i]-&apos;a&apos;]++;</span><br><span class="line">		y[t[i]-&apos;a&apos;]++;</span><br><span class="line">	&#125;</span><br><span class="line">	for i:=0; i&lt;26; i++ &#123;</span><br><span class="line">		if x[i] != y[i] &#123;</span><br><span class="line">			return false;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	return true;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="golang-5"><a href="#golang-5" class="headerlink" title="golang"></a>golang</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">//最佳答案，2ms</span><br><span class="line">func isAnagram(s string, t string) bool &#123;</span><br><span class="line">	m := make([]int, 26)</span><br><span class="line">	for _, char := range s &#123;</span><br><span class="line">		m[char - &apos;a&apos;]++</span><br><span class="line">	&#125;</span><br><span class="line">	for _, char := range t &#123;</span><br><span class="line">		m[char - &apos;a&apos;]--</span><br><span class="line">	&#125;</span><br><span class="line">	for _, n := range m &#123;</span><br><span class="line">		if n != 0 &#123;</span><br><span class="line">			return false</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	return true</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="php-仿上面最优解。。-php写法需要40ms"><a href="#php-仿上面最优解。。-php写法需要40ms" class="headerlink" title="php(仿上面最优解。。,php写法需要40ms)"></a>php(仿上面最优解。。,php写法需要40ms)</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">//仿上面最优解。。。拍黄片写法需要执行40ms，在生成全0数组需要轮询与切割字符串申请内存空间，转为ascii码需要调用函数</span><br><span class="line">function isAnagram($s, $t)&#123;</span><br><span class="line">	$m = range(0, 25);</span><br><span class="line">	array_walk($m, function (&amp;$v)&#123;</span><br><span class="line">		$v = 0;</span><br><span class="line">	&#125;);</span><br><span class="line">	$sa = str_split($s);</span><br><span class="line">	$ta = str_split($t);</span><br><span class="line">	foreach($sa as $vs)&#123;</span><br><span class="line">		$m[ord($vs) - ord(&apos;a&apos;)]++;</span><br><span class="line">	&#125;</span><br><span class="line">	foreach($ta as $vt)&#123;</span><br><span class="line">		$m[ord($vt) - ord(&apos;a&apos;)]--;</span><br><span class="line">	&#125;</span><br><span class="line">	foreach($m as $vm)&#123;</span><br><span class="line">		if($vm != 0) return false;</span><br><span class="line">	&#125;</span><br><span class="line">	return true;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a href="#top">回到顶部</a></p>
+<h2 id="验证回文字符串"><a href="#验证回文字符串" class="headerlink" title="验证回文字符串"></a>验证回文字符串</h2><p>给定一个字符串，验证它是否是回文串，只考虑字母和数字字符，可以忽略字母的大小写。<br>说明：本题中，我们将空字符串定义为有效的回文串。<br>[示例] 1: 输入: “A man, a plan, a canal: Panama”  输出: true<br>[示例] 2: 输入: “race a car”  输出: false     11</p>
+<h5 id="php-5"><a href="#php-5" class="headerlink" title="php"></a>php</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">//转小写，匹配出字母与数字，然后按回文数组解法</span><br><span class="line">function isPalindrome($s) &#123;</span><br><span class="line">    $s = strtolower($s);</span><br><span class="line">    preg_match_all(&apos;/[a-z0-9]/&apos;, $s, $sa);</span><br><span class="line">    $sa = $sa[0];</span><br><span class="line">    $len = count($sa);</span><br><span class="line">    for($i=0, $j=$len-1; $i&lt;=$j; $i++, $j--)&#123;</span><br><span class="line">        if($sa[$i] != $sa[$j])&#123;</span><br><span class="line">            return false;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return true;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="golang-6"><a href="#golang-6" class="headerlink" title="golang"></a>golang</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">//原理同php</span><br><span class="line">func isPalindrome(s string) bool &#123;</span><br><span class="line">	s = strings.ToLower(s)</span><br><span class="line">	i,j := 0, len(s)-1</span><br><span class="line">	for i&lt;j &#123;</span><br><span class="line">		if !(&apos;a&apos; &lt;= s[i] &amp;&amp; s[i] &lt;= &apos;z&apos; || &apos;0&apos; &lt;= s[i] &amp;&amp; s[i] &lt;= &apos;9&apos;) &#123;</span><br><span class="line">			i++</span><br><span class="line">			continue</span><br><span class="line">		&#125;</span><br><span class="line">		if !(&apos;a&apos; &lt;= s[j] &amp;&amp; s[j] &lt;= &apos;z&apos; || &apos;0&apos; &lt;= s[j] &amp;&amp; s[j] &lt;= &apos;9&apos;) &#123;</span><br><span class="line">			j--</span><br><span class="line">			continue</span><br><span class="line">		&#125;</span><br><span class="line">		i++</span><br><span class="line">		j--</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a href="#top">回到顶部</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="jiweii.com/2019/04/02/面试题/" data-id="cjxo1u4tz0021u4r3i7gx7eon" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/php/">php</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2019/04/04/常用书籍、资料、手册/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          常用书籍、资料、手册
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/10/30/小本本/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">小本本</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/git/">git</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/linux/">linux</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nginx/">nginx</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/">php</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/privately/">privately</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nginx/">nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php/">php</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/privately/">privately</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/nginx/" style="font-size: 16.67px;">nginx</a> <a href="/tags/php/" style="font-size: 20px;">php</a> <a href="/tags/privately/" style="font-size: 13.33px;">privately</a> <a href="/tags/数据库/" style="font-size: 13.33px;">数据库</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2019/04/18/淘宝联盟/">淘宝联盟</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/04/常用书籍、资料、手册/">常用书籍、资料、手册</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/02/面试题/">算法题</a>
+          </li>
+        
+          <li>
+            <a href="/2018/10/30/小本本/">小本本</a>
+          </li>
+        
+          <li>
+            <a href="/2018/10/20/常用/">常用 [置顶]</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 Jiwei<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"live2d-widget-model-wanko    //妹子有很多个，叫名字他才出来"},"display":{"position":"right   //位置","width":"150    //妹子宽度","height":"300    //妹子高度"},"mobile":{"show":true},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>Yaf框架类的自动加载 | A type of habit</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Yaf框架分为全局类、本地类的自动加载">
+<meta name="keywords" content="php">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Yaf框架类的自动加载">
+<meta property="og:url" content="jiweii.com/2017/09/08/Yaf框架自动加载/index.html">
+<meta property="og:site_name" content="A type of habit">
+<meta property="og:description" content="Yaf框架分为全局类、本地类的自动加载">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-04-11T06:59:08.395Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Yaf框架类的自动加载">
+<meta name="twitter:description" content="Yaf框架分为全局类、本地类的自动加载">
+  
+    <link rel="alternate" href="/atom.xml" title="A type of habit" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/images/favicon.ico">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">A type of habit</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="jiweii.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Yaf框架自动加载" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/09/08/Yaf框架自动加载/" class="article-date">
+  <time datetime="2017-09-08T13:56:29.000Z" itemprop="datePublished">2017-09-08</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/php/">php</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Yaf框架类的自动加载
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Yaf框架分为全局类、本地类的自动加载<a id="more"></a><br>全局类是所谓的公司或部门级别的现有类库，该类可以在多个项目中共同使用，而不只在当前的项目中可用。这些类的路径一般是通过在yaf.liabrary在php的配置文件php.ini中指定。<br>本地类指的是只应用于本项目的类，这些类所在的路径也可以通过在Yaf的配置文件中通过ap.liabrary指定。在Yaf中可以通过Yaf_Loader::registerLocalNamespace()申明那些本地类的前缀，那么带有该前缀的类，需要在本地的类库中加载。<br>无论是全局类还是本地类，Yaf中使用PSR0规则进行加载的时候，类名中的”_”都会被转换成目录分隔符“/”。<br>根据所看过的博客，全局类和本地类的加载规则可总结如下：</p>
+<ul>
+<li>如果指定yaf.library和产品的application.ini中指定ap.library，那么无论是否在application.ini中指定了ap.library.namespace或者通过Yaf_Loader::registerLocalNamespace()注册本地的命名空间前缀，那么在程序中遇到未定义的类的时候，会自动到ap.directory.library中寻找对应的类。（ap.directory.library是Yaf必不可少的配置，该配置指定了项目的绝对路径地址）</li>
+<li>如果在产品的application.ini文件中指定了本地的ap.library，但是却没有通过ap.library.namespace或者Yaf_Loader::registerLocalNamespace()指定本地的命名空间，那么无论是都指定了yaf.library，都会去yaf.library中加载类；</li>
+<li>只有在指定了本地类的ap.library，指定了本地的命名空间且类名中包含有命名空间的前缀的时候，才回去本地的类库中加载对应的类；否则到yaf.library中指定的文件中加载对应的类。…..</li>
+</ul>
+<p>指定命名空间的方式为：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$loader = Yaf_Loader::getIgnstance();</span><br><span class="line">$loader-&gt;registerLocalNamespace(array(&quot;local&quot;));</span><br></pre></td></tr></table></figure></p>
+<p>或者在项目中的conf/application.ini中指定ap.library.namespace为local确定本地的命名空间。</p>
+<h3 id="下面以类名local-sublocal-test-php说明上面三种情况分别对应的加载规则。"><a href="#下面以类名local-sublocal-test-php说明上面三种情况分别对应的加载规则。" class="headerlink" title="下面以类名local_sublocal_test.php说明上面三种情况分别对应的加载规则。"></a>下面以类名local_sublocal_test.php说明上面三种情况分别对应的加载规则。</h3><p>这种情况下，ap.directory一般在application.ini指定为APP_PATH（APP_PATH在入口文件index.php中定义），此时的加载路径为APP_PATH/library/local/sublocal/test.php;<br>这种情况下加载路径一般是yaf.library+’/local/sublocal/test.php’;<br>这种情况下加载路径为ap.library+’/local/sublocal/test.php’;</p>
+<p><br></p>
+<h2 id="与MVC框架相关的类的自动加载"><a href="#与MVC框架相关的类的自动加载" class="headerlink" title="与MVC框架相关的类的自动加载"></a>与MVC框架相关的类的自动加载</h2><p>与MVC框架相关的类的的自动加载是通过使用特定的前缀或者后缀名确定类的加载路径的，通过类与其所在的文件的特定映射完成类的自动加载：类名=文件名+后缀。</p>
+<p>对于控制器 Controller 默认模块下为{项目路径}/controllers/, 否则为{项目路径}/modules/{模块名}/controllers。例如，IndexController，该类自动加载文件 {项目目录}/Controllers/Index.php。</p>
+<p>对于Model 加载路径为{项目目录}/models/， 类似比如UserModel则自动加载{项目目录}/models/User.php。</p>
+<p>对于和V相关的视图文件不属于本文的讨论范围。</p>
+<p>以上是对Yaf中类的自动加载规则的总结，由目前使用到的最多的就是和MVC相关的类的加载和在conf/application.ini中指定加载路径的类。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="jiweii.com/2017/09/08/Yaf框架自动加载/" data-id="cjxo1u4sh0009u4r3slscq0w4" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/php/">php</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/06/20/nginx与php工作原理/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          nginx与php工作原理
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/09/08/Yaf框架/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Yaf框架</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/git/">git</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/linux/">linux</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nginx/">nginx</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/">php</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/privately/">privately</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nginx/">nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php/">php</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/privately/">privately</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/nginx/" style="font-size: 16.67px;">nginx</a> <a href="/tags/php/" style="font-size: 20px;">php</a> <a href="/tags/privately/" style="font-size: 13.33px;">privately</a> <a href="/tags/数据库/" style="font-size: 13.33px;">数据库</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2019/04/18/淘宝联盟/">淘宝联盟</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/04/常用书籍、资料、手册/">常用书籍、资料、手册</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/02/面试题/">算法题</a>
+          </li>
+        
+          <li>
+            <a href="/2018/10/30/小本本/">小本本</a>
+          </li>
+        
+          <li>
+            <a href="/2018/10/20/常用/">常用 [置顶]</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 Jiwei<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"live2d-widget-model-wanko    //妹子有很多个，叫名字他才出来"},"display":{"position":"right   //位置","width":"150    //妹子宽度","height":"300    //妹子高度"},"mobile":{"show":true},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
