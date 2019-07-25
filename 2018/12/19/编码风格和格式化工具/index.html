@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>编码格式化工具 | A type of habit</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="-php代码风格标准化工具介绍">
+<meta name="keywords" content="php">
+<meta property="og:type" content="article">
+<meta property="og:title" content="编码格式化工具">
+<meta property="og:url" content="jiweii.com/2018/12/19/编码风格和格式化工具/index.html">
+<meta property="og:site_name" content="A type of habit">
+<meta property="og:description" content="-php代码风格标准化工具介绍">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-07-25T07:00:30.805Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="编码格式化工具">
+<meta name="twitter:description" content="-php代码风格标准化工具介绍">
+  
+    <link rel="alternate" href="/atom.xml" title="A type of habit" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/images/favicon.ico">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">A type of habit</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="jiweii.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-编码风格和格式化工具" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/12/19/编码风格和格式化工具/" class="article-date">
+  <time datetime="2018-12-19T04:30:42.000Z" itemprop="datePublished">2018-12-19</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/php/">php</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      编码格式化工具
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>-php代码风格标准化工具介绍<a id="more"></a></p>
+<h3 id="整体流程"><a href="#整体流程" class="headerlink" title="整体流程"></a>整体流程</h3><ul>
+<li>规则采用 psr2 加一些自定规则</li>
+<li>安装 php-cs-fixer 工具，用于自动修复格式</li>
+<li>修复是基于项目维度，需要在项目根目录下新建对应的规则文件 .php_cs.dist</li>
+<li>添加 git pre-commit 钩子，用于提交前自动修复格式</li>
+<li>等待 git 服务器端代码风格校验</li>
+<li>验证完成提交到仓库</li>
+</ul>
+<h3 id="工具安装"><a href="#工具安装" class="headerlink" title="工具安装"></a>工具安装</h3><p>推荐用 composer 全局安装</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">composer global require friendsofphp/php-cs-fixer</span><br></pre></td></tr></table></figure>
+<p>注意需要将  ~/.composer/vendor/bin 加入 PATH 中</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ export PATH=&quot;$PATH:$HOME/.composer/vendor/bin&quot;</span><br></pre></td></tr></table></figure>
+<p>其他安装方式见<a href="https://github.com/FriendsOfPHP/PHP-CS-Fixer" target="_blank" rel="noopener">官方说明</a></p>
+<h3 id="常用修复指令"><a href="#常用修复指令" class="headerlink" title="常用修复指令"></a>常用修复指令</h3><p>修复目录<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">php-cs-fixer fix /path/to/dir</span><br></pre></td></tr></table></figure></p>
+<p>修复指定文件<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">php-cs-fixer fix /path/to/file</span><br></pre></td></tr></table></figure></p>
+<p>指定 rules<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">php-cs-fixer fix /path/to/file --rules=@PSR2,line_ending</span><br></pre></td></tr></table></figure></p>
+<p>检测变更，不执行修复<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">php-cs-fixer fix /path/to/file --dry-run --diff</span><br></pre></td></tr></table></figure></p>
+<p>.php_cs.dist 文件编写<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line"></span><br><span class="line">$finder = PhpCsFixer\Finder::create()</span><br><span class="line">    //-&gt;exclude(&apos;somedir&apos;)</span><br><span class="line">    //-&gt;notPath(&apos;src/Symfony/Component/Translation/Tests/fixtures/resources.php&apos;)</span><br><span class="line">    -&gt;in(__DIR__)</span><br><span class="line">;</span><br><span class="line"></span><br><span class="line">return PhpCsFixer\Config::create()</span><br><span class="line">    -&gt;setRules(array(</span><br><span class="line">         &apos;@PSR2&apos; =&gt; true, //遵循 PSR2 规范</span><br><span class="line">         &apos;array_syntax&apos; =&gt; array(&apos;syntax&apos; =&gt; &apos;short&apos;), //php数组声明改用 [] 方式</span><br><span class="line">         &apos;binary_operator_spaces&apos; =&gt; array(</span><br><span class="line">                  &apos;align_double_arrow&apos; =&gt; false, // =&gt; 两边的空格</span><br><span class="line">                  &apos;align_equals&apos; =&gt; false, // = 两边的空格</span><br><span class="line">              ),</span><br><span class="line">         &apos;blank_line_before_return&apos; =&gt; true, //return 前有一个空行</span><br><span class="line">         &apos;concat_space&apos; =&gt; array(// 字符串连接符号两边存在空格</span><br><span class="line">             &apos;spacing&apos; =&gt; &apos;one&apos;</span><br><span class="line">         ),</span><br><span class="line">         &apos;hash_to_slash_comment&apos; =&gt; true, //将 # 的注释符改成 //</span><br><span class="line">         &apos;new_with_braces&apos; =&gt; true,//new 一个无参数对象始终带上 ()</span><br><span class="line">         &apos;no_leading_import_slash&apos; =&gt; true, // use 命名空间时去除 `\`</span><br><span class="line">         &apos;ordered_imports&apos; =&gt; true, //导入的命名空间按照字母顺序排序</span><br><span class="line">         &apos;single_blank_line_before_namespace&apos; =&gt; true,//namespace 前有一行空白行</span><br><span class="line">         &apos;space_after_semicolon&apos; =&gt; true,//去除分号后面的空格</span><br><span class="line">         &apos;trailing_comma_in_multiline_array&apos; =&gt; true,//多行数组末尾存在一个，</span><br><span class="line">         &apos;whitespace_after_comma_in_array&apos; =&gt; true//单行数组声明时，每个逗号后面存在一个空格</span><br><span class="line">          ))</span><br><span class="line">    -&gt;setFinder($finder)</span><br><span class="line">;</span><br></pre></td></tr></table></figure></p>
+<h3 id="php-cs-dist-文件注意点"><a href="#php-cs-dist-文件注意点" class="headerlink" title=".php_cs.dist 文件注意点"></a>.php_cs.dist 文件注意点</h3><p>在进行 PhpCsFixer\Finder::create() 选取路径时，注意目前只能使用 in(DIR)-&gt;exclude() 的方式来排除文件夹，而无法使用 in(白名单目录的形式), 主要是服务端钩子在进行校验时，如果没有发生变更的目录是不会导出到临时目录的，此时使用 in(白名单) 会导致抛错</p>
+<h3 id="pre-commit-钩子"><a href="#pre-commit-钩子" class="headerlink" title="pre-commit 钩子"></a>pre-commit 钩子</h3><p>用法:</p>
+<ul>
+<li>将下面代码保存为 pre-commit 文件</li>
+<li>将pre-commit 保存至项目的 .git/hooks 目录下</li>
+<li>添加执行权限 chmod +x ./pre-commit<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#!/usr/bin/env bash</span><br><span class="line"></span><br><span class="line"># First Check php syntax</span><br><span class="line"></span><br><span class="line">echo &quot;[php syntax check] start&quot;</span><br><span class="line">ROOT_DIR=&quot;$(pwd)/&quot;</span><br><span class="line">LIST=$(git diff-index --cached --name-only --diff-filter=ACMR HEAD)</span><br><span class="line">ERRORS_BUFFER=&quot;&quot;</span><br><span class="line">for file in $LIST</span><br><span class="line">do</span><br><span class="line">    EXTENSION=$(echo &quot;$file&quot; | grep &quot;.php$&quot;)</span><br><span class="line">    if [ &quot;$EXTENSION&quot; != &quot;&quot; ]; then</span><br><span class="line">        ERRORS=$(php -l &quot;$ROOT_DIR$file&quot; 2&gt;&amp;1 | grep &quot;Parse error&quot;)</span><br><span class="line">        if [ &quot;$ERRORS&quot; != &quot;&quot; ]; then</span><br><span class="line">            if [ &quot;$ERRORS_BUFFER&quot; != &quot;&quot; ]; then</span><br><span class="line">                ERRORS_BUFFER=&quot;$ERRORS_BUFFER\n$ERRORS&quot;</span><br><span class="line">            else</span><br><span class="line">                ERRORS_BUFFER=&quot;$ERRORS&quot;</span><br><span class="line">            fi</span><br><span class="line">            echo &quot;Syntax errors found in file: $file &quot;</span><br><span class="line">        fi</span><br><span class="line"></span><br><span class="line">        # Check for xdebug statments</span><br><span class="line">        ERRORS=$(grep -nH xdebug_ &quot;$ROOT_DIR$file&quot; | \</span><br><span class="line">                 sed -e &apos;s/^/Found XDebug Statment : /&apos;)</span><br><span class="line">        if [ &quot;$ERRORS&quot; != &quot;&quot; ]; then</span><br><span class="line">            if [ &quot;$ERRORS_BUFFER&quot; != &quot;&quot; ]; then</span><br><span class="line">                ERRORS_BUFFER=&quot;$ERRORS_BUFFER\n$ERRORS&quot;</span><br><span class="line">            else</span><br><span class="line">                ERRORS_BUFFER=&quot;$ERRORS&quot;</span><br><span class="line">            fi</span><br><span class="line">        fi</span><br><span class="line">    fi</span><br><span class="line">done</span><br><span class="line">if [ &quot;$ERRORS_BUFFER&quot; != &quot;&quot; ]; then</span><br><span class="line">    echo</span><br><span class="line">    echo &quot;Found PHP parse errors: &quot;</span><br><span class="line">    echo -e $ERRORS_BUFFER</span><br><span class="line">    echo</span><br><span class="line">    echo &quot;PHP parse errors found. Fix errors and commit again.&quot;</span><br><span class="line">    exit 1</span><br><span class="line">else</span><br><span class="line">    echo &quot;No PHP parse errors found.&quot;</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">echo &quot;[php syntax check] finish&quot;</span><br><span class="line">echo &quot;&quot;</span><br><span class="line"></span><br><span class="line"># php-cs-fixer check</span><br><span class="line"></span><br><span class="line">echo &quot;[php-cs-fixer fix] start&quot;</span><br><span class="line"></span><br><span class="line">PHP_CS_FIXER=`which php-cs-fixer`</span><br><span class="line"></span><br><span class="line">HAS_PHP_CS_FIXER=false</span><br><span class="line"></span><br><span class="line">if [ -x &quot;$PHP_CS_FIXER&quot; ]; then</span><br><span class="line">    HAS_PHP_CS_FIXER=true</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">if $HAS_PHP_CS_FIXER; then</span><br><span class="line">    git status --porcelain | grep -e &apos;^[AM]\(.*\).php$&apos; | cut -c 3- | while read line; do</span><br><span class="line">        $&#123;PHP_CS_FIXER&#125; fix --config=.php_cs.dist --verbose $&#123;line&#125;;</span><br><span class="line">        git add &quot;$line&quot;;</span><br><span class="line">    done</span><br><span class="line">else</span><br><span class="line">    echo &quot;&quot;</span><br><span class="line">    echo &quot;Please install php-cs-fixer, e.g.:&quot;</span><br><span class="line">    echo &quot;&quot;</span><br><span class="line">    echo &quot;  composer global require friendsofphp/php-cs-fixer:2.0.0-RC&quot;</span><br><span class="line">    echo &quot;&quot;</span><br><span class="line">    exit 1</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">echo &quot;[php-cs-fixer fix] finish&quot;</span><br><span class="line">echo &quot;&quot;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="可用的规则"><a href="#可用的规则" class="headerlink" title="可用的规则"></a>可用的规则</h3><ul>
+<li>array_syntax | PHP 数组声明的风格(如果需要使用短风格，需要PHP 版本 &gt;= 5.4) | <em>Rule is: configurable.</em></li>
+<li>binary_operator_spaces [@Symfony] | 二进制操作符两端至少有一个空格 | <em>Rule is: configurable.</em></li>
+<li>blank_line_after_namespace [@PSR2, @Symfony] | 命名空间的声明后必须有一个空白行</li>
+<li>blank_line_after_opening_tag [@Symfony] | Ensure there is no code on the same line as the PHP open tag and it is | followed by a blank line.</li>
+<li>blank_line_before_return [@Symfony] | An empty line feed should precede a return statement.</li>
+<li>braces [@PSR2, @Symfony] | 所有语句块都必须包含在花括号内，且位置以及缩进是符合标准的</li>
+<li>cast_spaces [@Symfony] | A single space should be between cast and variable.</li>
+<li>class_definition [@PSR2, @Symfony] | class、trait、interfaces 关键字和名称之间只能有一个空格</li>
+<li>class_keyword_remove | Converts ::class keywords to FQCN strings.</li>
+<li>combine_consecutive_unsets | Calling <code>unset</code> on multiple items should be done in one call.</li>
+<li>concat_space [@Symfony] | 连接操作是否应该有空格。 | <em>Rule is: configurable.</em></li>
+<li>declare_equal_normalize [@Symfony] | Equal sign in declare statement should not be surrounded by spaces.</li>
+<li>declare_strict_types | Force strict types declaration in all files. Requires PHP &gt;= 7.0. | <em>Rule is: risky.</em></li>
+<li>dir_constant | Replaces <code>dirname(__FILE__) expression with equivalent __DIR__</code> | constant. | <em>Rule is: risky.</em></li>
+<li>elseif [@PSR2, @Symfony] | 使用 <code>elseif 替代 else if</code>, 这样所有的控制流关键字看起来像是一个单独的单词</li>
+<li>encoding [@PSR1, @PSR2, @Symfony] | 文件必须是不带 BOM 的 UTF-8 编码；</li>
+<li>ereg_to_preg | Replace deprecated <code>ereg</code> regular expression functions with preg. | <em>Rule is: risky.</em></li>
+<li>full_opening_tag [@PSR1, @PSR2, @Symfony] | PHP 代码必须使用 &lt;?php ?&gt; 的标签或者 &lt;?= ?&gt;的标签，不允许使用其他的形式。</li>
+<li>function_declaration [@PSR2, @Symfony] | 函数声明时空格的使用需要符合 PSR-2</li>
+<li>function_typehint_space [@Symfony] | 修正函数参数和类型提示之间的缺失的空格问题</li>
+<li>general_phpdoc_annotation_remove | Configured annotations should be omitted from phpdocs. | <em>Rule is: configurable.</em></li>
+<li>hash_to_slash_comment [@Symfony] | 单行注释应该使用 <code>// 而不是 #</code>.</li>
+<li>header_comment | Add, replace or remove header comment. | <em>Rule is: configurable.</em></li>
+<li>heredoc_to_nowdoc [@Symfony] | Convert <code>heredoc to nowdoc</code> where possible.</li>
+<li>include [@Symfony] | Include/Require and file path should be divided with a single space. | File path should not be placed under brackets.</li>
+<li>indentation_type [@PSR2, @Symfony] | 代码必须使用四个空格缩进而不是制表符</li>
+<li>line_ending [@PSR2, @Symfony] | 所有的 PHP 文件必须使用相同的行结束</li>
+<li>linebreak_after_opening_tag | Ensure there is no code on the same line as the PHP open tag.</li>
+<li>lowercase_cast [@Symfony] | Cast should be written in lower case.</li>
+<li>lowercase_constants [@PSR2, @Symfony] | PHP 常量 true、false 和 null 必须使用小写</li>
+<li>lowercase_keywords [@PSR2, @Symfony] | PHP 关键字必须都是小写；</li>
+<li>mb_str_functions | Replace non multibyte-safe functions with corresponding mb function. | <em>Rule is: risky.</em></li>
+<li>method_argument_space [@PSR2, @Symfony] | 方法声明及调用时，参数之间的逗号前不能有空格，逗号后必须有一个空格</li>
+<li>method_separation [@Symfony] | Methods must be separated with one blank line.</li>
+<li>modernize_types_casting | Replaces <code>intval, floatval, doubleval, strval and boolval</code> | function calls with according type casting operator. | <em>Rule is: risky.</em></li>
+<li>native_function_casing [@Symfony] | Function defined by PHP should be called using the correct casing.</li>
+<li>new_with_braces [@Symfony] | 使用 new 新建实例时后面都应该带上括号</li>
+<li>no_alias_functions [@Symfony] | Master functions shall be used instead of aliases.</li>
+<li>no_blank_lines_after_class_opening [@Symfony] | 类开始标签后不应该有空白行</li>
+<li>no_blank_lines_after_phpdoc [@Symfony] | There should not be blank lines between docblock and the documented | element.</li>
+<li>no_blank_lines_before_namespace | 命名空间申明前不能有空行。</li>
+<li>no_closing_tag [@PSR2, @Symfony] | 如果是纯 PHP 文件，结束的 <code>?&gt;</code> 标记必须省略。</li>
+<li>no_empty_comment [@Symfony] | There should not be any empty comments.</li>
+<li>no_empty_phpdoc [@Symfony] | There should not be empty PHPDoc blocks.</li>
+<li>no_empty_statement [@Symfony] | Remove useless semicolon statements.</li>
+<li>no_extra_consecutive_blank_lines [@Symfony] | Removes extra blank lines and/or blank lines following configuration. | <em>Rule is: configurable.</em></li>
+<li>no_leading_import_slash [@Symfony] | 去除 use 后多余的反斜线</li>
+<li>no_leading_namespace_whitespace [@Symfony] | The namespace declaration line shouldn’t contain leading whitespace.</li>
+<li>no_mixed_echo_print [@Symfony] | Either language construct <code>print or echo</code> should be used. | <em>Rule is: configurable.</em></li>
+<li>no_multiline_whitespace_around_double_arrow [@Symfony] | Operator =&gt; should not be surrounded by multi-line whitespaces.</li>
+<li>no_multiline_whitespace_before_semicolons | Multi-line whitespace before closing semicolon are prohibited.</li>
+<li>no_php4_constructor | 将 PHP4 风格的构造函数转换成 __construct。 | <em>Rule is: risky.</em></li>
+<li>no_short_bool_cast [@Symfony] | <code>bool</code> 类型数据前不应该使用两个感叹号来转换</li>
+<li>no_short_echo_tag | Replace short-echo &lt;?= with long format &lt;?php echo syntax.</li>
+<li>no_singleline_whitespace_before_semicolons [@Symfony] | Single-line whitespace before closing semicolon are prohibited.</li>
+<li>no_spaces_after_function_name [@PSR2, @Symfony] | 当进行方法或者函数调用时，在方法名或者函数名和圆括号之间不允许有空格。</li>
+<li>no_spaces_around_offset [@Symfony] | There MUST NOT be spaces around offset braces. | <em>Rule is: configurable.</em></li>
+<li>no_spaces_inside_parenthesis [@PSR2, @Symfony] | 在开闭圆括号之间不允许有空格。</li>
+<li>no_trailing_comma_in_list_call [@Symfony] | Remove trailing commas in list function calls.</li>
+<li>no_trailing_comma_in_singleline_array [@Symfony] | PHP single-line arrays should not have trailing comma.</li>
+<li>no_trailing_whitespace [@PSR2, @Symfony] | 移除非空白行末尾多余的空白。</li>
+<li>no_trailing_whitespace_in_comment [@PSR2, @Symfony] | 在注释和 phpdocs 中不允许有多余的空格。</li>
+<li>no_unneeded_control_parentheses [@Symfony] | 删除控制结构语句中多余的括号 | <em>Rule is: configurable.</em></li>
+<li>no_unreachable_default_argument_value [@Symfony] | In method arguments there must not be arguments with default values | before non-default ones.</li>
+<li>no_unused_imports [@Symfony] | Unused use statements must be removed.</li>
+<li>no_useless_else | There should not be useless <code>else</code> cases.</li>
+<li>no_useless_return | There should not be an empty return statement at the end of a function.</li>
+<li>no_whitespace_before_comma_in_array [@Symfony] | In array declaration, there MUST NOT be a whitespace before each comma.</li>
+<li>no_whitespace_in_blank_line [@Symfony] | Remove trailing whitespace at the end of blank lines.</li>
+<li>normalize_index_brace [@Symfony] | Array index should always be written by using square braces.</li>
+<li>not_operator_with_space | Logical NOT operators (!) should have leading and trailing whitespaces.</li>
+<li>not_operator_with_successor_space | Logical NOT operators (!) should have one trailing whitespace.</li>
+<li>object_operator_without_whitespace [@Symfony] | T_OBJECT_OPERATOR(-&gt;) 两端不应有空格</li>
+<li>ordered_class_elements | Orders the elements of classes/interfaces/traits. | <em>Rule is: configurable.</em></li>
+<li>ordered_imports | 给 use 排序.</li>
+<li>php_unit_construct [@Symfony:risky] | PHPUnit assertion method calls like “-&gt;assertSame(true, $foo)” should be | written with dedicated method like “-&gt;assertTrue($foo)”. | <em>Rule is: configurable, risky.</em></li>
+<li>php_unit_dedicate_assert [@Symfony:risky] | PHPUnit assertions like “assertInternalType”, “assertFileExists”, should | be used over “assertTrue”. | <em>Rule is: configurable, risky.</em></li>
+<li>php_unit_fqcn_annotation [@Symfony] | PHPUnit annotations should be a FQCNs including a root namespace.</li>
+<li>php_unit_strict | PHPUnit methods like <code>assertSame should be used instead of | assertEquals</code>. | <em>Rule is: configurable, risky.</em></li>
+<li>phpdoc_add_missing_param_annotation | Phpdoc should contain @param for all params. | <em>Rule is: configurable.</em></li>
+<li>phpdoc_align [@Symfony] | All items of the @param, @throws, @return, @var, and @type phpdoc tags | must be aligned vertically.</li>
+<li>phpdoc_annotation_without_dot [@Symfony] | Phpdocs annotation descriptions should not be a sentence.</li>
+<li>phpdoc_indent [@Symfony] | Docblocks should have the same indentation as the documented subject.</li>
+<li>phpdoc_inline_tag [@Symfony] | 修正 phpdoc 内联标签格式，使标签与后续内容始终位于一行</li>
+<li>phpdoc_no_access [@Symfony] | @access 不应该出现在 phpdoc 中</li>
+<li>phpdoc_no_alias_tag [@Symfony] | No alias PHPDoc tags should be used. | <em>Rule is: configurable.</em></li>
+<li>phpdoc_no_empty_return [@Symfony] | @return void 和 @return null 不应该出现在 phpdoc 中</li>
+<li>phpdoc_no_package [@Symfony] | @package 和 @subpackage 不应该出现在 phpdoc 中</li>
+<li>phpdoc_order | Annotations in phpdocs should be ordered so that param annotations come | first, then throws annotations, then return annotations.</li>
+<li>phpdoc_scalar [@Symfony] | phpdoc 标量类型应该用相同的格式书写，使用 <code>int 而不是integer,  使用 bool 而不是 boolean,  使用 float 而不是 real or double</code>.</li>
+<li>phpdoc_separation [@Symfony] | phpdoc 中注释相同的属性应该放在一起，不同的属性之间应该有一个空白行分割</li>
+<li>phpdoc_single_line_var_spacing [@Symfony] | Single line @var PHPDoc should have proper spacing.</li>
+<li>phpdoc_summary [@Symfony] | Phpdocs summary should end in either a full stop, exclamation mark, or | question mark.</li>
+<li>phpdoc_to_comment [@Symfony] | 文档块应该都是结构化的元素</li>
+<li>phpdoc_trim [@Symfony] | 除了文档块最开始的部分和最后的部分，phpdoc 开始和结束都应该是有内容的</li>
+<li>phpdoc_types [@Symfony] | The correct case must be used for standard PHP types in phpdoc.</li>
+<li>phpdoc_var_without_name [@Symfony] | @var 和 @type 注释中不应该包含变量名</li>
+<li>pow_to_exponentiation [@PHP56Migration, @PHP70Migration, @PHP71Migration] | Converts <code>pow() to the **</code> operator. Requires PHP &gt;= 5.6. | <em>Rule is: risky.</em></li>
+<li>pre_increment [@Symfony] | 不应该使用 ++i 或 –i 的用法</li>
+<li>protected_to_private | Converts <code>protected variables and methods to private</code> where possible.</li>
+<li>psr0 | PSR-0 的路径和命名空间标准</li>
+<li>psr4 | Class names should match the file name. | <em>Rule is: risky.</em></li>
+<li>random_api_migration [@PHP70Migration, @PHP71Migration] | Replaces <code>rand, mt_rand, srand, getrandmax functions calls with | their mt_*</code> analogs. | <em>Rule is: configurable, risky.</em></li>
+<li>return_type_declaration [@Symfony] | There should be no space before colon and one space after it in return | type declaration. Requires PHP &gt;= 7.</li>
+<li>self_accessor [@Symfony] | 在当前类中使用 self 代替类名</li>
+<li>semicolon_after_instruction | Instructions must be terminated with a semicolon.</li>
+<li>short_scalar_cast [@Symfony] | Cast <code>(boolean) and (integer) should be written as (bool) and | (int), (double) and (real) as (float)</code>.</li>
+<li>silenced_deprecation_error [@Symfony:risky] | Ensures deprecation notices are silenced. | <em>Rule is: risky.</em></li>
+<li>simplified_null_return | A return statement wishing to return <code>void should not return null</code>. | <em>Rule is: risky.</em></li>
+<li>single_blank_line_at_eof [@PSR2, @Symfony] | 不带末尾结束符的 PHP 文件必须要有一行空白行。</li>
+<li>single_blank_line_before_namespace [@Symfony] | 命名空间声明前应该有一个空白行</li>
+<li>single_class_element_per_statement [@PSR2, @Symfony] | 属性和常量的声明一次只能一个。 | <em>Rule is: configurable.</em></li>
+<li>single_import_per_statement [@PSR2, @Symfony] | 一个 use 关键词只是导入一个定义。</li>
+<li>single_line_after_imports [@PSR2, @Symfony] | 每个 use 声明独立一行，且 use 语句块之后要有一个空白行</li>
+<li>single_quote [@Symfony] | 简单字符串应该使用单引号代替双引号</li>
+<li>space_after_semicolon [@Symfony] | 修复分号后面的空格</li>
+<li>standardize_not_equals [@Symfony] | 将所有的 <code>&lt;&gt; 替换成 !=</code>.</li>
+<li>strict_comparison | 始终使用严格比较 | <em>Rule is: risky.</em></li>
+<li>strict_param | Functions should be used with <code>$strict param set to true</code>. | <em>Rule is: risky.</em></li>
+<li>switch_case_semicolon_to_colon [@PSR2, @Symfony] | case 之后应该跟冒号而不是分号。</li>
+<li>switch_case_space [@PSR2, @Symfony] | 去除冒号和 case 之间多余的空格。</li>
+<li>ternary_operator_spaces [@Symfony] | Standardize spaces around ternary operator.</li>
+<li>trailing_comma_in_multiline_array [@Symfony] | PHP 多行数组应该有一个结尾逗号</li>
+<li>trim_array_spaces [@Symfony] | 数组需要格式化成和函数/方法参数类似，上下没有空白行</li>
+<li>unary_operator_spaces [@Symfony] | Unary operators should be placed adjacent to their operands.</li>
+<li>visibility_required [@PSR2, @Symfony, @PHP71Migration] | 每个属性和方法都必须指定作用域是 public、protected 还是 private，abstract 和 final 必须位于作用域关键字之前，static 必须位于作用域之后 | <em>Rule is: configurable.</em></li>
+<li>whitespace_after_comma_in_array [@Symfony] | In array declaration, there MUST be a whitespace after each comma.</li>
+</ul>
+<h3 id="服务器端HOOK配置"><a href="#服务器端HOOK配置" class="headerlink" title="服务器端HOOK配置"></a>服务器端HOOK配置</h3><ul>
+<li>git支持服务器端hooks，参考： <a href="https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks" target="_blank" rel="noopener">https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks</a> 在此选择pre-receive hook，代码进版本库前做检查，不符合规范则打回</li>
+<li>放置以下hook文件到对应的代码仓库的hooks目录下，如xxx.git/hooks/pre-receive 分配可执行权限</li>
+<li>hook文件说明：此hook文件原为支持phpcs代码检查所写，支持自定义规划，后改为支持phpcs-fixer，所以有部分代码冗余，用户可根据需要自行修改使用</li>
+</ul>
+<p>pre-receive<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#!/bin/sh</span><br><span class="line"># PHP CodeSniffer pre-receive hook for git</span><br><span class="line">. ~/.bashrc</span><br><span class="line">export &quot;PATH=/home/git/bin/:$PATH&quot;</span><br><span class="line">PHPCS_BIN=&quot;/usr/bin/php-cs-fixer&quot;</span><br><span class="line">PHPCS_CODING_STANDARD=&quot;psr2&quot;</span><br><span class="line">CS_CONFIG_FILE=&quot;.php_cs.dist&quot;</span><br><span class="line"># use coding standart dir from local repo</span><br><span class="line">PHPCS_DIR_LOCAL=0</span><br><span class="line"></span><br><span class="line">TMP_DIR=$(mktemp -d --tmpdir phpcs-pre-receive-hook.XXXXXXXX)</span><br><span class="line">mkdir &quot;$TMP_DIR/source&quot;</span><br><span class="line"></span><br><span class="line"># parse config</span><br><span class="line">CONFIG_FILE=$(dirname $0)/config</span><br><span class="line">if [ -e $CONFIG_FILE ]; then</span><br><span class="line">    . $CONFIG_FILE</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line"># simple check if code sniffer is set up correctly</span><br><span class="line">if [ ! -x $PHPCS_BIN ]; then</span><br><span class="line">echo &quot;PHP CodeSniffer bin not found or executable -&gt; $PHPCS_BIN&quot;</span><br><span class="line">    exit 1</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line"># prepare our standart rules</span><br><span class="line">if [ $PHPCS_DIR_LOCAL = 1 ]; then</span><br><span class="line">    mkdir &quot;$TMP_DIR/standart&quot;</span><br><span class="line">    git archive HEAD $PHPCS_CODING_STANDARD | tar -x -C &quot;$TMP_DIR/standart&quot;</span><br><span class="line">    PHPCS_CODING_STANDARD=&quot;$TMP_DIR/standart/$PHPCS_CODING_STANDARD&quot;</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># gathers all errors and sent to output at end</span><br><span class="line">ERRORS=&quot;&quot;</span><br><span class="line">RETVAL=0</span><br><span class="line"></span><br><span class="line"># &lt;oldrev&gt; &lt;newrev&gt; &lt;refname&gt;</span><br><span class="line">while read oldrev newrev ref;</span><br><span class="line">do</span><br><span class="line"># ignore files</span><br><span class="line">config_file=$(git show $&#123;newrev&#125;:$CS_CONFIG_FILE 2&gt;/dev/null)</span><br><span class="line">#echo &quot;config file is: $config_file&quot;</span><br><span class="line"></span><br><span class="line">if [ x&quot;$&#123;config_file:0:6&#125;&quot; = x&quot;&quot; ]; then</span><br><span class="line">        config_file=&quot;&quot;</span><br><span class="line">        if [ x&quot;$oldrev&quot; = x&quot;0000000000000000000000000000000000000000&quot; ]; then</span><br><span class="line">                echo &quot;Error: no code style config file $CS_CONFIG_FILE, please add pre-commit hook and $CS_CONFIG_FILE file&quot;</span><br><span class="line">                exit 1</span><br><span class="line">        fi</span><br><span class="line">else</span><br><span class="line">         if [ x&quot;$oldrev&quot; = x&quot;0000000000000000000000000000000000000000&quot; ]; then</span><br><span class="line">                # new branch, diff with master</span><br><span class="line">                oldrev=&quot;master&quot;</span><br><span class="line">         fi</span><br><span class="line"></span><br><span class="line">        config_file=&quot;--config=$TMP_DIR/source/$CS_CONFIG_FILE&quot;</span><br><span class="line">    git show $&#123;newrev&#125;:$CS_CONFIG_FILE&gt; &quot;$TMP_DIR/source/$CS_CONFIG_FILE&quot;</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">#echo &quot;oldrev: $oldrev&quot;</span><br><span class="line">#echo &quot;config file is: $config_file&quot;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    list=$(git diff-tree --name-only -r $oldrev..$newrev | grep --color=none -e &apos;.php$&apos;)</span><br><span class="line">    curentDir=$(pwd)</span><br><span class="line">    for file in $&#123;list&#125;; do</span><br><span class="line">        # dirty hack for create dir tree</span><br><span class="line">        mkdir -p $(dirname &quot;$TMP_DIR/source/$file&quot;)</span><br><span class="line">        git show $&#123;newrev&#125;:$&#123;file&#125;&gt; &quot;$TMP_DIR/source/$file&quot;</span><br><span class="line">        #cd &quot;$TMP_DIR/source/&quot;</span><br><span class="line">        OUTPUT=$($PHPCS_BIN fix -v -n --dry-run --using-cache=no $config_file  &quot;$TMP_DIR/source/$file&quot;)</span><br><span class="line">        #cd &quot;$curentDir&quot;</span><br><span class="line">        if [ &quot;$?&quot; -ne &quot;0&quot; ]; then</span><br><span class="line">            ERRORS=&quot;$&#123;ERRORS&#125;$&#123;OUTPUT&#125;&quot;</span><br><span class="line">            RETVAL=1</span><br><span class="line">        fi</span><br><span class="line">    done</span><br><span class="line">done</span><br><span class="line"></span><br><span class="line"># cleanup</span><br><span class="line">rm -rf $TMP_DIR</span><br><span class="line"></span><br><span class="line">echo &quot;$ERRORS&quot;</span><br><span class="line"></span><br><span class="line">exit $RETVAL</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="jiweii.com/2018/12/19/编码风格和格式化工具/" data-id="cjyidavc90021b0r3h1y9saw6" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/php/">php</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2019/04/02/面试题/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          算法题
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/10/30/小本本/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">小本本</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/git/">git</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/linux/">linux</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nginx/">nginx</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/">php</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/privately/">privately</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nginx/">nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php/">php</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/privately/">privately</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/nginx/" style="font-size: 16.67px;">nginx</a> <a href="/tags/php/" style="font-size: 20px;">php</a> <a href="/tags/privately/" style="font-size: 13.33px;">privately</a> <a href="/tags/数据库/" style="font-size: 13.33px;">数据库</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2019/04/18/淘宝联盟/">淘宝联盟</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/04/常用书籍、资料、手册/">常用书籍、资料、手册</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/02/面试题/">算法题</a>
+          </li>
+        
+          <li>
+            <a href="/2018/12/19/编码风格和格式化工具/">编码格式化工具</a>
+          </li>
+        
+          <li>
+            <a href="/2018/10/30/小本本/">小本本</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 Jiwei<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"live2d-widget-model-wanko    //妹子有很多个，叫名字他才出来"},"display":{"position":"right   //位置","width":"150    //妹子宽度","height":"300    //妹子高度"},"mobile":{"show":true},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
