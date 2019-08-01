@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>mysql优化技巧 | A type of habit</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="-">
+<meta name="keywords" content="mysql">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mysql优化技巧">
+<meta property="og:url" content="jiweii.com/2019/05/14/mysql优化技巧/index.html">
+<meta property="og:site_name" content="A type of habit">
+<meta property="og:description" content="-">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="/images/mysql优化/check_cache.png">
+<meta property="og:image" content="/images/mysql优化/explain1.png">
+<meta property="og:image" content="/images/mysql优化/explain2.png">
+<meta property="og:image" content="/images/mysql优化/explain3.png">
+<meta property="og:image" content="/images/mysql优化/slow1.png">
+<meta property="og:image" content="/images/mysql优化/slow2.png">
+<meta property="og:image" content="/images/mysql优化/slow3.png">
+<meta property="og:image" content="/images/mysql优化/slow4.png">
+<meta property="og:image" content="/images/mysql优化/slow5.png">
+<meta property="og:image" content="/images/mysql优化/xingneng.png">
+<meta property="og:image" content="/images/mysql优化/flow.png">
+<meta property="og:image" content="/images/mysql优化/sphinx.png">
+<meta property="og:updated_time" content="2019-07-31T08:27:23.350Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="mysql优化技巧">
+<meta name="twitter:description" content="-">
+<meta name="twitter:image" content="/images/mysql优化/check_cache.png">
+  
+    <link rel="alternate" href="/atom.xml" title="A type of habit" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/images/favicon.ico">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">A type of habit</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="jiweii.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-mysql优化技巧" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/05/14/mysql优化技巧/" class="article-date">
+  <time datetime="2019-05-13T16:00:00.000Z" itemprop="datePublished">2019-05-14</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/mysql/">mysql</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      mysql优化技巧
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>-<br><a id="more"></a></p>
+<h4 id="sql相关优化效率技巧"><a href="#sql相关优化效率技巧" class="headerlink" title="sql相关优化效率技巧"></a>sql相关优化效率技巧</h4><p>1、大多数mysql服务器开启了查询缓存，当有很多相同的查询被执行了多次的时候，这些查询结果会被放入一个缓存中，这样后续的相同查询就不用操作而直接访问缓存结果了。<br>查看查询缓存是否启用：<br><img src="/14/mysql优化技巧/../../../../images/mysql优化/check_cache.png" alt=""><br>要使用缓存的话，需要使用SQL_CACHE开关参数：</p>
+<pre><code>- SELECT SQL_CACHE * FROM my_table WHERE condition；
+</code></pre><p>注：每次查询sql必须完全相同才可以使用；</p>
+<p>2、查询时正确使用索引，EXPLAIN查看查询情况，对比如下：<br><img src="/14/mysql优化技巧/../../../../images/mysql优化/explain1.png" alt=""><br><img src="/14/mysql优化技巧/../../../../images/mysql优化/explain2.png" alt=""><br><img src="/14/mysql优化技巧/../../../../images/mysql优化/explain3.png" alt=""></p>
+<p>EXPLAIN字段含义（摘抄）：<br>id</p>
+<pre><code>- SELECT识别符。这是SELECT的查询序列号
+</code></pre><p>select_type</p>
+<pre><code>- SELECT类型,可以为以下任何一种:
+- SIMPLE:简单SELECT(不使用UNION或子查询)
+- PRIMARY:最外面的SELECT
+- UNION:UNION中的第二个或后面的SELECT语句
+- DEPENDENT UNION:UNION中的第二个或后面的SELECT语句,取决于外面的查询
+- UNION RESULT:UNION 的结果
+- SUBQUERY:子查询中的第一个SELECT
+- DEPENDENT SUBQUERY:子查询中的第一个SELECT,取决于外面的查询
+- DERIVED:导出表的SELECT(FROM子句的子查询)
+</code></pre><p>table</p>
+<pre><code>- 输出的行所引用的表
+</code></pre><p>type</p>
+<pre><code>- 联接类型。下面给出各种联接类型,按照从最佳类型到最坏类型进行排序:
+- system:表仅有一行(=系统表)。这是const联接类型的一个特例。
+- const:表最多有一个匹配行,它将在查询开始时被读取。因为仅有一行,在这行的列值可被优化器剩余部分认为是常数。const表很快,因为它们只读取一次!
+- eq_ref:对于每个来自于前面的表的行组合,从该表中读取一行。这可能是最好的联接类型,除了const类型。
+- ref:对于每个来自于前面的表的行组合,所有有匹配索引值的行将从这张表中读取。
+- ref_or_null:该联接类型如同ref,但是添加了MySQL可以专门搜索包含NULL值的行。
+- index_merge:该联接类型表示使用了索引合并优化方法。
+- unique_subquery:该类型替换了下面形式的IN子查询的ref: value IN (SELECT primary_key FROM 
+- single_table WHERE some_expr) unique_subquery是一个索引查找函数,可以完全替换子查询,效率更高。
+- index_subquery:该联接类型类似于unique_subquery。可以替换IN子查询,但只适合下列形式的子查询中的非唯一索引: value IN (SELECT key_column FROM single_table WHERE some_expr)
+- range:只检索给定范围的行,使用一个索引来选择行。
+- index:该联接类型与ALL相同,除了只有索引树被扫描。这通常比ALL快,因为索引文件通常比数据文件小。
+- ALL:对于每个来自于先前的表的行组合,进行完整的表扫描。
+</code></pre><p>possible_keys</p>
+<pre><code>- 指出MySQL能使用哪个索引在该表中找到行
+</code></pre><p>key</p>
+<pre><code>- 显示MySQL实际决定使用的键(索引)。如果没有选择索引,键是NULL。
+</code></pre><p>key_len</p>
+<pre><code>- 显示MySQL决定使用的键长度。如果键是NULL,则长度为NULL。
+</code></pre><p>ref</p>
+<pre><code>- 显示使用哪个列或常数与key一起从表中选择行。
+</code></pre><p>rows</p>
+<pre><code>- 显示MySQL认为它执行查询时必须检查的行数。多行之间的数据相乘可以估算要处理的行数。
+</code></pre><p>Extra</p>
+<pre><code>- 该列包含MySQL解决查询的详细信息
+</code></pre><p>3、当只要一行数据时使用LIMIT 1<br>加上LIMIT 1可以增加性能。MySQL数据库引擎会在查找到一条数据后停止搜索，而不是继续往后查询下一条符合条件的数据记录。<br>4、索引使用</p>
+<ul>
+<li>普通索引INDEX：适用于name、email等一般属性，Like查询时，如果前后都有通配符，普通索引将不会起作用</li>
+<li>唯一索引UNIQUE：索引字段值在表中是唯一，唯一索引允许有空值，主键索引不允许。</li>
+<li>主键索引：在建表时就指定，不需要额外添加</li>
+<li>组合索引:建立索引时指定多个字段，组合索引的生效原则是 从前往后依次使用生效，如果中间某个索引没有使用，那么断点前面的索引部分起作用，断点后面的索引没有起作用（用于范围查询时也会造成断点）。</li>
+</ul>
+<p>where a=3 and b=45 and c=5 和 where b=45 and a=3 and c=5 这两种写法都会使联合索引全部发挥作用，与写的前后顺序无关。</p>
+<ul>
+<li>Join使用时要注意，联查的两个字段在两个表中是被建立过索引，并且数据类型相同<br>5、操作相关：</li>
+<li>在程序使用中最好不要使用ORDER BY RAND()，执行随机数之后还需排序，耗时大</li>
+<li>查询时尽量只查询需要的字段不要用select ‘*’，读的数据越多，查询越慢。</li>
+<li>尽量不要赋Null值，在MYSQL中对于INT类型而言，EMPTY是0，而NULL是空值。而在Oracle中 NULL和EMPTY的字符串是一样的。NULL也需要占用存储空间，并且会使我们的程序判断时更加复杂。</li>
+<li>为每个表建立自增主键ID，除了在操作中使用优化，整体结构中也会应用频繁（分区…..）</li>
+<li>update和delete操作时会锁表，尽量拆分大的这种语句，控制操作条数<br>6、慢查询操作：<ul>
+<li>@1.show variables like ‘%slow_query_log%’;  查看是否开启慢查询日志：<br><img src="/14/mysql优化技巧/../../../../images/mysql优化/slow1.png" alt=""></li>
+<li>@2. show global status like ‘%slow_queries%’;  查看慢查询sql条数：<br><img src="/14/mysql优化技巧/../../../../images/mysql优化/slow2.png" alt=""></li>
+<li>@3.show global variables like ‘slow_query_log_file’;查看慢查询存储文件路径：<br><img src="/14/mysql优化技巧/../../../../images/mysql优化/slow3.png" alt=""></li>
+<li>@4.show variables like ‘%long_query_time%’;慢查询时间阙值：<br><img src="/14/mysql优化技巧/../../../../images/mysql优化/slow4.png" alt=""></li>
+<li>@5.show variables like ‘%log_queries_not_using_indexes%’;是否捕获未使用索引的sql：<br><img src="/14/mysql优化技巧/../../../../images/mysql优化/slow5.png" alt=""><br>7、查看Mysql工作性能</li>
+<li>SHOW GLOBAL STATUS  展示语句展示mysql工作状态，包括索引的应用、缓存设置等。<br><img src="/14/mysql优化技巧/../../../../images/mysql优化/xingneng.png" alt=""><br>8、Mysql查询工作流程：</li>
+<li>Client往服务器发送查询指令。</li>
+<li>服务器查询缓存，如果存在则直接返回，否则下一步。</li>
+<li>服务器解析、预处理和优化查询，生成执行计划。</li>
+<li>执行引擎调用存储引擎API执行查询。</li>
+<li>服务器将结果返回至客户端。<br><img src="/14/mysql优化技巧/../../../../images/mysql优化/flow.png" alt=""><br>解析与预处理过程:</li>
+</ul>
+</li>
+<li>解析器将查询分解后构造解析树，进行语法解析与验证查询，检查SQL是否有效。</li>
+<li>预处理器解析语义：如检查表和列是否存在，是否存在歧义等。</li>
+<li>预处理器检查权限。<br>查询优化器:<ul>
+<li>-该过程比较复杂，将解析树的结果变成执行计划，优化器的任务是寻找最好的方式(但并不是总能选择最好的方案)，MySQL使用基于开销的优化器，预测不同执行计划的开销。</li>
+</ul>
+</li>
+</ul>
+<h4 id="Sphinx简介"><a href="#Sphinx简介" class="headerlink" title="Sphinx简介"></a>Sphinx简介</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1.全文检索引擎，Sphinx可以非常容易的与SQL数据库和脚本语言集成。当前系统内置MySQL和PostgreSQL 数据库数据源的支持，也支持从标准输入读取特定格式 的XML数据。通过修改源代码，用户可以自行增加新的数据源。</span><br><span class="line">  </span><br><span class="line">2.Sphinx在mysql上的应用有两种方式：</span><br><span class="line">    ①、采用API调用，如使用PHP、java等的API函数或方法查询。优点是可不必对mysql重新编译，服务端进程“低耦合”，且程序可灵活、方便的调用，缺点是如已有搜索程序的条件下，需修改部分程序。</span><br><span class="line">    ②、使用插件方式（sphinxSE）把sphinx编译成一个mysql插件并使用特定的sql语句进行检索。其特点是，在sql端方便组合，且能直接返回数据给客户端。</span><br><span class="line"></span><br><span class="line">3.使用Sphinx搜索引擎对数据做索引，数据一次性加载进来，然后做了所以之后保存在内存。这样用户进行搜索的时候就只需要在Sphinx服务器上检索数据即可。而且，Sphinx没有MySQL的伴随机磁盘I/O的缺陷，性能更佳。</span><br><span class="line"></span><br><span class="line">4.典型使用场景：</span><br><span class="line">    @1.数据量大的时候，比MyISAM和InnoDB都要快。 能对多个源表的混合数据创建索引，不限于单个表上的字段。 能将来自多个索引的搜索结果进行整合。 能根据属性上的附加条件对全文搜索进行优化</span><br><span class="line"></span><br><span class="line">    @2.当在多个WHERE条件做SELECT查询时，索引选择性较差或者根本没有索引支持的字段，性能较差。sphinx可以对关键字做索引。区别是，MySQL中，是内部引擎决定使用索引还是全扫描，而sphinx是让你自己选择使用哪一种访问方法。因为sphinx是把数据保存到RAM中，所以sphinx不会做太多的I/O操作。而mysql有一种叫半随机I/O磁盘读，把记录一行一行地读到排序缓冲区里，然后再进行排序，最后丢弃其中的绝大多数行。所以sphinx使用了更少的内存和磁盘I/O。</span><br><span class="line"></span><br><span class="line">    @3.优化GROUP BY查询，在sphinx中的排序和分组都是用固定的内存，它的效率比类似数据集全部可以放在RAM的MySQL查询要稍微高些。</span><br><span class="line"></span><br><span class="line">    @4.phinx可以让你从相同数据中同时产生几份结果，同样是使用固定量的内存。作为对比，传统SQL方法要么运行两个查询，要么对每个搜索结果集创建一个临时表。而sphinx用一个multi-query机制来完成这项任务。不是一个接一个地发起查询，而是把几个查询做成一个批处理，然后在一个请求里提交。</span><br><span class="line"></span><br><span class="line">5.工作流程图：</span><br></pre></td></tr></table></figure>
+<p><img src="/14/mysql优化技巧/../../../../images/mysql优化/sphinx.png" alt=""><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">流程图解释：</span><br><span class="line">    Database：数据源，是Sphinx做索引的数据来源。因为Sphinx是无关存储引擎、数据库的，所以数据源可以是MySQL、PostgreSQL、XML等数据。</span><br><span class="line">    Indexer：索引程序，从数据源中获取数据，并将数据生成全文索引。可以根据需求，定期运行Indexer达到定时更新索引的需求。</span><br><span class="line">    Searchd：Searchd直接与客户端程序进行对话，并使用Indexer程序构建好的索引来快速地处理搜索查询。</span><br><span class="line">    APP：客户端程序。接收来自用户输入的搜索字符串，发送查询给Searchd程序并显示返回结果。</span><br><span class="line">相关参考：</span><br><span class="line">	中文文档：http://www.sphinxsearch.org/</span><br><span class="line">	使用手册：http://zh-sphinx-doc.readthedocs.io/en/latest/contents.html</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="jiweii.com/2019/05/14/mysql优化技巧/" data-id="cjyshwub6000kfor32836moju" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mysql/">mysql</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2019/04/04/常用书籍、资料、手册/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">常用书籍、资料、手册</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/git/">git</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/linux/">linux</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/mysql/">mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nginx/">nginx</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/">php</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/privately/">privately</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mysql/">mysql</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nginx/">nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php/">php</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/privately/">privately</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/mysql/" style="font-size: 10px;">mysql</a> <a href="/tags/nginx/" style="font-size: 16.67px;">nginx</a> <a href="/tags/php/" style="font-size: 20px;">php</a> <a href="/tags/privately/" style="font-size: 13.33px;">privately</a> <a href="/tags/数据库/" style="font-size: 13.33px;">数据库</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">May 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2019/05/14/mysql优化技巧/">mysql优化技巧</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/04/常用书籍、资料、手册/">常用书籍、资料、手册</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/02/面试题/">各种算法</a>
+          </li>
+        
+          <li>
+            <a href="/2019/03/28/docker/">docker</a>
+          </li>
+        
+          <li>
+            <a href="/2018/12/19/编码风格和格式化工具/">编码格式化工具</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 Jiwei<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"live2d-widget-model-wanko    //妹子有很多个，叫名字他才出来"},"display":{"position":"right   //位置","width":"150    //妹子宽度","height":"300    //妹子高度"},"mobile":{"show":true},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
